@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.grookage.concierge</groupId>
+        <artifactId>concierge-parent</artifactId>
+        <version>0.0.1-RC1</version>
+        <relativePath>../concierge-parent</relativePath>
+    </parent>
+
+    <artifactId>concierge-client-dw</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.grookage.concierge</groupId>
+            <artifactId>concierge-client</artifactId>
+        </dependency>
+
+        <dependency>
+            <artifactId>dropwizard-core</artifactId>
+            <groupId>io.dropwizard</groupId>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/io.dropwizard/dropwizard-validation -->
+        <dependency>
+            <artifactId>dropwizard-validation</artifactId>
+            <groupId>io.dropwizard</groupId>
+        </dependency>
+    </dependencies>
+
+</project>
