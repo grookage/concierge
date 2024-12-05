@@ -15,7 +15,6 @@ import com.grookage.concierge.core.services.IngestionService;
 import com.grookage.concierge.core.services.impl.ConfigServiceImpl;
 import com.grookage.concierge.core.services.impl.IngestionServiceImpl;
 import com.grookage.concierge.models.ConfigUpdater;
-import com.grookage.concierge.models.serde.SerDeFactory;
 import com.grookage.concierge.repository.ConciergeRepository;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
@@ -56,8 +55,6 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
         return null;
     }
 
-    protected abstract SerDeFactory withSerDeFactory(T configuration);
-
     @Override
     public void run(T configuration, Environment environment) {
         final var userResolver = userResolver(configuration);
@@ -87,13 +84,10 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
                     }
                 }));
 
-        final var serDeFactory = withSerDeFactory(configuration);
-        Preconditions.checkNotNull(serDeFactory, "SerDe can't be null");
-
         withHealthChecks(configuration)
                 .forEach(leiaHealthCheck -> environment.healthChecks().register(leiaHealthCheck.getName(), leiaHealthCheck));
         environment.jersey().register(new IngestionResource<>(ingestionService, userResolver, permissionResolver));
-        environment.jersey().register(new ConfigResource(configService, serDeFactory));
+        environment.jersey().register(new ConfigResource(configService));
         environment.jersey().register(new ConciergeExceptionMapper());
     }
 

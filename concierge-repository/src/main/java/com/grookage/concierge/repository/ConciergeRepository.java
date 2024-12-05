@@ -9,9 +9,9 @@ import java.util.Set;
 
 public interface ConciergeRepository {
 
-    void createConfig(ConfigDetails configDetails);
+    void save(ConfigDetails configDetails);
 
-    void updateConfig(ConfigDetails configDetails);
+    void update(ConfigDetails configDetails);
 
     Optional<ConfigDetails> getRecord(final ConfigKey configKey);
 

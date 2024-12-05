@@ -4,6 +4,7 @@ import com.grookage.concierge.core.engine.ConciergeContext;
 import com.grookage.concierge.core.engine.ConciergeProcessor;
 import com.grookage.concierge.core.exception.ConciergeErrorCode;
 import com.grookage.concierge.core.exception.ConciergeException;
+import com.grookage.concierge.models.MapperUtils;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigEvent;
 import com.grookage.concierge.models.config.ConfigKey;
@@ -49,9 +50,9 @@ public class UpdateConfigProcessor extends ConciergeProcessor {
             throw ConciergeException.error(ConciergeErrorCode.NO_CONFIG_FOUND);
         }
         storedConfig.setDescription(updateConfigRequest.getDescription());
-        storedConfig.setData(updateConfigRequest.getData());
+        storedConfig.setData(MapperUtils.mapper().writeValueAsBytes(updateConfigRequest.getData()));
         addHistory(context, storedConfig);
-        getRepositorySupplier().get().updateConfig(storedConfig);
+        getRepositorySupplier().get().update(storedConfig);
         context.addContext(ConfigDetails.class.getSimpleName(), storedConfig);
     }
 }

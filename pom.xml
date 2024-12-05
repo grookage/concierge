@@ -30,9 +30,10 @@
         <module>concierge-core</module>
         <module>concierge-repository</module>
         <module>concierge-dw</module>
-        <module>concierge-server</module>
         <module>concierge-client</module>
         <module>concierge-client-dw</module>
+        <module>concierge-elastic</module>
+        <module>concierge-elastic-dw</module>
     </modules>
     <description>RBAC enabled, versioned configuration service</description>
     <inceptionYear>2024</inceptionYear>

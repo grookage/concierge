@@ -37,11 +37,6 @@
             </dependency>
             <dependency>
                 <groupId>com.grookage.concierge</groupId>
-                <artifactId>concierge-server</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.grookage.concierge</groupId>
                 <artifactId>concierge-repository</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -53,6 +48,16 @@
             <dependency>
                 <groupId>com.grookage.concierge</groupId>
                 <artifactId>concierge-client-dw</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.grookage.concierge</groupId>
+                <artifactId>concierge-elastic</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.grookage.concierge</groupId>
+                <artifactId>concierge-elastic-dw</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

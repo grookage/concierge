@@ -6,7 +6,6 @@ import com.grookage.concierge.core.exception.ConciergeErrorCode;
 import com.grookage.concierge.core.exception.ConciergeException;
 import com.grookage.concierge.core.managers.VersionGenerator;
 import com.grookage.concierge.core.utils.ConfigurationUtils;
-import com.grookage.concierge.core.utils.ContextUtils;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigEvent;
 import com.grookage.concierge.models.config.ConfigState;
@@ -47,17 +46,11 @@ public class CreateConfigProcessor extends ConciergeProcessor {
                     createConfigRequest.getNamespace(), createConfigRequest.getConfigName());
             throw ConciergeException.error(ConciergeErrorCode.CONFIG_ALREADY_EXISTS);
         }
-        final var userName = ContextUtils.getUser(context);
-        final var email = ContextUtils.getEmail(context);
-        final var userId = ContextUtils.getUserId(context);
         final var configDetails = ConfigurationUtils.toCreateConfigRequest(createConfigRequest,
-                getVersionSupplier().get(),
-                userName,
-                email,
-                userId
+                getVersionSupplier().get()
         );
         addHistory(context, configDetails);
-        getRepositorySupplier().get().createConfig(configDetails);
+        getRepositorySupplier().get().save(configDetails);
         context.addContext(ConfigDetails.class.getSimpleName(), configDetails);
     }
 }

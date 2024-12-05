@@ -45,7 +45,7 @@ public class RejectConfigProcessor extends ConciergeProcessor {
             throw ConciergeException.error(ConciergeErrorCode.NO_CONFIG_FOUND);
         }
         addHistory(context, storedConfig);
-        getRepositorySupplier().get().updateConfig(storedConfig);
+        getRepositorySupplier().get().update(storedConfig);
         context.addContext(ConfigDetails.class.getSimpleName(), storedConfig);
     }
 }

@@ -43,7 +43,8 @@ public abstract class AbstractConciergeRepository implements ConciergeRepository
     }
 
     public abstract List<ConfigDetails> getStoredRecords(String namespace,
-                                                         Set<String> configNames, Set<ConfigState> configStates);
+                                                         Set<String> configNames,
+                                                         Set<ConfigState> configStates);
 
 
     @Override

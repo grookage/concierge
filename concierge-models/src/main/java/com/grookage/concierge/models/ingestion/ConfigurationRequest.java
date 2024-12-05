@@ -18,5 +18,5 @@ public class ConfigurationRequest {
     @NotBlank String namespace;
     @NotBlank String configName;
     String description;
-    @NotNull byte[] data;
+    @NotNull Object data;
 }
