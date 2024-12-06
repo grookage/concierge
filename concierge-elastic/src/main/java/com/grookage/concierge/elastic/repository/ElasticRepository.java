@@ -21,10 +21,7 @@ import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.Refresh;
 import co.elastic.clients.elasticsearch._types.Time;
 import co.elastic.clients.elasticsearch._types.query_dsl.*;
-import co.elastic.clients.elasticsearch.core.GetRequest;
-import co.elastic.clients.elasticsearch.core.IndexRequest;
-import co.elastic.clients.elasticsearch.core.SearchRequest;
-import co.elastic.clients.elasticsearch.core.UpdateRequest;
+import co.elastic.clients.elasticsearch.core.*;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.indices.CreateIndexRequest;
 import co.elastic.clients.elasticsearch.indices.ExistsRequest;
@@ -97,6 +94,7 @@ public class ElasticRepository extends AbstractConciergeRepository {
                 .description(configDetails.getDescription())
                 .namespace(configDetails.getConfigKey().getNamespace())
                 .configName(configDetails.getConfigKey().getConfigName())
+                .configType(configDetails.getConfigKey().getConfigType())
                 .build();
     }
 
@@ -110,6 +108,7 @@ public class ElasticRepository extends AbstractConciergeRepository {
                         .version(storedElasticRecord.getVersion())
                         .namespace(storedElasticRecord.getNamespace())
                         .configName(storedElasticRecord.getConfigName())
+                        .configType(storedElasticRecord.getConfigType())
                         .build())
                 .build();
     }
@@ -139,6 +138,23 @@ public class ElasticRepository extends AbstractConciergeRepository {
                         request.index(CONFIG_INDEX).id(configKey.getReferenceId())),
                 StoredElasticRecord.class);
         return Optional.ofNullable(getResponse.source()).map(this::toConfigDetails);
+    }
+
+    @Override
+    @SneakyThrows
+    public boolean activeRecordExists(String namespace, String configName) {
+        final var namespaceQuery = TermQuery.of(p -> p.field(NAMESPACE).value(namespace))._toQuery();
+        final var configQuery = TermQuery.of(p -> p.field(CONFIG_NAME).value(configName))._toQuery();
+        final var searchQuery = BoolQuery.of(q -> q.must(List.of(namespaceQuery, configQuery)))._toQuery();
+        final var searchResponse = client.search(SearchRequest.of(
+                        s -> s.query(searchQuery)
+                                .requestCache(true)
+                                .index(List.of(CONFIG_INDEX))
+                                .size(elasticConfig.getMaxResultSize()) //If you have more than 10K schemas, this will hold you up!
+                                .timeout(elasticConfig.getTimeout())),
+                StoredElasticRecord.class
+        );
+        return !searchResponse.hits().hits().isEmpty();
     }
 
     @Override
@@ -181,7 +197,7 @@ public class ElasticRepository extends AbstractConciergeRepository {
 
     @Override
     @SneakyThrows
-    public void save(ConfigDetails configDetails) {
+    public void create(ConfigDetails configDetails) {
         final var createDocument = new IndexRequest.Builder<>().document(toStorageRecord(configDetails))
                 .index(CONFIG_INDEX)
                 .refresh(Refresh.WaitFor)
@@ -202,6 +218,35 @@ public class ElasticRepository extends AbstractConciergeRepository {
                 .timeout(Time.of(s -> s.time(elasticConfig.getTimeout())))
                 .build();
         client.update(updateRequest, StoredElasticRecord.class);
+    }
+
+    @Override
+    @SneakyThrows
+    public void rollOverAndUpdate(ConfigDetails configDetails) {
+        final var namespaceQuery = TermQuery.of(p -> p.field(NAMESPACE).value(configDetails.getConfigKey().getNamespace()))._toQuery();
+        final var configQuery = TermQuery.of(p -> p.field(CONFIG_NAME).value(configDetails.getConfigKey().getConfigName()))._toQuery();
+        final var stateQuery = TermQuery.of(p -> p.field(CONFIG_STATE).value(ConfigState.ACTIVATED.name()))._toQuery();
+        final var searchQuery = BoolQuery.of(q -> q.must(List.of(namespaceQuery, configQuery, stateQuery)))._toQuery();
+        final var searchResponse = client.search(SearchRequest.of(
+                        s -> s.query(searchQuery)
+                                .requestCache(true)
+                                .index(List.of(CONFIG_INDEX))
+                                .size(elasticConfig.getMaxResultSize()) //If you have more than 10K schemas, this will hold you up!
+                                .timeout(elasticConfig.getTimeout())),
+                StoredElasticRecord.class
+        );
+        final var newRecords = searchResponse.hits().hits().stream()
+                .map(Hit::source).filter(Objects::nonNull)
+                .peek(rec -> rec.setConfigState(ConfigState.ROLLED))
+                .collect(Collectors.toList());
+        newRecords.add(toStorageRecord(configDetails));
+        final var br = new BulkRequest.Builder()
+                .index(CONFIG_INDEX)
+                .refresh(Refresh.WaitFor)
+                .timeout(Time.of(s -> s.time(elasticConfig.getTimeout())));
+        newRecords.forEach(eachSchema -> br.operations(op ->
+                op.update(idx -> idx.index(CONFIG_INDEX).id(eachSchema.getReferenceId()).action(a -> a.doc(eachSchema)))));
+        client.bulk(br.build());
     }
 
     @Override

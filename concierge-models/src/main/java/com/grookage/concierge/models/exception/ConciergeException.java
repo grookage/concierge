@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.grookage.concierge.core.exception;
+package com.grookage.concierge.models.exception;
 
 import lombok.Builder;
 import lombok.Getter;

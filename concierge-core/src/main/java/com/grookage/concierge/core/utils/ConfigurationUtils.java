@@ -20,6 +20,7 @@ public class ConfigurationUtils {
                         .namespace(configurationRequest.getNamespace())
                         .version(versionGenerator.getVersionId("V"))
                         .configName(configurationRequest.getConfigName())
+                        .configType(configurationRequest.getConfigType())
                         .build())
                 .configState(ConfigState.CREATED)
                 .description(configurationRequest.getDescription())

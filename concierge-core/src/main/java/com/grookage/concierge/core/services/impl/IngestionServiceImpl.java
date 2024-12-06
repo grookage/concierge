@@ -2,8 +2,6 @@ package com.grookage.concierge.core.services.impl;
 
 import com.grookage.concierge.core.engine.ConciergeContext;
 import com.grookage.concierge.core.engine.ConciergeHub;
-import com.grookage.concierge.core.exception.ConciergeErrorCode;
-import com.grookage.concierge.core.exception.ConciergeException;
 import com.grookage.concierge.core.managers.ProcessorFactory;
 import com.grookage.concierge.core.services.IngestionService;
 import com.grookage.concierge.core.utils.ContextUtils;
@@ -11,6 +9,8 @@ import com.grookage.concierge.models.ConfigUpdater;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigEvent;
 import com.grookage.concierge.models.config.ConfigKey;
+import com.grookage.concierge.models.exception.ConciergeCoreErrorCode;
+import com.grookage.concierge.models.exception.ConciergeException;
 import com.grookage.concierge.models.ingestion.ConfigurationRequest;
 import com.grookage.concierge.models.ingestion.UpdateConfigRequest;
 import lombok.AllArgsConstructor;
@@ -33,7 +33,7 @@ public class IngestionServiceImpl<C extends ConfigUpdater> implements IngestionS
         conciergeContext.addContext(ConfigurationRequest.class.getSimpleName(), configurationRequest);
         ContextUtils.addSchemaUpdaterContext(conciergeContext, configUpdater);
         final var processor = conciergeHub.getProcessor(ConfigEvent.CREATE_CONFIG)
-                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeErrorCode.PROCESSOR_NOT_FOUND));
+                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.PROCESSOR_NOT_FOUND));
         processor.fire(conciergeContext, processorFactory.get());
         return conciergeContext.getContext(ConfigDetails.class).orElse(null);
     }
@@ -45,7 +45,7 @@ public class IngestionServiceImpl<C extends ConfigUpdater> implements IngestionS
         conciergeContext.addContext(UpdateConfigRequest.class.getSimpleName(), configurationRequest);
         ContextUtils.addSchemaUpdaterContext(conciergeContext, configUpdater);
         final var processor = conciergeHub.getProcessor(ConfigEvent.UPDATE_CONFIG)
-                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeErrorCode.PROCESSOR_NOT_FOUND));
+                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.PROCESSOR_NOT_FOUND));
         processor.fire(conciergeContext, processorFactory.get());
         return conciergeContext.getContext(ConfigDetails.class).orElse(null);
     }
@@ -57,7 +57,7 @@ public class IngestionServiceImpl<C extends ConfigUpdater> implements IngestionS
         conciergeContext.addContext(ConfigKey.class.getSimpleName(), configKey);
         ContextUtils.addSchemaUpdaterContext(conciergeContext, configUpdater);
         final var processor = conciergeHub.getProcessor(ConfigEvent.APPROVE_CONFIG)
-                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeErrorCode.PROCESSOR_NOT_FOUND));
+                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.PROCESSOR_NOT_FOUND));
         processor.fire(conciergeContext, processorFactory.get());
         return conciergeContext.getContext(ConfigDetails.class).orElse(null);
     }
@@ -69,7 +69,7 @@ public class IngestionServiceImpl<C extends ConfigUpdater> implements IngestionS
         conciergeContext.addContext(ConfigKey.class.getSimpleName(), configKey);
         ContextUtils.addSchemaUpdaterContext(conciergeContext, configUpdater);
         final var processor = conciergeHub.getProcessor(ConfigEvent.REJECT_CONFIG)
-                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeErrorCode.PROCESSOR_NOT_FOUND));
+                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.PROCESSOR_NOT_FOUND));
         processor.fire(conciergeContext, processorFactory.get());
         return conciergeContext.getContext(ConfigDetails.class).orElse(null);
     }
@@ -81,7 +81,7 @@ public class IngestionServiceImpl<C extends ConfigUpdater> implements IngestionS
         conciergeContext.addContext(ConfigKey.class.getSimpleName(), configKey);
         ContextUtils.addSchemaUpdaterContext(conciergeContext, configUpdater);
         final var processor = conciergeHub.getProcessor(ConfigEvent.ACTIVATE_CONFIG)
-                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeErrorCode.PROCESSOR_NOT_FOUND));
+                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.PROCESSOR_NOT_FOUND));
         processor.fire(conciergeContext, processorFactory.get());
         return conciergeContext.getContext(ConfigDetails.class).orElse(null);
     }

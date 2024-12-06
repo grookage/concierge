@@ -8,5 +8,7 @@ public enum ConfigState {
 
     ACTIVATED,
 
-    REJECTED
+    REJECTED,
+
+    ROLLED;
 }

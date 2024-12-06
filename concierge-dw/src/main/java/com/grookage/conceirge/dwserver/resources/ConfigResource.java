@@ -60,7 +60,7 @@ public class ConfigResource {
                     .description(response.getDescription())
                     .configState(response.getConfigState())
                     .configHistories(response.getConfigHistories())
-                    .data(MapperUtils.mapper().readTree(new String(response.getData())))
+                    .data(MapperUtils.mapper().readTree(response.getData()))
                     .build());
         }
         return responses;

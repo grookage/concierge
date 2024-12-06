@@ -1,6 +1,7 @@
 package com.grookage.concierge.models.ingestion;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.grookage.concierge.models.config.ConfigType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,4 +21,5 @@ public class UpdateConfigRequest {
     @NotBlank String version;
     String description;
     @NotNull Object data;
+    @NotNull ConfigType configType;
 }

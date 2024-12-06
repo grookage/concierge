@@ -46,7 +46,6 @@ public abstract class AbstractConciergeRepository implements ConciergeRepository
                                                          Set<String> configNames,
                                                          Set<ConfigState> configStates);
 
-
     @Override
     public List<ConfigDetails> getRecords(String namespace, Set<String> configNames) {
         final var configStates = Arrays.stream(ConfigState.values()).collect(Collectors.toSet());

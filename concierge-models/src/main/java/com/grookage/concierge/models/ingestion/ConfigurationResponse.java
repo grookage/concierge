@@ -1,7 +1,6 @@
 package com.grookage.concierge.models.ingestion;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.grookage.concierge.models.config.ConfigHistoryItem;
 import com.grookage.concierge.models.config.ConfigKey;
 import com.grookage.concierge.models.config.ConfigState;
@@ -24,7 +23,7 @@ public class ConfigurationResponse {
     @NotNull ConfigKey configKey;
     @NotNull ConfigState configState;
     String description;
-    @NotNull JsonNode data;
+    @NotNull Object data;
     @Builder.Default
     Set<ConfigHistoryItem> configHistories = new HashSet<>();
 }

@@ -1,4 +1,4 @@
-package com.grookage.concierge.elastic.storage;
+package com.grookage.concierge.aerospike.storage;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -22,7 +22,8 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class StoredElasticRecord {
+public class AerospikeRecord {
+
     @NotBlank String namespace;
     @NotBlank String configName;
     @NotBlank String version;

@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Locale;
 
 @AllArgsConstructor
@@ -21,6 +22,7 @@ public class ConfigKey {
     @NotBlank String namespace;
     @NotBlank String configName;
     @NotBlank String version;
+    @NotNull ConfigType configType;
 
     @JsonIgnore
     public String getReferenceId() {

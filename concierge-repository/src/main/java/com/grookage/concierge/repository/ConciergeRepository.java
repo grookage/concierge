@@ -9,10 +9,19 @@ import java.util.Set;
 
 public interface ConciergeRepository {
 
-    void save(ConfigDetails configDetails);
+    void create(ConfigDetails configDetails);
 
     void update(ConfigDetails configDetails);
 
+    void rollOverAndUpdate(ConfigDetails configDetails);
+
+    Optional<ConfigDetails> getStoredRecord(final ConfigKey configKey);
+
+    boolean activeRecordExists(String namespace, String configName);
+
+    List<ConfigDetails> getStoredRecords();
+
+    //The following implementations have cache binding, if enabled.
     Optional<ConfigDetails> getRecord(final ConfigKey configKey);
 
     List<ConfigDetails> getRecords(final String namespace, final Set<String> configNames);
@@ -22,7 +31,5 @@ public interface ConciergeRepository {
     List<ConfigDetails> getRecords(final Set<String> namespaces);
 
     List<ConfigDetails> getRecords();
-
-    List<ConfigDetails> getStoredRecords();
 
 }

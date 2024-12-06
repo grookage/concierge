@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.grookage.concierge.core.exception;
+package com.grookage.concierge.models.exception;
 
 import lombok.Getter;
 
 @Getter
-public enum ConciergeErrorCode {
+public enum ConciergeCoreErrorCode implements ConciergeErrorCode {
 
     PROCESSOR_NOT_FOUND(400),
 
@@ -31,7 +31,7 @@ public enum ConciergeErrorCode {
 
     final int status;
 
-    ConciergeErrorCode(int status) {
+    ConciergeCoreErrorCode(int status) {
         this.status = status;
     }
 }

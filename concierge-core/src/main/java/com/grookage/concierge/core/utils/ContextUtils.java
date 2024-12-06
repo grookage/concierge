@@ -17,9 +17,9 @@
 package com.grookage.concierge.core.utils;
 
 import com.grookage.concierge.core.engine.ConciergeContext;
-import com.grookage.concierge.core.exception.ConciergeErrorCode;
-import com.grookage.concierge.core.exception.ConciergeException;
 import com.grookage.concierge.models.ConfigUpdater;
+import com.grookage.concierge.models.exception.ConciergeCoreErrorCode;
+import com.grookage.concierge.models.exception.ConciergeException;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
@@ -43,18 +43,18 @@ public class ContextUtils {
     @SneakyThrows
     public static String getUser(final ConciergeContext conciergeContext) {
         return conciergeContext.getValue(USER_NAME)
-                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeErrorCode.VALUE_NOT_FOUND));
+                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.VALUE_NOT_FOUND));
     }
 
     @SneakyThrows
     public static String getEmail(final ConciergeContext conciergeContext) {
         return conciergeContext.getValue(EMAIL)
-                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeErrorCode.VALUE_NOT_FOUND));
+                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.VALUE_NOT_FOUND));
     }
 
     @SneakyThrows
     public static String getUserId(final ConciergeContext conciergeContext) {
         return conciergeContext.getValue(USER_ID)
-                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeErrorCode.VALUE_NOT_FOUND));
+                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.VALUE_NOT_FOUND));
     }
 }

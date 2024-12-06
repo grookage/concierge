@@ -60,6 +60,16 @@
                 <artifactId>concierge-elastic-dw</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.grookage.concierge</groupId>
+                <artifactId>concierge-aerospike</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.grookage.concierge</groupId>
+                <artifactId>concierge-aerospike-dw</artifactId>
+                <version>${project.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

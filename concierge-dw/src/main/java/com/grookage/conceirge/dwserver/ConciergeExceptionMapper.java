@@ -16,7 +16,7 @@
 
 package com.grookage.conceirge.dwserver;
 
-import com.grookage.concierge.core.exception.ConciergeException;
+import com.grookage.concierge.models.exception.ConciergeException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
