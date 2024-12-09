@@ -20,5 +20,5 @@ public class ConfigurationRequest {
     @NotBlank String configName;
     String description;
     @NotNull Object data;
-    @NotNull ConfigType configType;
+    ConfigType configType;
 }

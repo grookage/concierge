@@ -2,8 +2,8 @@ package com.grookage.concierge.client.serde;
 
 import com.grookage.concierge.models.ingestion.ConfigurationResponse;
 
-public interface SerDe {
+public interface SerDe<T> {
 
-    <T> T convert(ConfigurationResponse configurationResponse);
+    T convert(ConfigurationResponse configurationResponse);
 
 }

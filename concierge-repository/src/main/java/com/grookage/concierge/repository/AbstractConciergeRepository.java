@@ -22,18 +22,17 @@ public abstract class AbstractConciergeRepository implements ConciergeRepository
     private final CacheConfig cacheConfig;
     private RepositoryRefresher refresher;
 
-    public AbstractConciergeRepository(CacheConfig cacheConfig) {
+    protected AbstractConciergeRepository(CacheConfig cacheConfig) {
         this.cacheConfig = cacheConfig;
 
         if (null != cacheConfig && cacheConfig.isEnabled()) {
             this.refresher = RepositoryRefresher.builder()
                     .supplier(new RepositorySupplier(this))
                     .dataRefreshInterval(cacheConfig.getRefreshCacheSeconds())
+                    .periodicRefresh(true)
                     .build();
         }
     }
-
-    public abstract Optional<ConfigDetails> getStoredRecord(ConfigKey configKey);
 
     @Override
     public Optional<ConfigDetails> getRecord(ConfigKey configKey) {
@@ -84,7 +83,7 @@ public abstract class AbstractConciergeRepository implements ConciergeRepository
         final var configs = refresher.getData().getConfigs();
         return configs.stream()
                 .filter(each -> namespaces.contains(each.getConfigKey().getNamespace()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override

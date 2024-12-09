@@ -26,8 +26,8 @@ public class StoredElasticRecord {
     @NotBlank String namespace;
     @NotBlank String configName;
     @NotBlank String version;
-    @NotNull ConfigType configType;
     @NotNull ConfigState configState;
+    ConfigType configType;
     String description;
     @NotNull byte[] data;
     @Builder.Default

@@ -21,5 +21,5 @@ public class UpdateConfigRequest {
     @NotBlank String version;
     String description;
     @NotNull Object data;
-    @NotNull ConfigType configType;
+    ConfigType configType;
 }

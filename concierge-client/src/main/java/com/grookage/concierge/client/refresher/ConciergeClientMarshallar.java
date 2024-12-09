@@ -21,6 +21,7 @@ import com.grookage.concierge.models.MapperUtils;
 import com.grookage.concierge.models.ingestion.ConfigurationResponse;
 import com.grookage.leia.provider.marshal.Marshaller;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 
 import java.util.List;
 
@@ -31,8 +32,9 @@ public class ConciergeClientMarshallar implements Marshaller<List<ConfigurationR
     }
 
     @Override
+    @SneakyThrows
     public List<ConfigurationResponse> marshall(byte[] body) {
-        return MapperUtils.mapper().convertValue(body, new TypeReference<>() {
+        return MapperUtils.mapper().readValue(body, new TypeReference<>() {
         });
     }
 }

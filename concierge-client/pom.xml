@@ -14,7 +14,8 @@
 
     <properties>
         <maven.deploy.skip>false</maven.deploy.skip>
-        <leia.refresher.version>0.0.1-RC7</leia.refresher.version>
+        <leia.refresher.version>0.0.1-RC9</leia.refresher.version>
+        <wiremock.version>3.3.1</wiremock.version>
     </properties>
 
     <dependencies>
@@ -50,6 +51,7 @@
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
+            <version>4.1.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -64,5 +66,13 @@
             </exclusions>
             <groupId>com.grookage.concierge</groupId>
         </dependency>
+
+        <dependency>
+            <groupId>org.wiremock</groupId>
+            <artifactId>wiremock-standalone</artifactId>
+            <version>${wiremock.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>

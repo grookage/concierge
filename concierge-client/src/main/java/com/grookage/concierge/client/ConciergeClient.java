@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Optional;
+
 @Slf4j
 @AllArgsConstructor
 @Builder
@@ -15,12 +17,14 @@ public class ConciergeClient {
     private final SerDeFactory serDeFactory;
     private final ConciergeClientRefresher refresher;
 
-    public <T> T getConfiguration(final ConfigKey configKey) {
+    @SuppressWarnings("unchecked")
+    public <T> Optional<T> getConfiguration(final ConfigKey configKey) {
         final var configurations = refresher.getData();
         final var serde = serDeFactory.getSerDe(configKey.getConfigName());
         final var responseConfiguration = configurations.stream().filter(each -> each.getConfigKey().equals(configKey))
                 .findFirst().orElse(null);
-        return null == responseConfiguration ? null : serde.convert(responseConfiguration);
+        return null == responseConfiguration ? Optional.empty() :
+                (Optional<T>) Optional.of(serde.convert(responseConfiguration));
     }
 
 }

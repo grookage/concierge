@@ -7,7 +7,8 @@ public class RepositoryRefresher extends AbstractLeiaRefresher<ConfigRegistry> {
 
     @Builder
     protected RepositoryRefresher(RepositorySupplier supplier,
-                                  int dataRefreshInterval) {
-        super(supplier, dataRefreshInterval, true);
+                                  int dataRefreshInterval,
+                                  boolean periodicRefresh) {
+        super(supplier, dataRefreshInterval, periodicRefresh);
     }
 }
