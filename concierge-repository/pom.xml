@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.grookage.concierge</groupId>
+        <artifactId>concierge-parent</artifactId>
+        <version>0.0.1-RC1</version>
+        <relativePath>../concierge-parent</relativePath>
+    </parent>
+
+    <artifactId>concierge-repository</artifactId>
+
+    <dependencies>
+        <dependency>
+            <artifactId>lombok</artifactId>
+            <groupId>org.projectlombok</groupId>
+        </dependency>
+
+        <dependency>
+            <artifactId>jackson-annotations</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+        </dependency>
+
+        <dependency>
+            <artifactId>jackson-core</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+        </dependency>
+
+        <dependency>
+            <artifactId>jackson-databind</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+        </dependency>
+
+        <dependency>
+            <artifactId>concierge-models</artifactId>
+            <groupId>com.grookage.concierge</groupId>
+        </dependency>
+
+        <dependency>
+            <artifactId>concierge-models</artifactId>
+            <groupId>com.grookage.concierge</groupId>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <artifactId>junit-jupiter</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+        </dependency>
+
+        <dependency>
+            <artifactId>leia-refresher</artifactId>
+            <groupId>com.grookage.leia</groupId>
+            <version>${leia.refresher.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>4.1.0</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <properties>
+        <maven.deploy.skip>false</maven.deploy.skip>
+        <leia.refresher.version>0.0.1-RC7</leia.refresher.version>
+    </properties>
+
+</project>
