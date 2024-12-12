@@ -59,69 +59,54 @@ public class IngestionResource<U extends ConfigUpdater> {
     @Timed
     @ExceptionMetered
     @Path("/add")
-    public GenericResponse<ConfigDetails> addConfig(@Context HttpHeaders headers,
+    public ConfigDetails addConfig(@Context HttpHeaders headers,
                                                     @Valid final ConfigurationRequest configurationRequest) {
         final var updater = updaterResolver.get().resolve(headers);
         permissionValidatorSupplier.get().authorize(headers, updater, configurationRequest);
-        return GenericResponse.<ConfigDetails>builder()
-                .success(true)
-                .data(ingestionService.createConfiguration(updater, configurationRequest))
-                .build();
+        return ingestionService.createConfiguration(updater, configurationRequest);
     }
 
     @POST
     @Timed
     @ExceptionMetered
     @Path("/update")
-    public GenericResponse<ConfigDetails> updateConfig(@Context HttpHeaders headers,
+    public ConfigDetails updateConfig(@Context HttpHeaders headers,
                                                        @Valid final UpdateConfigRequest updateRequest) {
         final var updater = updaterResolver.get().resolve(headers);
         permissionValidatorSupplier.get().authorize(headers, updater, updateRequest);
-        return GenericResponse.<ConfigDetails>builder()
-                .success(true)
-                .data(ingestionService.updateConfiguration(updater, updateRequest))
-                .build();
+        return ingestionService.updateConfiguration(updater, updateRequest);
     }
 
     @POST
     @Timed
     @ExceptionMetered
     @Path("/approve")
-    public GenericResponse<ConfigDetails> approveConfig(@Context HttpHeaders headers,
+    public ConfigDetails approveConfig(@Context HttpHeaders headers,
                                                         @Valid final ConfigKey configKey) {
         final var updater = updaterResolver.get().resolve(headers);
         permissionValidatorSupplier.get().authorizeApproval(headers, updater, configKey);
-        return GenericResponse.<ConfigDetails>builder()
-                .success(true)
-                .data(ingestionService.approveConfiguration(updater, configKey))
-                .build();
+        return ingestionService.approveConfiguration(updater, configKey);
     }
 
     @POST
     @Timed
     @ExceptionMetered
     @Path("/reject")
-    public GenericResponse<ConfigDetails> rejectConfig(@Context HttpHeaders headers,
+    public ConfigDetails rejectConfig(@Context HttpHeaders headers,
                                                        @Valid final ConfigKey configKey) {
         final var updater = updaterResolver.get().resolve(headers);
         permissionValidatorSupplier.get().authorizeRejection(headers, updater, configKey);
-        return GenericResponse.<ConfigDetails>builder()
-                .success(true)
-                .data(ingestionService.rejectConfiguration(updater, configKey))
-                .build();
+        return ingestionService.rejectConfiguration(updater, configKey);
     }
 
     @POST
     @Timed
     @ExceptionMetered
     @Path("/activate")
-    public GenericResponse<ConfigDetails> activateConfig(@Context HttpHeaders headers,
+    public ConfigDetails activateConfig(@Context HttpHeaders headers,
                                                          @Valid final ConfigKey configKey) {
         final var updater = updaterResolver.get().resolve(headers);
         permissionValidatorSupplier.get().authorizeActivation(headers, updater, configKey);
-        return GenericResponse.<ConfigDetails>builder()
-                .success(true)
-                .data(ingestionService.activateConfiguration(updater, configKey))
-                .build();
+        return ingestionService.activateConfiguration(updater, configKey);
     }
 }

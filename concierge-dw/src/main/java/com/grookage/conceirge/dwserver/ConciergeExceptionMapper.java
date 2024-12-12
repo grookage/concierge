@@ -20,6 +20,7 @@ import com.grookage.concierge.models.exception.ConciergeException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
+import java.util.Map;
 
 public class ConciergeExceptionMapper implements ExceptionMapper<ConciergeException> {
 
@@ -27,11 +28,7 @@ public class ConciergeExceptionMapper implements ExceptionMapper<ConciergeExcept
     public Response toResponse(ConciergeException e) {
         return Response.status(e.getStatus())
                 .entity(
-                        GenericResponse.builder()
-                                .success(false)
-                                .code(e.getCode())
-                                .data(e.getContext())
-                                .build()
+                        Map.of("success", false, "code", e.getCode(), "data", e.getContext())
                 )
                 .build();
     }

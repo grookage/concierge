@@ -27,7 +27,7 @@ class ConfigDetailsTest {
                 ConfigHistoryItem.class);
         Assertions.assertNotNull(configHistory);
         Assertions.assertEquals(ConfigEvent.CREATE_CONFIG, configHistory.getConfigEvent());
-        Assertions.assertEquals("conciergeUser", configHistory.getConfigUpdaterId());
+        Assertions.assertEquals("conciergeUser", configHistory.getConfigUpdaterName());
     }
 
 }
