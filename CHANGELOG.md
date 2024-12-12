@@ -8,3 +8,5 @@ All notable changes to this project will be documented in this file.
 - A RESTful interface and a console to manage the said configs, to allow for easier integrations
 - Listeners on state changes whenever the config state changes
 - Extensible repository bindings for config store
+- Default repository implementations for Aerospike and Elasticsearch
+- A concierge client to fetch configs and keep it in-memory instead of fetching from source everytime.
