@@ -17,7 +17,8 @@ import java.util.concurrent.Executors;
 public class AerospikeClientUtils {
 
     private static final List<String> BIN_INDEXES =
-            List.of(AerospikeStorageConstants.CONFIG_BIN, AerospikeStorageConstants.CONFIG_STATE_BIN,
+            List.of(AerospikeStorageConstants.CONFIG_BIN,
+                    AerospikeStorageConstants.CONFIG_STATE_BIN,
                     AerospikeStorageConstants.NAMESPACE_BIN);
 
     /*

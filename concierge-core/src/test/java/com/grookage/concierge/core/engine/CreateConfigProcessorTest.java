@@ -28,8 +28,8 @@ class CreateConfigProcessorTest extends AbstractProcessorTest {
         final var createConfigRequest = ResourceHelper.getResource("configurationRequest.json",
                 ConfigurationRequest.class);
         conciergeContext.addContext(ConfigurationRequest.class.getSimpleName(), createConfigRequest);
-        ContextUtils.addSchemaUpdaterContext(conciergeContext, getConfigUpdater());
-        Mockito.when(getConciergeRepository().activeRecordExists(Mockito.any(), Mockito.any()))
+        ContextUtils.addConfigUpdaterContext(conciergeContext, getConfigUpdater());
+        Mockito.when(getConciergeRepository().createdRecordExists(Mockito.any(), Mockito.any()))
                 .thenReturn(true);
         final var processor = getConciergeProcessor();
         Assertions.assertThrows(ConciergeException.class, () -> processor.process(conciergeContext));
@@ -42,8 +42,8 @@ class CreateConfigProcessorTest extends AbstractProcessorTest {
         final var createConfigRequest = ResourceHelper.getResource("configurationRequest.json",
                 ConfigurationRequest.class);
         conciergeContext.addContext(ConfigurationRequest.class.getSimpleName(), createConfigRequest);
-        ContextUtils.addSchemaUpdaterContext(conciergeContext, getConfigUpdater());
-        Mockito.when(getConciergeRepository().activeRecordExists(Mockito.any(), Mockito.any()))
+        ContextUtils.addConfigUpdaterContext(conciergeContext, getConfigUpdater());
+        Mockito.when(getConciergeRepository().createdRecordExists(Mockito.any(), Mockito.any()))
                 .thenReturn(false);
         final var processor = getConciergeProcessor();
         processor.process(conciergeContext);

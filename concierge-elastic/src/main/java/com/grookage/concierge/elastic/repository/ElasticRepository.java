@@ -142,10 +142,11 @@ public class ElasticRepository extends AbstractConciergeRepository {
 
     @Override
     @SneakyThrows
-    public boolean activeRecordExists(String namespace, String configName) {
+    public boolean createdRecordExists(String namespace, String configName) {
         final var namespaceQuery = TermQuery.of(p -> p.field(NAMESPACE).value(namespace))._toQuery();
         final var configQuery = TermQuery.of(p -> p.field(CONFIG_NAME).value(configName))._toQuery();
-        final var searchQuery = BoolQuery.of(q -> q.must(List.of(namespaceQuery, configQuery)))._toQuery();
+        final var configStateQuery = TermQuery.of(p -> p.field(CONFIG_STATE).value(ConfigState.CREATED.name()))._toQuery();
+        final var searchQuery = BoolQuery.of(q -> q.must(List.of(namespaceQuery, configQuery, configStateQuery)))._toQuery();
         final var searchResponse = client.search(SearchRequest.of(
                         s -> s.query(searchQuery)
                                 .requestCache(true)

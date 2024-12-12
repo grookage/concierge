@@ -46,5 +46,16 @@ class ConciergeRepositoryTest {
         Assertions.assertTrue(testableRepository.getRecords(Set.of("concierge")).isEmpty());
     }
 
+    @Test
+    @SneakyThrows
+    void testWithCacheDisabled() {
+        final var testableRepository = new TestableConciergeRepository(null);
+        final var configKey = ResourceHelper.getResource("configKey.json", ConfigKey.class);
+        Assertions.assertFalse(testableRepository.getStoredRecords().isEmpty());
+        Assertions.assertFalse(testableRepository.getRecords("concierge", Set.of("testConfig")).isEmpty());
+        Assertions.assertFalse(testableRepository.getRecords(Set.of("concierge")).isEmpty());
+        Assertions.assertFalse(testableRepository.getStoredRecord(configKey).isEmpty());
+    }
+
 
 }

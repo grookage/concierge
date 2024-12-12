@@ -17,7 +17,7 @@ public interface ConciergeRepository {
 
     Optional<ConfigDetails> getStoredRecord(final ConfigKey configKey);
 
-    boolean activeRecordExists(String namespace, String configName);
+    boolean createdRecordExists(String namespace, String configName);
 
     List<ConfigDetails> getStoredRecords();
 

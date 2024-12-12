@@ -6,12 +6,9 @@ import com.aerospike.client.exp.Exp;
 import com.aerospike.client.policy.RecordExistsAction;
 import com.aerospike.client.policy.WritePolicy;
 import com.aerospike.client.query.Statement;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.grookage.concierge.aerospike.exception.ConciergeAeroErrorCode;
 import com.grookage.concierge.aerospike.storage.AerospikeRecord;
 import com.grookage.concierge.aerospike.storage.AerospikeStorageConstants;
 import com.grookage.concierge.models.MapperUtils;
-import com.grookage.concierge.models.exception.ConciergeException;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Getter
@@ -77,17 +73,23 @@ public class AerospikeManager {
         save(aerospikeRecord, RecordExistsAction.REPLACE);
     }
 
-    //TODO:: Explore MRT here
     public void bulkUpdate(List<AerospikeRecord> aerospikeRecords) {
-        client.operate(client.getBatchPolicyDefault(), aerospikeRecords.stream().map(each -> {
-            final Bin bin;
-            try {
-                bin = new Bin(AerospikeStorageConstants.DEFAULT_BIN, MapperUtils.mapper().writeValueAsBytes(each));
-            } catch (JsonProcessingException e) {
-                throw ConciergeException.error(ConciergeAeroErrorCode.WRITE_FAILED);
+        final var transaction = new Txn();
+        log.debug("Started transaction with id {} and records {}", transaction.getId(), aerospikeRecords);
+        try {
+            final var writePolicy = client.copyWritePolicyDefault();
+            writePolicy.txn = transaction;
+            for (AerospikeRecord storageRecord : aerospikeRecords) {
+                final var key = getKey(storageRecord.getReferenceId());
+                final var bin = new Bin(AerospikeStorageConstants.DEFAULT_BIN, MapperUtils.mapper().writeValueAsBytes(storageRecord));
+                client.put(writePolicy, key, bin);
             }
-            return new BatchWrite(getKey(each.getReferenceId()), Operation.array(Operation.put(bin)));
-        }).collect(Collectors.toList()));
+        } catch (Exception e) {
+            log.debug("There is an error trying to commit the transaction with id {}. Aborting the transaction", transaction.getId(), e);
+            client.abort(transaction);
+        }
+        client.commit(transaction);
+        log.debug("Successfully completed the transaction with id {} and records {}", transaction.getId(), aerospikeRecords);
     }
 
     @SneakyThrows
@@ -115,7 +117,7 @@ public class AerospikeManager {
         configNames.forEach(cName ->
                 searchableExpressions.add(Exp.eq(Exp.stringBin(AerospikeStorageConstants.CONFIG_BIN), Exp.val(cName))));
         configStates.forEach(sName ->
-                searchableExpressions.add(Exp.eq(Exp.stringBin(AerospikeStorageConstants.CONFIG_BIN), Exp.val(sName))));
+                searchableExpressions.add(Exp.eq(Exp.stringBin(AerospikeStorageConstants.CONFIG_STATE_BIN), Exp.val(sName))));
         if (!searchableExpressions.isEmpty()) {
             queryPolicy.filterExp = Exp.build(Exp.and(searchableExpressions.toArray(Exp[]::new)));
         }

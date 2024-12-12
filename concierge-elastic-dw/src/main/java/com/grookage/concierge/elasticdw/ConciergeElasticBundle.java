@@ -63,5 +63,6 @@ public abstract class ConciergeElasticBundle<T extends Configuration, U extends 
         this.elasticsearchClient = elasticRepository.getClient();
         super.run(configuration, environment);
     }
-
 }
+
+

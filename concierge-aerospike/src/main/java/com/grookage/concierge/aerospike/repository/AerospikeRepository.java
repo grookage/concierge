@@ -81,7 +81,7 @@ public class AerospikeRepository extends AbstractConciergeRepository {
     }
 
     @Override
-    public boolean activeRecordExists(String namespace, String configName) {
+    public boolean createdRecordExists(String namespace, String configName) {
         return aerospikeManager.exists(namespace, configName, ConfigState.CREATED.name());
     }
 

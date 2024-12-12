@@ -27,7 +27,7 @@ class RejectConfigProcessorTest extends AbstractProcessorTest {
         final var configKey = ResourceHelper.getResource("configKey.json",
                 ConfigKey.class);
         conciergeContext.addContext(ConfigKey.class.getSimpleName(), configKey);
-        ContextUtils.addSchemaUpdaterContext(conciergeContext, getConfigUpdater());
+        ContextUtils.addConfigUpdaterContext(conciergeContext, getConfigUpdater());
         Mockito.when(getConciergeRepository().getStoredRecord(configKey))
                 .thenReturn(Optional.empty());
         final var processor = getConciergeProcessor();
@@ -47,7 +47,7 @@ class RejectConfigProcessorTest extends AbstractProcessorTest {
         final var configKey = ResourceHelper.getResource("configKey.json",
                 ConfigKey.class);
         conciergeContext.addContext(ConfigKey.class.getSimpleName(), configKey);
-        ContextUtils.addSchemaUpdaterContext(conciergeContext, getConfigUpdater());
+        ContextUtils.addConfigUpdaterContext(conciergeContext, getConfigUpdater());
         final var configDetails = ResourceHelper.getResource("configDetails.json", ConfigDetails.class);
         Mockito.when(getConciergeRepository().getStoredRecord(configKey))
                 .thenReturn(Optional.of(configDetails));

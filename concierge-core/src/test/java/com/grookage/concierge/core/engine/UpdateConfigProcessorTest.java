@@ -25,7 +25,7 @@ class UpdateConfigProcessorTest extends AbstractProcessorTest {
     @SneakyThrows
     void testUpdateConfigNoCreatedRecord() {
         final var conciergeContext = new ConciergeContext();
-        ContextUtils.addSchemaUpdaterContext(conciergeContext, getConfigUpdater());
+        ContextUtils.addConfigUpdaterContext(conciergeContext, getConfigUpdater());
         final var updateConfigRequest = ResourceHelper.getResource("updateConfiguration.json", UpdateConfigRequest.class);
         conciergeContext.addContext(UpdateConfigRequest.class.getSimpleName(), updateConfigRequest);
         final var processor = getConciergeProcessor();
@@ -38,7 +38,7 @@ class UpdateConfigProcessorTest extends AbstractProcessorTest {
     @SneakyThrows
     void testUpdateConfig() {
         final var conciergeContext = new ConciergeContext();
-        ContextUtils.addSchemaUpdaterContext(conciergeContext, getConfigUpdater());
+        ContextUtils.addConfigUpdaterContext(conciergeContext, getConfigUpdater());
         final var updateConfigRequest = ResourceHelper.getResource("updateConfiguration.json", UpdateConfigRequest.class);
         conciergeContext.addContext(UpdateConfigRequest.class.getSimpleName(), updateConfigRequest);
         final var processor = getConciergeProcessor();
@@ -54,7 +54,7 @@ class UpdateConfigProcessorTest extends AbstractProcessorTest {
     @SneakyThrows
     void testUpdateConfigNotCreatedState() {
         final var conciergeContext = new ConciergeContext();
-        ContextUtils.addSchemaUpdaterContext(conciergeContext, getConfigUpdater());
+        ContextUtils.addConfigUpdaterContext(conciergeContext, getConfigUpdater());
         final var updateConfigRequest = ResourceHelper.getResource("updateConfiguration.json", UpdateConfigRequest.class);
         conciergeContext.addContext(UpdateConfigRequest.class.getSimpleName(), updateConfigRequest);
         final var processor = getConciergeProcessor();
