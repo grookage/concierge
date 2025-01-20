@@ -5,8 +5,13 @@ import com.grookage.concierge.core.utils.ContextUtils;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigEvent;
 import com.grookage.concierge.models.config.ConfigHistoryItem;
+import com.grookage.concierge.models.exception.ConciergeCoreErrorCode;
+import com.grookage.concierge.models.exception.ConciergeException;
+import com.grookage.concierge.models.processor.ProcessorKey;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.function.Supplier;
 
 
 @Slf4j
@@ -31,14 +36,19 @@ public abstract class ConciergeProcessor {
 
     public abstract void process(ConciergeContext context);
 
+    @SneakyThrows
     public void fire(ConciergeContext context, ProcessorFactory processorFactory) {
+        final var processorKey = context.getContext(ProcessorKey.class)
+                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.VALUE_NOT_FOUND));
+        final var processor = null != processorFactory ? processorFactory.getProcessor(processorKey).orElse(null) : null;
+
+        if (null != processor) {
+            processor.preProcess(context);
+        }
         process(context);
-        final var configEvent = name();
-        if (null != processorFactory) {
-            final var postProcessor = processorFactory.getProcessor(configEvent).orElse(null);
-            if (null != postProcessor) {
-                postProcessor.process(context);
-            }
+
+        if (null != processor) {
+            processor.postProcess(context);
         }
     }
 }

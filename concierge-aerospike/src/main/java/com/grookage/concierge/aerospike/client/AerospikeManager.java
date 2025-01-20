@@ -79,11 +79,11 @@ public class AerospikeManager {
         try {
             final var writePolicy = client.copyWritePolicyDefault();
             writePolicy.txn = transaction;
-            for (AerospikeRecord storageRecord : aerospikeRecords) {
+            aerospikeRecords.forEach(storageRecord -> {
                 final var key = getKey(storageRecord.getReferenceId());
-                final var bin = new Bin(AerospikeStorageConstants.DEFAULT_BIN, MapperUtils.mapper().writeValueAsBytes(storageRecord));
-                client.put(writePolicy, key, bin);
-            }
+                final var bins = getBins(storageRecord).toArray(Bin[]::new);
+                client.put(writePolicy, key, bins);
+            });
         } catch (Exception e) {
             log.debug("There is an error trying to commit the transaction with id {}. Aborting the transaction", transaction.getId(), e);
             client.abort(transaction);

@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.1-RC2]
+
+- Added a preProcessor and post-processor for every config update, basis namespace, configName and configEvent
+- Bug Fix : AS Repository wasn't saving namespace and config bins. Fixed it
+
 ## [0.0.1-RC1]
 
 - A versioned config registry, to register various configs backed by a RBAC enabled maker-checker process

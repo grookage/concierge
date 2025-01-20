@@ -35,6 +35,7 @@ import com.grookage.concierge.models.config.ConfigKey;
 import com.grookage.concierge.models.config.ConfigState;
 import com.grookage.concierge.repository.AbstractConciergeRepository;
 import com.grookage.concierge.repository.cache.CacheConfig;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
@@ -46,6 +47,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Getter
+@EqualsAndHashCode(callSuper = true)
 public class ElasticRepository extends AbstractConciergeRepository {
 
     private static final String CONFIG_INDEX = "config_registry";

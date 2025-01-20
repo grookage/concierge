@@ -5,6 +5,7 @@ import com.grookage.concierge.core.managers.ProcessorFactory;
 import com.grookage.concierge.core.stubs.TestConfigUpdater;
 import com.grookage.concierge.models.ConfigUpdater;
 import com.grookage.concierge.models.config.ConfigEvent;
+import com.grookage.concierge.models.processor.ProcessorKey;
 import com.grookage.concierge.repository.ConciergeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
@@ -38,7 +39,7 @@ public abstract class AbstractProcessorTest {
         conciergeRepository = Mockito.mock(ConciergeRepository.class);
         processorFactory = Mockito.mock(ProcessorFactory.class);
         eventProcessor = Mockito.mock(EventProcessor.class);
-        Mockito.when(processorFactory.getProcessor(Mockito.any(ConfigEvent.class)))
+        Mockito.when(processorFactory.getProcessor(Mockito.any(ProcessorKey.class)))
                 .thenReturn(Optional.of(eventProcessor));
         conciergeProcessor = createConciergeProcessor();
     }
