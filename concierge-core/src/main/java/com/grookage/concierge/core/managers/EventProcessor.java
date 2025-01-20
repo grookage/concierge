@@ -4,6 +4,8 @@ import com.grookage.concierge.core.engine.ConciergeContext;
 
 public interface EventProcessor {
 
-    void process(ConciergeContext context);
+    void preProcess(ConciergeContext context);
+
+    void postProcess(ConciergeContext context);
 
 }

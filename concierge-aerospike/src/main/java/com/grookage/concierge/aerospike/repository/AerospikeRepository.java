@@ -8,6 +8,7 @@ import com.grookage.concierge.models.config.ConfigKey;
 import com.grookage.concierge.models.config.ConfigState;
 import com.grookage.concierge.repository.AbstractConciergeRepository;
 import com.grookage.concierge.repository.cache.CacheConfig;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
+@EqualsAndHashCode(callSuper = true)
 public class AerospikeRepository extends AbstractConciergeRepository {
 
     private final AerospikeManager aerospikeManager;
@@ -88,26 +90,26 @@ public class AerospikeRepository extends AbstractConciergeRepository {
     @Override
     public List<ConfigDetails> getStoredRecords() {
         return aerospikeManager.getRecords(List.of(), List.of(), List.of())
-                .stream().map(this::toConfigDetails).collect(Collectors.toList());
+                .stream().map(this::toConfigDetails).toList();
     }
 
     @Override
     public List<ConfigDetails> getStoredRecords(String namespace, Set<String> configNames, Set<ConfigState> configStates) {
         return aerospikeManager.getRecords(List.of(namespace), configNames.stream().toList(),
-                        configStates.stream().map(Enum::name).collect(Collectors.toList()))
-                .stream().map(this::toConfigDetails).collect(Collectors.toList());
+                        configStates.stream().map(Enum::name).toList())
+                .stream().map(this::toConfigDetails).toList();
     }
 
     @Override
     public List<ConfigDetails> getActiveStoredRecords(Set<String> namespaces) {
         return aerospikeManager.getRecords(namespaces.stream().toList(),
                         List.of(), List.of(ConfigState.ACTIVATED.name())).stream()
-                .map(this::toConfigDetails).collect(Collectors.toList());
+                .map(this::toConfigDetails).toList();
     }
 
     @Override
     public List<ConfigDetails> getStoredRecords(Set<String> namespaces) {
         return aerospikeManager.getRecords(namespaces.stream().toList(), List.of(), List.of())
-                .stream().map(this::toConfigDetails).collect(Collectors.toList());
+                .stream().map(this::toConfigDetails).toList();
     }
 }

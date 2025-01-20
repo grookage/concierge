@@ -6,6 +6,7 @@ import com.grookage.concierge.models.config.ConfigKey;
 import com.grookage.concierge.models.config.ConfigState;
 import com.grookage.concierge.repository.AbstractConciergeRepository;
 import com.grookage.concierge.repository.cache.CacheConfig;
+import lombok.EqualsAndHashCode;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+@EqualsAndHashCode(callSuper = true)
 public class TestableConciergeRepository extends AbstractConciergeRepository {
 
     private static List<ConfigDetails> CONFIG_DETAILS;
