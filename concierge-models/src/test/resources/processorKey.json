@@ -1,5 +1,5 @@
 {
-  "namespace" : "testNamespace",
-  "configName" : "testConfig",
-  "configEvent" : "CREATE_CONFIG"
+  "namespace": "testNamespace",
+  "configName": "testConfig",
+  "configEvent": "CREATE_CONFIG"
 }

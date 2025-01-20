@@ -60,7 +60,7 @@ public class IngestionResource<U extends ConfigUpdater> {
     @ExceptionMetered
     @Path("/add")
     public ConfigDetails addConfig(@Context HttpHeaders headers,
-                                                    @Valid final ConfigurationRequest configurationRequest) {
+                                   @Valid final ConfigurationRequest configurationRequest) {
         final var updater = updaterResolver.get().resolve(headers);
         permissionValidatorSupplier.get().authorize(headers, updater, configurationRequest);
         return ingestionService.createConfiguration(updater, configurationRequest);
@@ -71,7 +71,7 @@ public class IngestionResource<U extends ConfigUpdater> {
     @ExceptionMetered
     @Path("/update")
     public ConfigDetails updateConfig(@Context HttpHeaders headers,
-                                                       @Valid final UpdateConfigRequest updateRequest) {
+                                      @Valid final UpdateConfigRequest updateRequest) {
         final var updater = updaterResolver.get().resolve(headers);
         permissionValidatorSupplier.get().authorize(headers, updater, updateRequest);
         return ingestionService.updateConfiguration(updater, updateRequest);
@@ -82,7 +82,7 @@ public class IngestionResource<U extends ConfigUpdater> {
     @ExceptionMetered
     @Path("/approve")
     public ConfigDetails approveConfig(@Context HttpHeaders headers,
-                                                        @Valid final ConfigKey configKey) {
+                                       @Valid final ConfigKey configKey) {
         final var updater = updaterResolver.get().resolve(headers);
         permissionValidatorSupplier.get().authorizeApproval(headers, updater, configKey);
         return ingestionService.approveConfiguration(updater, configKey);
@@ -93,7 +93,7 @@ public class IngestionResource<U extends ConfigUpdater> {
     @ExceptionMetered
     @Path("/reject")
     public ConfigDetails rejectConfig(@Context HttpHeaders headers,
-                                                       @Valid final ConfigKey configKey) {
+                                      @Valid final ConfigKey configKey) {
         final var updater = updaterResolver.get().resolve(headers);
         permissionValidatorSupplier.get().authorizeRejection(headers, updater, configKey);
         return ingestionService.rejectConfiguration(updater, configKey);
@@ -104,7 +104,7 @@ public class IngestionResource<U extends ConfigUpdater> {
     @ExceptionMetered
     @Path("/activate")
     public ConfigDetails activateConfig(@Context HttpHeaders headers,
-                                                         @Valid final ConfigKey configKey) {
+                                        @Valid final ConfigKey configKey) {
         final var updater = updaterResolver.get().resolve(headers);
         permissionValidatorSupplier.get().authorizeActivation(headers, updater, configKey);
         return ingestionService.activateConfiguration(updater, configKey);

@@ -5,6 +5,7 @@ import com.grookage.concierge.models.config.ConfigEvent;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
 class ProcessorKeyTest {
     @Test
     @SneakyThrows
