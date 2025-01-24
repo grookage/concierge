@@ -13,8 +13,6 @@ public interface ConciergeRepository {
 
     void update(ConfigDetails configDetails);
 
-    void rollOverAndUpdate(ConfigDetails configDetails);
-
     Optional<ConfigDetails> getStoredRecord(final ConfigKey configKey);
 
     boolean createdRecordExists(String namespace, String configName);

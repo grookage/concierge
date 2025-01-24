@@ -46,7 +46,7 @@ public class ActivateConfigProcessor extends ConciergeProcessor {
         }
         addHistory(context, storedConfig);
         storedConfig.setConfigState(ConfigState.ACTIVATED);
-        getRepositorySupplier().get().rollOverAndUpdate(storedConfig);
+        getRepositorySupplier().get().update(storedConfig);
         context.addContext(ConfigDetails.class.getSimpleName(), storedConfig);
     }
 }

@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.1-RC3]
+
+- Support for multiple versions of configs and support to fetch the latest version on demand
+
 ## [0.0.1-RC2]
 
 - Added a preProcessor and post-processor for every config update, basis namespace, configName and configEvent

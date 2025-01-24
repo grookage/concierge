@@ -33,7 +33,7 @@ class RejectConfigProcessorTest extends AbstractProcessorTest {
         final var processor = getConciergeProcessor();
         Assertions.assertThrows(ConciergeException.class, () -> processor.process(conciergeContext));
         final var configDetails = ResourceHelper.getResource("configDetails.json", ConfigDetails.class);
-        configDetails.setConfigState(ConfigState.ROLLED);
+        configDetails.setConfigState(ConfigState.ACTIVATED);
         Mockito.when(getConciergeRepository().getStoredRecord(configKey))
                 .thenReturn(Optional.of(configDetails));
         Assertions.assertThrows(ConciergeException.class, () -> processor.process(conciergeContext));

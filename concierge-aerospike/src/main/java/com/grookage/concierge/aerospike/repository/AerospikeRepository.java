@@ -14,7 +14,6 @@ import lombok.Getter;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
@@ -64,16 +63,6 @@ public class AerospikeRepository extends AbstractConciergeRepository {
     @Override
     public void update(ConfigDetails configDetails) {
         aerospikeManager.update(toStorageRecord(configDetails));
-    }
-
-    @Override
-    public void rollOverAndUpdate(ConfigDetails configDetails) {
-        final var newRecords = aerospikeManager.getRecords(List.of(configDetails.getConfigKey().getNamespace()),
-                        List.of(configDetails.getConfigKey().getConfigName()),
-                        List.of(ConfigState.ACTIVATED.name()))
-                .stream().peek(each -> each.setConfigState(ConfigState.ROLLED)).collect(Collectors.toList());
-        newRecords.add(toStorageRecord(configDetails));
-        aerospikeManager.bulkUpdate(newRecords);
     }
 
     @Override

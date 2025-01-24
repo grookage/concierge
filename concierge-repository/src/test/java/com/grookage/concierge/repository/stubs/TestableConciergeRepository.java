@@ -62,11 +62,6 @@ public class TestableConciergeRepository extends AbstractConciergeRepository {
     }
 
     @Override
-    public void rollOverAndUpdate(ConfigDetails configDetails) {
-
-    }
-
-    @Override
     public Optional<ConfigDetails> getStoredRecord(ConfigKey configKey) {
         return CONFIG_DETAILS.stream().findFirst();
     }

@@ -4,7 +4,6 @@ import com.grookage.concierge.core.managers.EventProcessor;
 import com.grookage.concierge.core.managers.ProcessorFactory;
 import com.grookage.concierge.core.stubs.TestConfigUpdater;
 import com.grookage.concierge.models.ConfigUpdater;
-import com.grookage.concierge.models.config.ConfigEvent;
 import com.grookage.concierge.models.processor.ProcessorKey;
 import com.grookage.concierge.repository.ConciergeRepository;
 import org.junit.jupiter.api.BeforeEach;
