@@ -22,7 +22,8 @@ import java.util.function.Supplier;
 @Getter
 public class RejectConfigProcessor extends ConciergeProcessor {
 
-    private static final Set<ConfigState> ACCEPTABLE_STATES = Set.of(ConfigState.CREATED, ConfigState.APPROVED);
+    private static final Set<ConfigState> ACCEPTABLE_STATES = Set.of(ConfigState.CREATED,
+            ConfigState.APPROVED, ConfigState.ACTIVATED);
 
     private final Supplier<ConciergeRepository> repositorySupplier;
 

@@ -17,7 +17,7 @@ import java.util.Optional;
 class ActivateConfigProcessorTest extends AbstractProcessorTest {
     @Override
     public ConciergeProcessor createConciergeProcessor() {
-        return new ActivateConfigProcessor(() -> getConciergeRepository());
+        return new ActivateConfigProcessor(this::getConciergeRepository);
     }
 
     @Test
@@ -36,7 +36,7 @@ class ActivateConfigProcessorTest extends AbstractProcessorTest {
         Mockito.when(getConciergeRepository().getStoredRecord(configKey))
                 .thenReturn(Optional.of(configDetails));
         Assertions.assertThrows(ConciergeException.class, () -> processor.process(conciergeContext));
-        Mockito.verify(getConciergeRepository(), Mockito.times(0)).rollOverAndUpdate(configDetails);
+        Mockito.verify(getConciergeRepository(), Mockito.times(0)).update(configDetails);
     }
 
     @Test
@@ -52,6 +52,6 @@ class ActivateConfigProcessorTest extends AbstractProcessorTest {
                 .thenReturn(Optional.of(configDetails));
         configDetails.setConfigState(ConfigState.APPROVED);
         getConciergeProcessor().process(conciergeContext);
-        Mockito.verify(getConciergeRepository(), Mockito.times(1)).rollOverAndUpdate(configDetails);
+        Mockito.verify(getConciergeRepository(), Mockito.times(1)).update(configDetails);
     }
 }

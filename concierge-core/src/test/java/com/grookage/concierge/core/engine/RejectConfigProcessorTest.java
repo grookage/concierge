@@ -22,7 +22,7 @@ class RejectConfigProcessorTest extends AbstractProcessorTest {
 
     @Test
     @SneakyThrows
-    void testRejectConfigNotInCreatedState() {
+    void testRejectConfigInActivatedState() {
         final var conciergeContext = new ConciergeContext();
         final var configKey = ResourceHelper.getResource("configKey.json",
                 ConfigKey.class);
@@ -33,11 +33,11 @@ class RejectConfigProcessorTest extends AbstractProcessorTest {
         final var processor = getConciergeProcessor();
         Assertions.assertThrows(ConciergeException.class, () -> processor.process(conciergeContext));
         final var configDetails = ResourceHelper.getResource("configDetails.json", ConfigDetails.class);
-        configDetails.setConfigState(ConfigState.ROLLED);
+        configDetails.setConfigState(ConfigState.ACTIVATED);
         Mockito.when(getConciergeRepository().getStoredRecord(configKey))
                 .thenReturn(Optional.of(configDetails));
-        Assertions.assertThrows(ConciergeException.class, () -> processor.process(conciergeContext));
-        Mockito.verify(getConciergeRepository(), Mockito.times(0)).update(configDetails);
+        getConciergeProcessor().process(conciergeContext);
+        Mockito.verify(getConciergeRepository(), Mockito.times(1)).update(configDetails);
     }
 
     @Test
