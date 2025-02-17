@@ -10,6 +10,8 @@ public interface IngestionService<C extends ConfigUpdater> {
 
     ConfigDetails createConfiguration(C configUpdater, ConfigurationRequest configurationRequest);
 
+    ConfigDetails appendConfiguration(C configUpdater, UpdateConfigRequest configurationRequest);
+
     ConfigDetails updateConfiguration(C configUpdater, UpdateConfigRequest configurationRequest);
 
     ConfigDetails approveConfiguration(C configUpdater, ConfigKey configKey);

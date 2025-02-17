@@ -2,6 +2,8 @@ package com.grookage.concierge.core.engine;
 
 import com.google.common.base.Preconditions;
 import com.grookage.concierge.core.engine.processors.*;
+import com.grookage.concierge.core.engine.resolver.AppendConfigResolver;
+import com.grookage.concierge.core.engine.resolver.DefaultAppendConfigResolver;
 import com.grookage.concierge.core.managers.VersionGenerator;
 import com.grookage.concierge.models.config.ConfigEvent;
 import com.grookage.concierge.models.config.ConfigEventVisitor;
@@ -20,6 +22,7 @@ public class ConciergeHub {
     private static final Map<ConfigEvent, ConciergeProcessor> processors = new ConcurrentHashMap<>();
     private Supplier<ConciergeRepository> repositorySupplier;
     private Supplier<VersionGenerator> versionSupplier;
+    private Supplier<AppendConfigResolver> appendConfigResolverSupplier = DefaultAppendConfigResolver::new;
 
     private ConciergeHub() {
 
@@ -34,18 +37,24 @@ public class ConciergeHub {
     }
 
     public ConciergeHub withRepositoryResolver(Supplier<ConciergeRepository> repositorySupplier) {
+        Preconditions.checkNotNull(repositorySupplier, "Schema Repository can't be null");
         this.repositorySupplier = repositorySupplier;
         return this;
     }
 
     public ConciergeHub withVersionSupplier(Supplier<VersionGenerator> versionSupplier) {
+        Preconditions.checkNotNull(versionSupplier, "Version ID Generator can't be null");
         this.versionSupplier = versionSupplier;
         return this;
     }
 
+    public ConciergeHub withAppendConfigResolverSupplier(Supplier<AppendConfigResolver> appendConfigResolver) {
+        Preconditions.checkNotNull(appendConfigResolver, "Append Config Resolver can't be null");
+        this.appendConfigResolverSupplier = appendConfigResolver;
+        return this;
+    }
+
     public ConciergeHub build() {
-        Preconditions.checkNotNull(repositorySupplier, "Schema Repository can't be null");
-        Preconditions.checkNotNull(versionSupplier, "Version ID Generator can't be null");
         Arrays.stream(ConfigEvent.values()).forEach(this::buildProcessor);
         return this;
     }
@@ -55,6 +64,11 @@ public class ConciergeHub {
             @Override
             public ConciergeProcessor configCreate() {
                 return new CreateConfigProcessor(repositorySupplier, versionSupplier);
+            }
+
+            @Override
+            public ConciergeProcessor configAppend() {
+                return new AppendConfigProcessor(repositorySupplier, appendConfigResolverSupplier);
             }
 
             @Override

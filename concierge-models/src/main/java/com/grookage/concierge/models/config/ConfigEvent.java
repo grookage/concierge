@@ -10,6 +10,13 @@ public enum ConfigEvent {
         }
     },
 
+    APPEND_CONFIG {
+        @Override
+        public <T> T accept(ConfigEventVisitor<T> eventVisitor) {
+            return eventVisitor.configAppend();
+        }
+    },
+
     UPDATE_CONFIG {
         @Override
         public <T> T accept(ConfigEventVisitor<T> eventVisitor) {

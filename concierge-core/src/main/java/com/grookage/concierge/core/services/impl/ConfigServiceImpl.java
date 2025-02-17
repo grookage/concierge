@@ -42,4 +42,5 @@ public class ConfigServiceImpl implements ConfigService {
     public List<ConfigDetails> getConfigs() {
         return repositorySupplier.get().getRecords();
     }
+
 }

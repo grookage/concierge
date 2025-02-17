@@ -4,6 +4,8 @@ public interface ConfigEventVisitor<T> {
 
     T configCreate();
 
+    T configAppend();
+
     T configUpdate();
 
     T configApprove();

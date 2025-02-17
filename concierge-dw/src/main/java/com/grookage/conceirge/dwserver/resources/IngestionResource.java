@@ -69,6 +69,17 @@ public class IngestionResource<U extends ConfigUpdater> {
     @POST
     @Timed
     @ExceptionMetered
+    @Path("/append")
+    public ConfigDetails appendConfig(@Context HttpHeaders headers,
+                                      @Valid final UpdateConfigRequest updateRequest) {
+        final var updater = updaterResolver.get().resolve(headers);
+        permissionValidatorSupplier.get().authorize(headers, updater, updateRequest);
+        return ingestionService.appendConfiguration(updater, updateRequest);
+    }
+
+    @POST
+    @Timed
+    @ExceptionMetered
     @Path("/update")
     public ConfigDetails updateConfig(@Context HttpHeaders headers,
                                       @Valid final UpdateConfigRequest updateRequest) {

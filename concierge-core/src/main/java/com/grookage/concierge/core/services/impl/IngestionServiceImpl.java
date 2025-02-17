@@ -37,9 +37,29 @@ public class IngestionServiceImpl<C extends ConfigUpdater> implements IngestionS
                 .namespace(configurationRequest.getNamespace())
                 .configName(configurationRequest.getConfigName())
                 .configEvent(ConfigEvent.CREATE_CONFIG)
+                .configType(configurationRequest.getConfigType())
                 .build();
         conciergeContext.addContext(ProcessorKey.class.getSimpleName(), processorKey);
         final var processor = conciergeHub.getProcessor(ConfigEvent.CREATE_CONFIG)
+                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.PROCESSOR_NOT_FOUND));
+        processor.fire(conciergeContext, processorFactory.get());
+        return conciergeContext.getContext(ConfigDetails.class).orElse(null);
+    }
+
+    @Override
+    @SneakyThrows
+    public ConfigDetails appendConfiguration(C configUpdater, UpdateConfigRequest configurationRequest) {
+        final var conciergeContext = new ConciergeContext();
+        conciergeContext.addContext(UpdateConfigRequest.class.getSimpleName(), configurationRequest);
+        ContextUtils.addConfigUpdaterContext(conciergeContext, configUpdater);
+        final var processorKey = ProcessorKey.builder()
+                .namespace(configurationRequest.getNamespace())
+                .configName(configurationRequest.getConfigName())
+                .configEvent(ConfigEvent.APPEND_CONFIG)
+                .configType(configurationRequest.getConfigType())
+                .build();
+        conciergeContext.addContext(ProcessorKey.class.getSimpleName(), processorKey);
+        final var processor = conciergeHub.getProcessor(ConfigEvent.APPEND_CONFIG)
                 .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.PROCESSOR_NOT_FOUND));
         processor.fire(conciergeContext, processorFactory.get());
         return conciergeContext.getContext(ConfigDetails.class).orElse(null);
@@ -55,6 +75,7 @@ public class IngestionServiceImpl<C extends ConfigUpdater> implements IngestionS
                 .namespace(configurationRequest.getNamespace())
                 .configName(configurationRequest.getConfigName())
                 .configEvent(ConfigEvent.CREATE_CONFIG)
+                .configType(configurationRequest.getConfigType())
                 .build();
         conciergeContext.addContext(ProcessorKey.class.getSimpleName(), processorKey);
         final var processor = conciergeHub.getProcessor(ConfigEvent.UPDATE_CONFIG)
@@ -73,6 +94,7 @@ public class IngestionServiceImpl<C extends ConfigUpdater> implements IngestionS
                 .namespace(configKey.getNamespace())
                 .configName(configKey.getConfigName())
                 .configEvent(ConfigEvent.CREATE_CONFIG)
+                .configType(configKey.getConfigType())
                 .build();
         conciergeContext.addContext(ProcessorKey.class.getSimpleName(), processorKey);
         final var processor = conciergeHub.getProcessor(ConfigEvent.APPROVE_CONFIG)
@@ -91,6 +113,7 @@ public class IngestionServiceImpl<C extends ConfigUpdater> implements IngestionS
                 .namespace(configKey.getNamespace())
                 .configName(configKey.getConfigName())
                 .configEvent(ConfigEvent.CREATE_CONFIG)
+                .configType(configKey.getConfigType())
                 .build();
         conciergeContext.addContext(ProcessorKey.class.getSimpleName(), processorKey);
         final var processor = conciergeHub.getProcessor(ConfigEvent.REJECT_CONFIG)
@@ -109,6 +132,7 @@ public class IngestionServiceImpl<C extends ConfigUpdater> implements IngestionS
                 .namespace(configKey.getNamespace())
                 .configName(configKey.getConfigName())
                 .configEvent(ConfigEvent.CREATE_CONFIG)
+                .configType(configKey.getConfigType())
                 .build();
         conciergeContext.addContext(ProcessorKey.class.getSimpleName(), processorKey);
         final var processor = conciergeHub.getProcessor(ConfigEvent.ACTIVATE_CONFIG)
