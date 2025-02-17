@@ -9,10 +9,7 @@ import com.grookage.concierge.repository.cache.RepositorySupplier;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -24,7 +21,6 @@ public abstract class AbstractConciergeRepository implements ConciergeRepository
 
     protected AbstractConciergeRepository(CacheConfig cacheConfig) {
         this.cacheConfig = cacheConfig;
-
         if (null != cacheConfig && cacheConfig.isEnabled()) {
             this.refresher = RepositoryRefresher.builder()
                     .supplier(new RepositorySupplier(this))
@@ -34,11 +30,24 @@ public abstract class AbstractConciergeRepository implements ConciergeRepository
         }
     }
 
+    private Optional<ConfigDetails> getLatestActiveRecord(final String namespace, final String configName){
+        if (null == cacheConfig || !cacheConfig.isEnabled()) {
+            return getStoredRecords(namespace, Set.of(configName), Set.of(ConfigState.ACTIVATED)).stream()
+                    .max(Comparator.naturalOrder()).stream().findFirst();
+        }
+        return refresher.getData().getConfigs().stream().filter(
+                        each -> each.getConfigKey().getReferenceTag().equalsIgnoreCase(each.getConfigKey().getReferenceTag())
+                                && each.getConfigState() == ConfigState.ACTIVATED)
+                .max(Comparator.naturalOrder()).stream().findFirst();
+    }
+
     @Override
     public Optional<ConfigDetails> getRecord(ConfigKey configKey) {
+        if (configKey.latest()) {
+            return getLatestActiveRecord(configKey.getNamespace(), configKey.getConfigName());
+        }
         return cacheConfig.isEnabled() ? refresher.getData().getConfiguration(configKey) :
                 getStoredRecord(configKey);
-
     }
 
     public abstract List<ConfigDetails> getStoredRecords(String namespace,

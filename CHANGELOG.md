@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.1-RC4]
+
 ## [0.0.1-RC3]
 
 - Support for multiple versions of configs and support to fetch the latest version on demand

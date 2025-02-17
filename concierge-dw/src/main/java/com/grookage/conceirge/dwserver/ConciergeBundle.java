@@ -8,6 +8,8 @@ import com.grookage.conceirge.dwserver.resolvers.ConfigUpdaterResolver;
 import com.grookage.conceirge.dwserver.resources.ConfigResource;
 import com.grookage.conceirge.dwserver.resources.IngestionResource;
 import com.grookage.concierge.core.engine.ConciergeHub;
+import com.grookage.concierge.core.engine.resolver.AppendConfigResolver;
+import com.grookage.concierge.core.engine.resolver.DefaultAppendConfigResolver;
 import com.grookage.concierge.core.managers.ProcessorFactory;
 import com.grookage.concierge.core.managers.VersionGenerator;
 import com.grookage.concierge.core.services.ConfigService;
@@ -55,6 +57,10 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
         return null;
     }
 
+    protected Supplier<AppendConfigResolver> getAppendConfigResolver(T configuration) {
+        return DefaultAppendConfigResolver::new;
+    }
+
     @Override
     public void run(T configuration, Environment environment) {
         final var userResolver = userResolver(configuration);
@@ -68,6 +74,7 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
         final var conciergeHub = ConciergeHub.of()
                 .withRepositoryResolver(repositorySupplier)
                 .withVersionSupplier(getVersionSupplier())
+                .withAppendConfigResolverSupplier(getAppendConfigResolver(configuration))
                 .build();
         this.ingestionService = new IngestionServiceImpl<>(withProcessorFactory(configuration), conciergeHub);
         this.configService = new ConfigServiceImpl(repositorySupplier);
