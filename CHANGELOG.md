@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [0.0.1-RC4]
 
+- Optimizations
+  - Added config appender during ingestion.
+  - Introduced configType in processorKey during ProcessorSelection
+
 ## [0.0.1-RC3]
 
 - Support for multiple versions of configs and support to fetch the latest version on demand
