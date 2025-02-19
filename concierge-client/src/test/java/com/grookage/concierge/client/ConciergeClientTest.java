@@ -59,7 +59,7 @@ class ConciergeClientTest {
         final var serDeFactory = new SerDeFactory() {
             @SuppressWarnings("unchecked")
             @Override
-            public SerDe<CustomConvert> getSerDe(String configName) {
+            public SerDe<CustomConvert> getSerDe(ConfigKey configKey) {
                 return new SerDe<CustomConvert>() {
                     @Override
                     public CustomConvert convert(ConfigurationResponse configurationResponse) {

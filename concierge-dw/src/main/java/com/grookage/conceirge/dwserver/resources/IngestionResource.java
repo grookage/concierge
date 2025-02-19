@@ -20,6 +20,7 @@ import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
 import com.grookage.conceirge.dwserver.permissions.PermissionValidator;
 import com.grookage.conceirge.dwserver.resolvers.ConfigUpdaterResolver;
+import com.grookage.concierge.core.engine.validator.ConfigDataValidator;
 import com.grookage.concierge.core.services.IngestionService;
 import com.grookage.concierge.models.ConfigUpdater;
 import com.grookage.concierge.models.config.ConfigDetails;
@@ -54,6 +55,7 @@ public class IngestionResource<U extends ConfigUpdater> {
     private final IngestionService<U> ingestionService;
     private final Supplier<ConfigUpdaterResolver<U>> updaterResolver;
     private final Supplier<PermissionValidator<U>> permissionValidatorSupplier;
+    private final Supplier<ConfigDataValidator> configDataValidatorSupplier;
 
     @PUT
     @Timed
@@ -63,6 +65,7 @@ public class IngestionResource<U extends ConfigUpdater> {
                                    @Valid final ConfigurationRequest configurationRequest) {
         final var updater = updaterResolver.get().resolve(headers);
         permissionValidatorSupplier.get().authorize(headers, updater, configurationRequest);
+        configDataValidatorSupplier.get().validate(configurationRequest.getConfigKey(), configurationRequest.getData());
         return ingestionService.createConfiguration(updater, configurationRequest);
     }
 
@@ -74,6 +77,7 @@ public class IngestionResource<U extends ConfigUpdater> {
                                       @Valid final UpdateConfigRequest updateRequest) {
         final var updater = updaterResolver.get().resolve(headers);
         permissionValidatorSupplier.get().authorize(headers, updater, updateRequest);
+        configDataValidatorSupplier.get().validate(updateRequest.getConfigKey(), updateRequest.getData());
         return ingestionService.appendConfiguration(updater, updateRequest);
     }
 
@@ -85,6 +89,7 @@ public class IngestionResource<U extends ConfigUpdater> {
                                       @Valid final UpdateConfigRequest updateRequest) {
         final var updater = updaterResolver.get().resolve(headers);
         permissionValidatorSupplier.get().authorize(headers, updater, updateRequest);
+        configDataValidatorSupplier.get().validate(updateRequest.getConfigKey(), updateRequest.getData());
         return ingestionService.updateConfiguration(updater, updateRequest);
     }
 
