@@ -7,6 +7,7 @@ import com.grookage.conceirge.dwserver.permissions.PermissionValidator;
 import com.grookage.conceirge.dwserver.resolvers.ConfigUpdaterResolver;
 import com.grookage.conceirge.dwserver.resources.ConfigResource;
 import com.grookage.conceirge.dwserver.resources.IngestionResource;
+import com.grookage.concierge.core.engine.validator.ConfigDataValidator;
 import com.grookage.concierge.core.engine.ConciergeHub;
 import com.grookage.concierge.core.engine.resolver.AppendConfigResolver;
 import com.grookage.concierge.core.engine.resolver.DefaultAppendConfigResolver;
@@ -61,6 +62,8 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
         return DefaultAppendConfigResolver::new;
     }
 
+    protected abstract Supplier<ConfigDataValidator> getConfigDataValidator(T configuration);
+
     @Override
     public void run(T configuration, Environment environment) {
         final var userResolver = userResolver(configuration);
@@ -70,6 +73,9 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
 
         this.repositorySupplier = getRepositorySupplier(configuration);
         Preconditions.checkNotNull(repositorySupplier, "Schema Repository Supplier can't be null");
+
+        final var configDataValidator = getConfigDataValidator(configuration);
+        Preconditions.checkNotNull(configDataValidator, "Config Data Resolver can't be null");
 
         final var conciergeHub = ConciergeHub.of()
                 .withRepositoryResolver(repositorySupplier)
@@ -93,7 +99,7 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
 
         withHealthChecks(configuration)
                 .forEach(leiaHealthCheck -> environment.healthChecks().register(leiaHealthCheck.getName(), leiaHealthCheck));
-        environment.jersey().register(new IngestionResource<>(ingestionService, userResolver, permissionResolver));
+        environment.jersey().register(new IngestionResource<>(ingestionService, userResolver, permissionResolver, configDataValidator));
         environment.jersey().register(new ConfigResource(configService));
         environment.jersey().register(new ConciergeExceptionMapper());
     }

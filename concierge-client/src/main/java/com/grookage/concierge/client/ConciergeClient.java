@@ -23,7 +23,7 @@ public class ConciergeClient {
     @SuppressWarnings("unchecked")
     public <T> Optional<T> getConfiguration(final ConfigKey configKey) {
         final var configurations = refresher.getData();
-        final var serde = serDeFactory.getSerDe(configKey.getConfigName());
+        final var serde = serDeFactory.getSerDe(configKey);
         final var responseConfiguration = getMatchingConfig(configurations, configKey).orElse(null);
         return null == responseConfiguration ? Optional.empty() :
                 (Optional<T>) Optional.of(serde.convert(responseConfiguration));
