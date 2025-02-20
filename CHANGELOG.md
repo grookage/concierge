@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.1-RC6]
+
+- Formatting fixes
+
 ## [0.0.1-RC5]
 
 - Introduced Config Data Validator
