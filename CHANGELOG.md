@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.1-RC7]
+
+- Ingestion Resource http methods changed to reflect the actual behaviour. Append is a PATCH and Update is a PUT.   
+
 ## [0.0.1-RC6]
 
 - Formatting fixes

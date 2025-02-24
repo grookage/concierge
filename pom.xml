@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.grookage.concierge</groupId>
     <artifactId>concierge</artifactId>
-    <version>0.0.1-RC6</version>
+    <version>0.0.1-RC7</version>
     <packaging>pom</packaging>
 
     <name>Concierge</name>
