@@ -7,6 +7,8 @@ import com.grookage.conceirge.dwserver.permissions.PermissionValidator;
 import com.grookage.conceirge.dwserver.resolvers.ConfigUpdaterResolver;
 import com.grookage.conceirge.dwserver.resources.ConfigResource;
 import com.grookage.conceirge.dwserver.resources.IngestionResource;
+import com.grookage.concierge.core.engine.resolver.ConfigVersionManager;
+import com.grookage.concierge.core.engine.resolver.DefaultConfigVersionManager;
 import com.grookage.concierge.core.engine.validator.ConfigDataValidator;
 import com.grookage.concierge.core.engine.ConciergeHub;
 import com.grookage.concierge.core.engine.resolver.AppendConfigResolver;
@@ -62,6 +64,11 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
         return DefaultAppendConfigResolver::new;
     }
 
+    protected ConfigVersionManager getConfigVersionManageR(T configuration) {
+        return new DefaultConfigVersionManager();
+
+    }
+
     protected abstract Supplier<ConfigDataValidator> getConfigDataValidator(T configuration);
 
     @Override
@@ -77,10 +84,14 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
         final var configDataValidator = getConfigDataValidator(configuration);
         Preconditions.checkNotNull(configDataValidator, "Config Data Resolver can't be null");
 
+        final var configVersionManager = getConfigVersionManageR(configuration);
+        Preconditions.checkNotNull(configVersionManager, "Config Version Manager can't be null");
+
         final var conciergeHub = ConciergeHub.of()
                 .withRepositoryResolver(repositorySupplier)
                 .withVersionSupplier(getVersionSupplier())
                 .withAppendConfigResolverSupplier(getAppendConfigResolver(configuration))
+                .withConfigVersionManager(configVersionManager)
                 .build();
         this.ingestionService = new IngestionServiceImpl<>(withProcessorFactory(configuration), conciergeHub);
         this.configService = new ConfigServiceImpl(repositorySupplier);

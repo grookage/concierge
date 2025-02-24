@@ -30,7 +30,7 @@ public abstract class AbstractConciergeRepository implements ConciergeRepository
         }
     }
 
-    private Optional<ConfigDetails> getLatestActiveRecord(final String namespace, final String configName){
+    public Optional<ConfigDetails> getLatestActiveRecord(final String namespace, final String configName){
         if (null == cacheConfig || !cacheConfig.isEnabled()) {
             return getStoredRecords(namespace, Set.of(configName), Set.of(ConfigState.ACTIVATED)).stream()
                     .max(Comparator.naturalOrder()).stream().findFirst();

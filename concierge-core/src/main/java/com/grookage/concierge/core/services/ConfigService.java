@@ -11,6 +11,8 @@ public interface ConfigService {
 
     Optional<ConfigDetails> getConfig(ConfigKey configKey);
 
+    Optional<ConfigDetails> getLatestActiveConfig(final String namespace, final String configName);
+
     List<ConfigDetails> getConfigs(Set<String> namespaces);
 
     List<ConfigDetails> getConfigs(String namespace, Set<String> configNames);

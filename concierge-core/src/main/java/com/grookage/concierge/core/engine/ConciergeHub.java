@@ -3,6 +3,7 @@ package com.grookage.concierge.core.engine;
 import com.google.common.base.Preconditions;
 import com.grookage.concierge.core.engine.processors.*;
 import com.grookage.concierge.core.engine.resolver.AppendConfigResolver;
+import com.grookage.concierge.core.engine.resolver.ConfigVersionManager;
 import com.grookage.concierge.core.engine.resolver.DefaultAppendConfigResolver;
 import com.grookage.concierge.core.managers.VersionGenerator;
 import com.grookage.concierge.models.config.ConfigEvent;
@@ -23,6 +24,7 @@ public class ConciergeHub {
     private Supplier<ConciergeRepository> repositorySupplier;
     private Supplier<VersionGenerator> versionSupplier;
     private Supplier<AppendConfigResolver> appendConfigResolverSupplier = DefaultAppendConfigResolver::new;
+    private ConfigVersionManager configVersionManager;
 
     private ConciergeHub() {
 
@@ -51,6 +53,12 @@ public class ConciergeHub {
     public ConciergeHub withAppendConfigResolverSupplier(Supplier<AppendConfigResolver> appendConfigResolver) {
         Preconditions.checkNotNull(appendConfigResolver, "Append Config Resolver can't be null");
         this.appendConfigResolverSupplier = appendConfigResolver;
+        return this;
+    }
+
+    public ConciergeHub withConfigVersionManager(ConfigVersionManager manager) {
+        Preconditions.checkNotNull(configVersionManager, "Config Version Manager can't be null");
+        this.configVersionManager = manager;
         return this;
     }
 
@@ -88,7 +96,7 @@ public class ConciergeHub {
 
             @Override
             public ConciergeProcessor configActivate() {
-                return new ActivateConfigProcessor(repositorySupplier);
+                return new ActivateConfigProcessor(repositorySupplier, configVersionManager);
             }
         }));
     }

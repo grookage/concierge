@@ -1,6 +1,7 @@
 package com.grookage.concierge.core.engine;
 
 import com.grookage.concierge.core.engine.processors.ActivateConfigProcessor;
+import com.grookage.concierge.core.engine.resolver.DefaultConfigVersionManager;
 import com.grookage.concierge.core.utils.ContextUtils;
 import com.grookage.concierge.models.ResourceHelper;
 import com.grookage.concierge.models.config.ConfigDetails;
@@ -17,7 +18,7 @@ import java.util.Optional;
 class ActivateConfigProcessorTest extends AbstractProcessorTest {
     @Override
     public ConciergeProcessor createConciergeProcessor() {
-        return new ActivateConfigProcessor(this::getConciergeRepository);
+        return new ActivateConfigProcessor(this::getConciergeRepository, new DefaultConfigVersionManager());
     }
 
     @Test
@@ -52,6 +53,6 @@ class ActivateConfigProcessorTest extends AbstractProcessorTest {
                 .thenReturn(Optional.of(configDetails));
         configDetails.setConfigState(ConfigState.APPROVED);
         getConciergeProcessor().process(conciergeContext);
-        Mockito.verify(getConciergeRepository(), Mockito.times(1)).update(configDetails);
+        Mockito.verify(getConciergeRepository(), Mockito.times(1)).rollOverAndUpdate(configDetails);
     }
 }

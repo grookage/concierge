@@ -2,6 +2,7 @@ package com.grookage.concierge.core.engine.processors;
 
 import com.grookage.concierge.core.engine.ConciergeContext;
 import com.grookage.concierge.core.engine.ConciergeProcessor;
+import com.grookage.concierge.core.engine.resolver.ConfigVersionManager;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigEvent;
 import com.grookage.concierge.models.config.ConfigKey;
@@ -24,7 +25,7 @@ public class ActivateConfigProcessor extends ConciergeProcessor {
 
     private static final Set<ConfigState> ACCEPTABLE_STATES = Set.of(ConfigState.APPROVED);
     private final Supplier<ConciergeRepository> repositorySupplier;
-
+    private final ConfigVersionManager configVersionManager;
 
     @Override
     public ConfigEvent name() {
@@ -46,7 +47,11 @@ public class ActivateConfigProcessor extends ConciergeProcessor {
         }
         addHistory(context, storedConfig);
         storedConfig.setConfigState(ConfigState.ACTIVATED);
-        getRepositorySupplier().get().update(storedConfig);
+        if (configVersionManager.enableMultipleConfigs(configKey.getConfigType())) {
+            getRepositorySupplier().get().update(storedConfig);
+        } else {
+            getRepositorySupplier().get().rollOverAndUpdate(storedConfig);
+        }
         context.addContext(ConfigDetails.class.getSimpleName(), storedConfig);
     }
 }

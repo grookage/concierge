@@ -69,7 +69,7 @@ public class IngestionResource<U extends ConfigUpdater> {
         return ingestionService.createConfiguration(updater, configurationRequest);
     }
 
-    @POST
+    @PATCH
     @Timed
     @ExceptionMetered
     @Path("/append")
@@ -81,7 +81,7 @@ public class IngestionResource<U extends ConfigUpdater> {
         return ingestionService.appendConfiguration(updater, updateRequest);
     }
 
-    @POST
+    @PUT
     @Timed
     @ExceptionMetered
     @Path("/update")
