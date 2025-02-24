@@ -1,8 +1,6 @@
 package com.grookage.concierge.aerospike.client;
 
-import com.aerospike.client.Bin;
-import com.aerospike.client.IAerospikeClient;
-import com.aerospike.client.Key;
+import com.aerospike.client.*;
 import com.aerospike.client.Record;
 import com.aerospike.client.exp.Exp;
 import com.aerospike.client.policy.RecordExistsAction;
@@ -141,5 +139,24 @@ public class AerospikeManager {
             }
         }
         return resultCount > 0;
+    }
+
+    public void bulkUpdate(List<AerospikeRecord> aerospikeRecords) {
+        final var transaction = new Txn();
+        log.debug("Started transaction with id {} and records {}", transaction.getId(), aerospikeRecords);
+        try {
+            final var writePolicy = client.copyWritePolicyDefault();
+            writePolicy.txn = transaction;
+            aerospikeRecords.forEach(storageRecord -> {
+                final var key = getKey(storageRecord.getReferenceId());
+                final var bins = getBins(storageRecord).toArray(Bin[]::new);
+                client.put(writePolicy, key, bins);
+            });
+        } catch (Exception e) {
+            log.debug("There is an error trying to commit the transaction with id {}. Aborting the transaction", transaction.getId(), e);
+            client.abort(transaction);
+        }
+        client.commit(transaction);
+        log.debug("Successfully completed the transaction with id {} and records {}", transaction.getId(), aerospikeRecords);
     }
 }

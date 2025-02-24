@@ -19,7 +19,11 @@ public interface ConciergeRepository {
 
     List<ConfigDetails> getStoredRecords();
 
+    void rollOverAndUpdate(ConfigDetails configDetails);
+
     //The following implementations have cache binding, if enabled.
+    Optional<ConfigDetails> getLatestActiveRecord(final String namespace, final String configName);
+
     Optional<ConfigDetails> getRecord(final ConfigKey configKey);
 
     List<ConfigDetails> getRecords(final String namespace, final Set<String> configNames);
