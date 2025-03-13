@@ -46,7 +46,7 @@ public class CreateConfigProcessor extends ConciergeProcessor {
         final var configDetails = ConfigurationUtils.toCreateConfigRequest(createConfigRequest,
                 getVersionSupplier().get()
         );
-        addHistory(context, configDetails);
+        addHistory(context, configDetails, createConfigRequest.getMessage());
         getRepositorySupplier().get().create(configDetails);
         context.addContext(ConfigDetails.class.getSimpleName(), configDetails);
     }

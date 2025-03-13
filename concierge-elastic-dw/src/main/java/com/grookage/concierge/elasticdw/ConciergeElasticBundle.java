@@ -23,7 +23,6 @@ import com.grookage.concierge.elastic.config.ElasticConfig;
 import com.grookage.concierge.elastic.repository.ElasticRepository;
 import com.grookage.concierge.models.ConfigUpdater;
 import com.grookage.concierge.repository.ConciergeRepository;
-import com.grookage.concierge.repository.cache.CacheConfig;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Environment;
 import lombok.Getter;
@@ -43,8 +42,6 @@ public abstract class ConciergeElasticBundle<T extends Configuration, U extends 
     protected abstract ElasticConfig getElasticConfig(T configuration);
 
 
-    protected abstract CacheConfig getCacheConfig(T configuration);
-
     @Override
     protected Supplier<ConciergeRepository> getRepositorySupplier(T configuration) {
         return () -> elasticRepository;
@@ -58,8 +55,7 @@ public abstract class ConciergeElasticBundle<T extends Configuration, U extends 
     @Override
     public void run(T configuration, Environment environment) {
         this.elasticConfig = getElasticConfig(configuration);
-        final var cacheConfig = getCacheConfig(configuration);
-        this.elasticRepository = new ElasticRepository(elasticConfig, cacheConfig);
+        this.elasticRepository = new ElasticRepository(elasticConfig);
         this.elasticsearchClient = elasticRepository.getClient();
         super.run(configuration, environment);
     }

@@ -1,4 +1,4 @@
-package com.grookage.concierge.repository.cache;
+package com.grookage.concierge.core.cache;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;

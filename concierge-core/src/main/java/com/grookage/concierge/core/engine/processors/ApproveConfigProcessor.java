@@ -41,7 +41,7 @@ public class ApproveConfigProcessor extends ConciergeProcessor {
                     configKey.getConfigName());
             throw ConciergeException.error(ConciergeCoreErrorCode.NO_CONFIG_FOUND);
         }
-        addHistory(context, storedConfig);
+        addHistory(context, storedConfig, null);
         storedConfig.setConfigState(ConfigState.APPROVED);
         getRepositorySupplier().get().update(storedConfig);
         context.addContext(ConfigDetails.class.getSimpleName(), storedConfig);

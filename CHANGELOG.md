@@ -2,13 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.1-RC9]
+
+- Moved CacheConfig and cache handling to ConfigService from Repository. This is now coupled with jersey resources sending an ignoreCache queryParam if real time fetch from datastores are required.
+- Added an updateMessage on Config Creation, Update and on Append for configurations.
+
 ## [0.0.1-RC8]
 
-- Introduced rollOverAndUpdate to configs. Only keeping one latest config by default, we can override to multiple active configs if need be.
+- Introduced rollOverAndUpdate to configs. Only keeping one latest config by default, we can override to multiple active
+  configs if need be.
 
 ## [0.0.1-RC7]
 
-- Ingestion Resource http methods changed to reflect the actual behaviour. Append is a PATCH and Update is a PUT.   
+- Ingestion Resource http methods changed to reflect the actual behaviour. Append is a PATCH and Update is a PUT.
 
 ## [0.0.1-RC6]
 
@@ -21,8 +27,8 @@ All notable changes to this project will be documented in this file.
 ## [0.0.1-RC4]
 
 - Optimizations
-  - Added config appender during ingestion.
-  - Introduced configType in processorKey during ProcessorSelection
+    - Added config appender during ingestion.
+    - Introduced configType in processorKey during ProcessorSelection
 
 ## [0.0.1-RC3]
 

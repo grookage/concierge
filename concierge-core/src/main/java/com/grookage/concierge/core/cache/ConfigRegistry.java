@@ -1,4 +1,4 @@
-package com.grookage.concierge.repository.cache;
+package com.grookage.concierge.core.cache;
 
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigKey;

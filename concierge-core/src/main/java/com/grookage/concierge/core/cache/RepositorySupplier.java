@@ -1,14 +1,16 @@
-package com.grookage.concierge.repository.cache;
+package com.grookage.concierge.core.cache;
 
 import com.grookage.concierge.repository.ConciergeRepository;
 import com.grookage.leia.provider.suppliers.LeiaSupplier;
 import lombok.AllArgsConstructor;
 
+import java.util.function.Supplier;
+
 
 @AllArgsConstructor
 public class RepositorySupplier implements LeiaSupplier<ConfigRegistry> {
 
-    private final ConciergeRepository repository;
+    private final Supplier<ConciergeRepository> repositorySupplier;
 
     @Override
     public void start() {
@@ -22,7 +24,7 @@ public class RepositorySupplier implements LeiaSupplier<ConfigRegistry> {
 
     @Override
     public ConfigRegistry get() {
-        final var configDetails = repository.getStoredRecords();
+        final var configDetails = repositorySupplier.get().getStoredRecords();
         final var registry = new ConfigRegistry();
         configDetails.forEach(registry::add);
         return registry;

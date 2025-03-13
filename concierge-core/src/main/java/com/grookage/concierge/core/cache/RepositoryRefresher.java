@@ -1,4 +1,4 @@
-package com.grookage.concierge.repository.cache;
+package com.grookage.concierge.core.cache;
 
 import com.grookage.leia.provider.refresher.AbstractLeiaRefresher;
 import lombok.Builder;

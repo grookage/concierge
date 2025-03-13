@@ -17,10 +17,13 @@ import java.util.Set;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConfigDetails implements Comparable<ConfigDetails> {
-    @NotNull ConfigKey configKey;
-    @NotNull ConfigState configState;
+    @NotNull
+    ConfigKey configKey;
+    @NotNull
+    ConfigState configState;
     String description;
-    @NotNull byte[] data;
+    @NotNull
+    byte[] data;
     @Builder.Default
     Set<ConfigHistoryItem> configHistories = new HashSet<>();
 

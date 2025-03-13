@@ -20,7 +20,7 @@ public abstract class ConciergeProcessor {
     public abstract ConfigEvent name();
 
     @SneakyThrows
-    public void addHistory(ConciergeContext context, ConfigDetails configDetails) {
+    public void addHistory(ConciergeContext context, ConfigDetails configDetails, String updateMessage) {
         final var userName = ContextUtils.getUser(context);
         final var email = ContextUtils.getEmail(context);
         final var userId = ContextUtils.getUserId(context);
@@ -30,6 +30,7 @@ public abstract class ConciergeProcessor {
                 .configUpdaterName(userName)
                 .timestamp(System.currentTimeMillis())
                 .configEvent(name())
+                .message(updateMessage)
                 .build();
         configDetails.addHistory(configHistoryItem);
     }

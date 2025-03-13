@@ -16,11 +16,15 @@ import javax.validation.constraints.NotNull;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConfigHistoryItem {
 
-    @NotNull ConfigEvent configEvent;
-    @NotNull long timestamp;
-    @NotBlank String configUpdaterName;
+    @NotNull
+    ConfigEvent configEvent;
+    @NotNull
+    long timestamp;
+    @NotBlank
+    String configUpdaterName;
     String configUpdaterId;
     String configUpdaterEmail;
+    String message;
 
     @Override
     public int hashCode() {
