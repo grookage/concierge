@@ -24,6 +24,11 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
+    public Optional<ConfigDetails> getLatestActiveConfig(String namespace, String configName) {
+        return repositorySupplier.get().getLatestActiveRecord(namespace, configName);
+    }
+
+    @Override
     public List<ConfigDetails> getConfigs(Set<String> namespaces) {
         return repositorySupplier.get().getRecords(namespaces);
     }

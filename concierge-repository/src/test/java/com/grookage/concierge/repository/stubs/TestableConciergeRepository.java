@@ -75,4 +75,9 @@ public class TestableConciergeRepository extends AbstractConciergeRepository {
     public List<ConfigDetails> getStoredRecords() {
         return CONFIG_DETAILS;
     }
+
+    @Override
+    public void rollOverAndUpdate(ConfigDetails configDetails) {
+
+    }
 }
