@@ -51,7 +51,7 @@ public class UpdateConfigProcessor extends ConciergeProcessor {
         }
         storedConfig.setDescription(updateConfigRequest.getDescription());
         storedConfig.setData(MapperUtils.mapper().writeValueAsBytes(updateConfigRequest.getData()));
-        addHistory(context, storedConfig);
+        addHistory(context, storedConfig, updateConfigRequest.getMessage());
         getRepositorySupplier().get().update(storedConfig);
         context.addContext(ConfigDetails.class.getSimpleName(), storedConfig);
     }

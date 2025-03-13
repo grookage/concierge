@@ -20,10 +20,13 @@ import java.util.Set;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConfigurationResponse implements Comparable<ConfigurationResponse> {
 
-    @NotNull ConfigKey configKey;
-    @NotNull ConfigState configState;
+    @NotNull
+    ConfigKey configKey;
+    @NotNull
+    ConfigState configState;
     String description;
-    @NotNull Object data;
+    @NotNull
+    Object data;
     @Builder.Default
     Set<ConfigHistoryItem> configHistories = new HashSet<>();
 

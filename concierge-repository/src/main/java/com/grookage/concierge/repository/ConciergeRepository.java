@@ -2,6 +2,7 @@ package com.grookage.concierge.repository;
 
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigKey;
+import com.grookage.concierge.models.config.ConfigState;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,19 +20,12 @@ public interface ConciergeRepository {
 
     List<ConfigDetails> getStoredRecords();
 
+    List<ConfigDetails> getStoredRecords(String namespace, Set<String> configNames, Set<ConfigState> configStates);
+
+    List<ConfigDetails> getActiveStoredRecords(Set<String> namespaces);
+
+    List<ConfigDetails> getStoredRecords(Set<String> namespaces);
+
     void rollOverAndUpdate(ConfigDetails configDetails);
-
-    //The following implementations have cache binding, if enabled.
-    Optional<ConfigDetails> getLatestActiveRecord(final String namespace, final String configName);
-
-    Optional<ConfigDetails> getRecord(final ConfigKey configKey);
-
-    List<ConfigDetails> getRecords(final String namespace, final Set<String> configNames);
-
-    List<ConfigDetails> getActiveRecords(final Set<String> namespaces);
-
-    List<ConfigDetails> getRecords(final Set<String> namespaces);
-
-    List<ConfigDetails> getRecords();
 
 }

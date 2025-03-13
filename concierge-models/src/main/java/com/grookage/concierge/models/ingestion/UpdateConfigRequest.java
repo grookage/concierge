@@ -18,12 +18,17 @@ import javax.validation.constraints.NotNull;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UpdateConfigRequest {
-    @NotBlank String namespace;
-    @NotBlank String configName;
-    @NotBlank String version;
+    @NotBlank
+    String namespace;
+    @NotBlank
+    String configName;
+    @NotBlank
+    String version;
     String description;
-    @NotNull Object data;
+    @NotNull
+    Object data;
     ConfigType configType;
+    String message;
 
     @JsonIgnore
     public ConfigKey getConfigKey() {

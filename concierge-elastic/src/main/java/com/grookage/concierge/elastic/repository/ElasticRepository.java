@@ -33,9 +33,7 @@ import com.grookage.concierge.elastic.storage.StoredElasticRecord;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigKey;
 import com.grookage.concierge.models.config.ConfigState;
-import com.grookage.concierge.repository.AbstractConciergeRepository;
-import com.grookage.concierge.repository.cache.CacheConfig;
-import lombok.EqualsAndHashCode;
+import com.grookage.concierge.repository.ConciergeRepository;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
@@ -47,8 +45,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Getter
-@EqualsAndHashCode(callSuper = true)
-public class ElasticRepository extends AbstractConciergeRepository {
+public class ElasticRepository implements ConciergeRepository {
 
     private static final String CONFIG_INDEX = "config_registry";
     private static final String NAMESPACE = "namespace";
@@ -58,8 +55,7 @@ public class ElasticRepository extends AbstractConciergeRepository {
     private final ElasticsearchClient client;
     private final ElasticConfig elasticConfig;
 
-    public ElasticRepository(ElasticConfig elasticConfig, CacheConfig cacheConfig) {
-        super(cacheConfig);
+    public ElasticRepository(ElasticConfig elasticConfig) {
         Preconditions.checkNotNull(elasticConfig, "Elastic Config can't be null");
         this.elasticConfig = elasticConfig;
         this.client = new ElasticClientManager(elasticConfig).getElasticClient();

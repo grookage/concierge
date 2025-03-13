@@ -6,9 +6,7 @@ import com.grookage.concierge.aerospike.storage.AerospikeRecord;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigKey;
 import com.grookage.concierge.models.config.ConfigState;
-import com.grookage.concierge.repository.AbstractConciergeRepository;
-import com.grookage.concierge.repository.cache.CacheConfig;
-import lombok.EqualsAndHashCode;
+import com.grookage.concierge.repository.ConciergeRepository;
 import lombok.Getter;
 
 import java.util.List;
@@ -17,14 +15,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
-@EqualsAndHashCode(callSuper = true)
-public class AerospikeRepository extends AbstractConciergeRepository {
+public class AerospikeRepository implements ConciergeRepository {
 
     private final AerospikeManager aerospikeManager;
 
-    public AerospikeRepository(AerospikeConfig aerospikeConfig,
-                               CacheConfig cacheConfig) {
-        super(cacheConfig);
+    public AerospikeRepository(AerospikeConfig aerospikeConfig) {
         this.aerospikeManager = new AerospikeManager(aerospikeConfig);
     }
 

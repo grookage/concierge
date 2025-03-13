@@ -18,9 +18,12 @@ import java.util.Locale;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConfigKey implements Comparable<ConfigKey> {
 
-    @NotBlank String namespace;
-    @NotBlank String configName;
-    @NotBlank String version;
+    @NotBlank
+    String namespace;
+    @NotBlank
+    String configName;
+    @NotBlank
+    String version;
     ConfigType configType;
 
     @JsonIgnore

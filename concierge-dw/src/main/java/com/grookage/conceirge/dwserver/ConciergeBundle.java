@@ -7,12 +7,13 @@ import com.grookage.conceirge.dwserver.permissions.PermissionValidator;
 import com.grookage.conceirge.dwserver.resolvers.ConfigUpdaterResolver;
 import com.grookage.conceirge.dwserver.resources.ConfigResource;
 import com.grookage.conceirge.dwserver.resources.IngestionResource;
-import com.grookage.concierge.core.engine.resolver.ConfigVersionManager;
-import com.grookage.concierge.core.engine.resolver.DefaultConfigVersionManager;
-import com.grookage.concierge.core.engine.validator.ConfigDataValidator;
+import com.grookage.concierge.core.cache.CacheConfig;
 import com.grookage.concierge.core.engine.ConciergeHub;
 import com.grookage.concierge.core.engine.resolver.AppendConfigResolver;
+import com.grookage.concierge.core.engine.resolver.ConfigVersionManager;
 import com.grookage.concierge.core.engine.resolver.DefaultAppendConfigResolver;
+import com.grookage.concierge.core.engine.resolver.DefaultConfigVersionManager;
+import com.grookage.concierge.core.engine.validator.ConfigDataValidator;
 import com.grookage.concierge.core.managers.ProcessorFactory;
 import com.grookage.concierge.core.managers.VersionGenerator;
 import com.grookage.concierge.core.services.ConfigService;
@@ -41,6 +42,8 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
     private ConfigService configService;
 
     protected abstract Supplier<ConfigUpdaterResolver<U>> userResolver(T configuration);
+
+    protected abstract CacheConfig getCacheConfig(T configuration);
 
     protected abstract Supplier<ConciergeRepository> getRepositorySupplier(T configuration);
 
@@ -87,6 +90,8 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
         final var configVersionManager = getConfigVersionManageR(configuration);
         Preconditions.checkNotNull(configVersionManager, "Config Version Manager can't be null");
 
+        final var cacheConfig = getCacheConfig(configuration);
+
         final var conciergeHub = ConciergeHub.of()
                 .withRepositoryResolver(repositorySupplier)
                 .withVersionSupplier(getVersionSupplier())
@@ -94,7 +99,7 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
                 .withConfigVersionManager(configVersionManager)
                 .build();
         this.ingestionService = new IngestionServiceImpl<>(withProcessorFactory(configuration), conciergeHub);
-        this.configService = new ConfigServiceImpl(repositorySupplier);
+        this.configService = new ConfigServiceImpl(repositorySupplier, cacheConfig);
         withLifecycleManagers(configuration)
                 .forEach(lifecycle -> environment.lifecycle().manage(new Managed() {
                     @Override

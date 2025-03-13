@@ -19,8 +19,10 @@ package com.grookage.conceirge.dwserver.resources;
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
 import com.grookage.concierge.core.services.ConfigService;
+import com.grookage.concierge.models.ConfigNamesRequest;
 import com.grookage.concierge.models.MapperUtils;
 import com.grookage.concierge.models.NamespaceRequest;
+import com.grookage.concierge.models.config.ConciergeRequestContext;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigKey;
 import com.grookage.concierge.models.ingestion.ConfigurationResponse;
@@ -33,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.annotation.security.PermitAll;
 import javax.inject.Singleton;
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
@@ -66,12 +69,20 @@ public class ConfigResource {
         return responses;
     }
 
+    private ConciergeRequestContext toRequestContext(final boolean ignoreCache) {
+        return ConciergeRequestContext.builder()
+                .ignoreCache(ignoreCache)
+                .build();
+    }
+
     @POST
     @Timed
     @ExceptionMetered
     @Path("/summary")
-    public List<ConfigurationResponse> getSchemaDetails(@Valid final ConfigKey configKey) {
-        final var config = configService.getConfig(configKey).orElse(null);
+    public List<ConfigurationResponse> getSchemaDetails(
+            @QueryParam("ignoreCache") boolean ignoreCache, @Valid final ConfigKey configKey
+    ) {
+        final var config = configService.getConfig(toRequestContext(ignoreCache), configKey).orElse(null);
         return getConfigurationResponses(null == config ? List.of() : List.of(config));
     }
 
@@ -79,24 +90,52 @@ public class ConfigResource {
     @Timed
     @ExceptionMetered
     @Path("/details/active")
-    public List<ConfigurationResponse> getActiveConfigs(@Valid final NamespaceRequest namespaceRequest) {
-        return getConfigurationResponses(configService.getActiveConfigs(namespaceRequest.getNamespaces()));
+    public List<ConfigurationResponse> getActiveConfigs(
+            @QueryParam("ignoreCache") boolean ignoreCache, @Valid final NamespaceRequest namespaceRequest
+    ) {
+        return getConfigurationResponses(configService.getActiveConfigs(toRequestContext(ignoreCache), namespaceRequest.getNamespaces()));
+    }
+
+    @POST
+    @Timed
+    @ExceptionMetered
+    @Path("/details/active/{namespace}/{configName}/latest")
+    public List<ConfigurationResponse> getLatestActiveConfigs(
+            @QueryParam("ignoreCache") boolean ignoreCache,
+            @PathParam("namespace") final String namesapce,
+            @PathParam("configName") final String configName
+    ) {
+        final var config = configService.getLatestActiveConfig(toRequestContext(ignoreCache),namesapce, configName).orElse(null);
+        return getConfigurationResponses(null == config ? List.of() : List.of(config));
     }
 
     @POST
     @Timed
     @ExceptionMetered
     @Path("/details")
-    public List<ConfigurationResponse> getAllConfigDetails(@Valid final NamespaceRequest namespaceRequest) {
-        return getConfigurationResponses(configService.getConfigs(namespaceRequest.getNamespaces()));
+    public List<ConfigurationResponse> getConfigs(
+            @QueryParam("ignoreCache") boolean ignoreCache, @Valid final NamespaceRequest namespaceRequest) {
+        return getConfigurationResponses(configService.getConfigs(toRequestContext(ignoreCache), namespaceRequest.getNamespaces()));
     }
+
+    @POST
+    @Timed
+    @ExceptionMetered
+    @Path("/{namespace}")
+    public List<ConfigurationResponse> getConfigs(
+            @QueryParam("ignoreCache") boolean ignoreCache,
+            @PathParam("namespace") @NotEmpty final String namespace,
+            @Valid final ConfigNamesRequest configNamesRequest) {
+        return getConfigurationResponses(configService.getConfigs(toRequestContext(ignoreCache),
+                namespace, configNamesRequest.getConfigNames()));
+    }
+
 
     @GET
     @Timed
     @ExceptionMetered
     @Path("/all")
-    public List<ConfigurationResponse> getAllSchemaDetails() {
-        return getConfigurationResponses(configService.getConfigs());
+    public List<ConfigurationResponse> getConfigs(@QueryParam("ignoreCache") boolean ignoreCache) {
+        return getConfigurationResponses(configService.getConfigs(toRequestContext(ignoreCache)));
     }
-
 }

@@ -24,13 +24,18 @@ import java.util.Set;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AerospikeRecord {
 
-    @NotBlank String namespace;
-    @NotBlank String configName;
-    @NotBlank String version;
-    @NotNull ConfigState configState;
+    @NotBlank
+    String namespace;
+    @NotBlank
+    String configName;
+    @NotBlank
+    String version;
+    @NotNull
+    ConfigState configState;
     ConfigType configType;
     String description;
-    @NotNull byte[] data;
+    @NotNull
+    byte[] data;
     @Builder.Default
     Set<ConfigHistoryItem> configHistories = new HashSet<>();
 
