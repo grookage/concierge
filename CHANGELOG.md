@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.1-RC10]
+
+- Added SearchRequest to filter on namespaces, configNames and configStates
+- Minor code convention improvments
+
 ## [0.0.1-RC9]
 
 - Moved CacheConfig and cache handling to ConfigService from Repository. This is now coupled with jersey resources
