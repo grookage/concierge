@@ -157,12 +157,12 @@ public class ElasticRepository implements ConciergeRepository {
     public List<ConfigDetails> getStoredRecords(Set<String> namespaces,
                                                 Set<String> configNames,
                                                 Set<ConfigState> configStates) {
-        final var namespaceQuery = TermsQuery.of(q -> q.field(NAMESPACE)
-                .terms(t -> t.value(getNormalizedValues(namespaces))))._toQuery();
-        final var configQuery = TermsQuery.of(q -> q.field(CONFIG_NAME)
-                .terms(t -> t.value(getNormalizedValues(configNames))))._toQuery();
-        final var configStateQuery = TermsQuery.of(q -> q.field(CONFIG_STATE)
-                        .terms(t -> t.value(getNormalizedValues(configStates.stream().map(Enum::name).collect(Collectors.toSet()))))).
+        final var namespaceQuery = namespaces.isEmpty() ? MatchAllQuery.of(q -> q)._toQuery() :
+                TermsQuery.of(q -> q.field(NAMESPACE).terms(t -> t.value(getNormalizedValues(namespaces))))._toQuery();
+        final var configQuery = configNames.isEmpty() ? MatchAllQuery.of(q -> q)._toQuery() :
+                TermsQuery.of(q -> q.field(CONFIG_NAME).terms(t -> t.value(getNormalizedValues(configNames))))._toQuery();
+        final var configStateQuery = configStates.isEmpty() ? MatchAllQuery.of(q -> q)._toQuery() :
+                TermsQuery.of(q -> q.field(CONFIG_STATE).terms(t -> t.value(getNormalizedValues(configStates.stream().map(Enum::name).collect(Collectors.toSet()))))).
                 _toQuery();
         final var searchQuery = BoolQuery.of(q -> q.must(List.of(namespaceQuery, configQuery, configStateQuery)))._toQuery();
         return queryDetails(searchQuery, storedElasticRecordHit -> true);
@@ -177,19 +177,6 @@ public class ElasticRepository implements ConciergeRepository {
         final var searchQuery = BoolQuery.of(q -> q.must(List.of(namespaceQuery)))._toQuery();
         return queryDetails(searchQuery, storedElasticRecordHit -> storedElasticRecordHit.source() != null &&
                 storedElasticRecordHit.source().getConfigState() == ConfigState.ACTIVATED);
-    }
-
-    @Override
-    @SneakyThrows
-    public List<ConfigDetails> getStoredRecords(Set<String> namespaces) {
-        if (namespaces.isEmpty()) {
-            return getStoredRecords();
-        }
-
-        final var namespaceQuery = TermsQuery.of(q -> q.field(NAMESPACE)
-                .terms(t -> t.value(getNormalizedValues(namespaces))))._toQuery();
-        final var searchQuery = BoolQuery.of(q -> q.must(List.of(namespaceQuery)))._toQuery();
-        return queryDetails(searchQuery, storedElasticRecordHit -> true);
     }
 
     @Override

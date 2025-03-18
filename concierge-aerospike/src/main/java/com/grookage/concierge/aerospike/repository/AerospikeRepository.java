@@ -93,12 +93,6 @@ public class AerospikeRepository implements ConciergeRepository {
     }
 
     @Override
-    public List<ConfigDetails> getStoredRecords(Set<String> namespaces) {
-        return aerospikeManager.getRecords(namespaces.stream().toList(), List.of(), List.of())
-                .stream().map(this::toConfigDetails).toList();
-    }
-
-    @Override
     public void rollOverAndUpdate(ConfigDetails configDetails) {
         final var newRecords = aerospikeManager.getRecords(List.of(configDetails.getConfigKey().getNamespace()),
                         List.of(configDetails.getConfigKey().getConfigName()),
