@@ -84,23 +84,6 @@ public class ConfigResource {
         return getConfigurationResponses(null == config ? List.of() : List.of(config));
     }
 
-    @GET
-    @Timed
-    @ExceptionMetered
-    @Path("/details/{namespace}/{configName}/latest")
-    public List<ConfigurationResponse> getLatestActiveConfigs(
-            @QueryParam("ignoreCache") boolean ignoreCache,
-            @PathParam("namespace") final String namespace,
-            @PathParam("configName") final String configName
-    ) {
-        final var config = configService.getConfig(toRequestContext(ignoreCache), ConfigKey.builder()
-                        .namespace(namespace)
-                        .configName(configName)
-                        .version("latest")
-                .build()).orElse(null);
-        return getConfigurationResponses(null == config ? List.of() : List.of(config));
-    }
-
     @POST
     @Timed
     @ExceptionMetered

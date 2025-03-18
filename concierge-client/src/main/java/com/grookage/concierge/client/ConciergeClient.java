@@ -41,5 +41,4 @@ public class ConciergeClient {
                         .filter(each -> each.getConfigKey().getReferenceId().equals(configKey.getReferenceId()))
                         .findFirst();
     }
-
 }

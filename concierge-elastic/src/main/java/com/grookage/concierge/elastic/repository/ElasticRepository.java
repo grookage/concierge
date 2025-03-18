@@ -163,7 +163,7 @@ public class ElasticRepository implements ConciergeRepository {
                 TermsQuery.of(q -> q.field(CONFIG_NAME).terms(t -> t.value(getNormalizedValues(configNames))))._toQuery();
         final var configStateQuery = configStates.isEmpty() ? MatchAllQuery.of(q -> q)._toQuery() :
                 TermsQuery.of(q -> q.field(CONFIG_STATE).terms(t -> t.value(getNormalizedValues(configStates.stream().map(Enum::name).collect(Collectors.toSet()))))).
-                _toQuery();
+                        _toQuery();
         final var searchQuery = BoolQuery.of(q -> q.must(List.of(namespaceQuery, configQuery, configStateQuery)))._toQuery();
         return queryDetails(searchQuery, storedElasticRecordHit -> true);
     }
