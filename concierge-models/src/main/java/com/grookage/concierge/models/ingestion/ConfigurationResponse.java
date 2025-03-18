@@ -18,7 +18,7 @@ import java.util.Set;
 @Builder
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ConfigurationResponse implements Comparable<ConfigurationResponse> {
+public class ConfigurationResponse {
 
     @NotNull
     ConfigKey configKey;
@@ -29,9 +29,4 @@ public class ConfigurationResponse implements Comparable<ConfigurationResponse> 
     Object data;
     @Builder.Default
     Set<ConfigHistoryItem> configHistories = new HashSet<>();
-
-    @Override
-    public int compareTo(ConfigurationResponse o) {
-        return configKey.compareTo(o.getConfigKey());
-    }
 }

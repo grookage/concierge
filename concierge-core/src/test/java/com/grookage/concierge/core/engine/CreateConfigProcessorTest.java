@@ -1,7 +1,6 @@
 package com.grookage.concierge.core.engine;
 
 import com.grookage.concierge.core.engine.processors.CreateConfigProcessor;
-import com.grookage.concierge.core.utils.ConciergeTestUtils;
 import com.grookage.concierge.core.utils.ContextUtils;
 import com.grookage.concierge.models.ResourceHelper;
 import com.grookage.concierge.models.config.ConfigDetails;
@@ -16,8 +15,7 @@ class CreateConfigProcessorTest extends AbstractProcessorTest {
 
     @Override
     public ConciergeProcessor createConciergeProcessor() {
-        return new CreateConfigProcessor(this::getConciergeRepository,
-                () -> ConciergeTestUtils.generator);
+        return new CreateConfigProcessor(this::getConciergeRepository);
     }
 
 

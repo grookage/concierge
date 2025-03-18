@@ -1,6 +1,5 @@
 package com.grookage.concierge.core.utils;
 
-import com.grookage.concierge.core.managers.VersionGenerator;
 import com.grookage.concierge.models.MapperUtils;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigKey;
@@ -13,12 +12,11 @@ import lombok.experimental.UtilityClass;
 public class ConfigurationUtils {
 
     @SneakyThrows
-    public ConfigDetails toCreateConfigRequest(ConfigurationRequest configurationRequest,
-                                               VersionGenerator versionGenerator) {
+    public ConfigDetails toCreateConfigRequest(ConfigurationRequest configurationRequest) {
         return ConfigDetails.builder()
                 .configKey(ConfigKey.builder()
                         .namespace(configurationRequest.getNamespace())
-                        .version(versionGenerator.getVersionId("V"))
+                        .version(configurationRequest.getVersionId())
                         .configName(configurationRequest.getConfigName())
                         .configType(configurationRequest.getConfigType())
                         .build())

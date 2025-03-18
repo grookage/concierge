@@ -16,7 +16,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ConfigDetails implements Comparable<ConfigDetails> {
+public class ConfigDetails {
     @NotNull
     ConfigKey configKey;
     @NotNull
@@ -40,10 +40,4 @@ public class ConfigDetails implements Comparable<ConfigDetails> {
 
         configHistories.add(configHistoryItem);
     }
-
-    @Override
-    public int compareTo(ConfigDetails o) {
-        return configKey.compareTo(o.getConfigKey());
-    }
-
 }

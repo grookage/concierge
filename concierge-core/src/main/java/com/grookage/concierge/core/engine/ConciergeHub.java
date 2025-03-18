@@ -5,7 +5,6 @@ import com.grookage.concierge.core.engine.processors.*;
 import com.grookage.concierge.core.engine.resolver.AppendConfigResolver;
 import com.grookage.concierge.core.engine.resolver.ConfigVersionManager;
 import com.grookage.concierge.core.engine.resolver.DefaultAppendConfigResolver;
-import com.grookage.concierge.core.managers.VersionGenerator;
 import com.grookage.concierge.models.config.ConfigEvent;
 import com.grookage.concierge.models.config.ConfigEventVisitor;
 import com.grookage.concierge.repository.ConciergeRepository;
@@ -22,7 +21,6 @@ public class ConciergeHub {
 
     private static final Map<ConfigEvent, ConciergeProcessor> processors = new ConcurrentHashMap<>();
     private Supplier<ConciergeRepository> repositorySupplier;
-    private Supplier<VersionGenerator> versionSupplier;
     private Supplier<AppendConfigResolver> appendConfigResolverSupplier = DefaultAppendConfigResolver::new;
     private ConfigVersionManager configVersionManager;
 
@@ -41,12 +39,6 @@ public class ConciergeHub {
     public ConciergeHub withRepositoryResolver(Supplier<ConciergeRepository> repositorySupplier) {
         Preconditions.checkNotNull(repositorySupplier, "Schema Repository can't be null");
         this.repositorySupplier = repositorySupplier;
-        return this;
-    }
-
-    public ConciergeHub withVersionSupplier(Supplier<VersionGenerator> versionSupplier) {
-        Preconditions.checkNotNull(versionSupplier, "Version ID Generator can't be null");
-        this.versionSupplier = versionSupplier;
         return this;
     }
 
@@ -71,7 +63,7 @@ public class ConciergeHub {
         processors.putIfAbsent(configEvent, configEvent.accept(new ConfigEventVisitor<>() {
             @Override
             public ConciergeProcessor configCreate() {
-                return new CreateConfigProcessor(repositorySupplier, versionSupplier);
+                return new CreateConfigProcessor(repositorySupplier);
             }
 
             @Override

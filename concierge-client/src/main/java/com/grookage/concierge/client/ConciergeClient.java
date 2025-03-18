@@ -33,11 +33,7 @@ public class ConciergeClient {
             final List<ConfigurationResponse> allConfigs,
             final ConfigKey configKey
     ) {
-        return configKey.latest() ?
-                allConfigs.stream()
-                        .filter(each -> each.getConfigKey().getReferenceTag().equals(configKey.getReferenceTag()))
-                        .max(Comparator.naturalOrder()) :
-                allConfigs.stream()
+        return allConfigs.stream()
                         .filter(each -> each.getConfigKey().getReferenceId().equals(configKey.getReferenceId()))
                         .findFirst();
     }

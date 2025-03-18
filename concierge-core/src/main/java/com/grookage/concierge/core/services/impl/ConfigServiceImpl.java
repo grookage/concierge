@@ -46,21 +46,6 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public Optional<ConfigDetails> getConfig(ConciergeRequestContext requestContext, ConfigKey configKey) {
         final var useCache = useRepositoryCache(requestContext);
-        if (configKey.latest()) {
-            return useCache ?
-                    refresher.getData()
-                            .getConfigs()
-                            .stream().filter(
-                                    each -> each.getConfigKey().getReferenceTag().equalsIgnoreCase(each.getConfigKey().getReferenceTag())
-                                            && each.getConfigState() == ConfigState.ACTIVATED
-                            )
-                            .max(Comparator.naturalOrder()).stream().findFirst()
-                    : repositorySupplier.get()
-                    .getStoredRecords(Set.of(configKey.getNamespace()), Set.of(configKey.getConfigName()), Set.of(ConfigState.ACTIVATED))
-                    .stream()
-                    .max(Comparator.naturalOrder()).stream().findFirst();
-
-        }
         return useCache ? refresher.getData().getConfiguration(configKey) :
                 repositorySupplier.get().getStoredRecord(configKey);
     }

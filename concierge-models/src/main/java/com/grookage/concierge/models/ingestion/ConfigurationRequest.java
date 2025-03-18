@@ -22,6 +22,8 @@ public class ConfigurationRequest {
     String namespace;
     @NotBlank
     String configName;
+    @NotBlank
+    String versionId;
     String description;
     @NotNull
     Object data;
@@ -34,7 +36,7 @@ public class ConfigurationRequest {
                 .namespace(namespace)
                 .configName(configName)
                 .configType(configType)
-                .version("latest")
+                .version(versionId)
                 .build();
     }
 }

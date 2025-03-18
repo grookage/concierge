@@ -16,7 +16,7 @@ import java.util.Locale;
 @Builder
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ConfigKey implements Comparable<ConfigKey> {
+public class ConfigKey {
 
     @NotBlank
     String namespace;
@@ -29,16 +29,6 @@ public class ConfigKey implements Comparable<ConfigKey> {
     @JsonIgnore
     public String getReferenceId() {
         return Joiner.on(".").join(namespace, configName, version).toUpperCase(Locale.ROOT);
-    }
-
-    @JsonIgnore
-    public String getReferenceTag() {
-        return Joiner.on(".").join(namespace, configName).toUpperCase(Locale.ROOT);
-    }
-
-    @JsonIgnore
-    public boolean latest() {
-        return null != version && version.equalsIgnoreCase("latest");
     }
 
     @Override
@@ -56,11 +46,6 @@ public class ConfigKey implements Comparable<ConfigKey> {
         }
         final var thatKey = (ConfigKey) obj;
         return (thatKey.getReferenceId().equals(this.getReferenceId()));
-    }
-
-    @Override
-    public int compareTo(ConfigKey o) {
-        return this.version.compareTo(o.getVersion());
     }
 
 }
