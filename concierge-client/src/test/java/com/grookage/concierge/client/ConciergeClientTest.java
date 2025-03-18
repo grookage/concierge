@@ -34,7 +34,7 @@ class ConciergeClientTest {
                 .build();
         final var configResponse = ResourceHelper.getResource("configurationResponse.json",
                 ConfigurationResponse.class);
-        stubFor(post(urlEqualTo("/v1/configs/details/active"))
+        stubFor(post(urlEqualTo("/v1/configs/details"))
                 .withRequestBody(binaryEqualTo(ResourceHelper.getObjectMapper().writeValueAsBytes(namespaceRequest)))
                 .willReturn(aResponse()
                         .withBody(ResourceHelper.getObjectMapper().writeValueAsBytes(configResponse))
