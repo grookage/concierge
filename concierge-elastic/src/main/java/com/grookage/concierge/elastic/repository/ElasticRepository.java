@@ -169,17 +169,6 @@ public class ElasticRepository implements ConciergeRepository {
     }
 
     @Override
-    public List<ConfigDetails> getActiveStoredRecords(Set<String> namespaces) {
-        final var namespaceQuery = namespaces.isEmpty() ?
-                MatchAllQuery.of(q -> q)._toQuery() :
-                TermsQuery.of(q -> q.field(NAMESPACE)
-                        .terms(t -> t.value(getNormalizedValues(namespaces))))._toQuery();
-        final var searchQuery = BoolQuery.of(q -> q.must(List.of(namespaceQuery)))._toQuery();
-        return queryDetails(searchQuery, storedElasticRecordHit -> storedElasticRecordHit.source() != null &&
-                storedElasticRecordHit.source().getConfigState() == ConfigState.ACTIVATED);
-    }
-
-    @Override
     @SneakyThrows
     public void create(ConfigDetails configDetails) {
         final var createDocument = new IndexRequest.Builder<>().document(toStorageRecord(configDetails))
