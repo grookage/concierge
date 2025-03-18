@@ -4,7 +4,8 @@ import com.grookage.concierge.core.cache.CacheConfig;
 import com.grookage.concierge.core.cache.RepositoryRefresher;
 import com.grookage.concierge.core.cache.RepositorySupplier;
 import com.grookage.concierge.core.services.ConfigService;
-import com.grookage.concierge.core.utils.CollectionUtils;
+import com.grookage.concierge.models.CollectionUtils;
+import com.grookage.concierge.models.SearchRequest;
 import com.grookage.concierge.models.config.ConciergeRequestContext;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigKey;
@@ -13,9 +14,11 @@ import com.grookage.concierge.repository.ConciergeRepository;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class ConfigServiceImpl implements ConfigService {
@@ -58,7 +61,7 @@ public class ConfigServiceImpl implements ConfigService {
                             )
                             .max(Comparator.naturalOrder()).stream().findFirst()
                     : repositorySupplier.get()
-                    .getStoredRecords(configKey.getNamespace(), Set.of(configKey.getConfigName()), Set.of(ConfigState.ACTIVATED))
+                    .getStoredRecords(Set.of(configKey.getNamespace()), Set.of(configKey.getConfigName()), Set.of(ConfigState.ACTIVATED))
                     .stream()
                     .max(Comparator.naturalOrder()).stream().findFirst();
 
@@ -77,28 +80,25 @@ public class ConfigServiceImpl implements ConfigService {
         return getConfig(requestContext, configKey);
     }
 
-    @Override
-    public List<ConfigDetails> getConfigs(ConciergeRequestContext requestContext, Set<String> namespaces) {
-        if (!useRepositoryCache(requestContext)) {
-            return repositorySupplier.get().getStoredRecords(namespaces);
-        }
-        if (CollectionUtils.isNullOrEmpty(namespaces)) return refresher.getData().getConfigs().stream().toList();
-        return refresher.getData().getConfigs().stream()
-                .filter(each -> namespaces.contains(each.getConfigKey().getNamespace()))
-                .toList();
+    private boolean match(ConfigDetails configDetails, SearchRequest searchRequest) {
+        final var configKey = configDetails.getConfigKey();
+        final var namespaceMatch = CollectionUtils.isNullOrEmpty(searchRequest.getNamespaces()) ||
+                searchRequest.getConfigNames().contains(configKey.getNamespace());
+        final var configNameMatch = CollectionUtils.isNullOrEmpty(searchRequest.getConfigNames()) ||
+                searchRequest.getConfigNames().contains(configKey.getConfigName());
+        final var configStateMatch = CollectionUtils.isNullOrEmpty(searchRequest.getConfigStates()) ||
+                searchRequest.getConfigStates().contains(configDetails.getConfigState());
+        return namespaceMatch && configNameMatch && configStateMatch;
     }
 
     @Override
-    public List<ConfigDetails> getConfigs(ConciergeRequestContext requestContext, String namespace, Set<String> configNames) {
+    public List<ConfigDetails> getConfigs(ConciergeRequestContext requestContext, SearchRequest searchRequest) {
         if (!useRepositoryCache(requestContext)) {
-            final var configStates = Arrays.stream(ConfigState.values()).collect(Collectors.toSet());
-            return repositorySupplier.get().getStoredRecords(namespace, configNames, configStates);
+            return repositorySupplier.get().getStoredRecords(searchRequest.getNamespaces(),
+                    searchRequest.getConfigNames(), searchRequest.getConfigStates());
         }
-        return refresher.getData().getConfigs()
-                .stream()
-                .filter(
-                        each -> each.getConfigKey().getNamespace().equalsIgnoreCase(namespace)
-                                && (CollectionUtils.isNullOrEmpty(configNames) || configNames.contains(each.getConfigKey().getConfigName())))
+        return refresher.getData().getConfigs().stream()
+                .filter(each -> match(each, searchRequest))
                 .toList();
     }
 

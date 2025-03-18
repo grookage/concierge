@@ -62,4 +62,5 @@ public class ConfigKey implements Comparable<ConfigKey> {
     public int compareTo(ConfigKey o) {
         return this.version.compareTo(o.getVersion());
     }
+
 }

@@ -20,7 +20,7 @@ public interface ConciergeRepository {
 
     List<ConfigDetails> getStoredRecords();
 
-    List<ConfigDetails> getStoredRecords(String namespace, Set<String> configNames, Set<ConfigState> configStates);
+    List<ConfigDetails> getStoredRecords(Set<String> namespace, Set<String> configNames, Set<ConfigState> configStates);
 
     List<ConfigDetails> getActiveStoredRecords(Set<String> namespaces);
 

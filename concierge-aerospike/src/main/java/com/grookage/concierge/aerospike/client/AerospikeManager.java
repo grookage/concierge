@@ -1,7 +1,7 @@
 package com.grookage.concierge.aerospike.client;
 
-import com.aerospike.client.*;
 import com.aerospike.client.Record;
+import com.aerospike.client.*;
 import com.aerospike.client.exp.Exp;
 import com.aerospike.client.policy.RecordExistsAction;
 import com.aerospike.client.policy.WritePolicy;
@@ -84,9 +84,9 @@ public class AerospikeManager {
     }
 
     @SneakyThrows
-    public List<AerospikeRecord> getRecords(final List<String> namespaces,
-                                            final List<String> configNames,
-                                            final List<String> configStates) {
+    public List<AerospikeRecord> getRecords(final Collection<String> namespaces,
+                                            final Collection<String> configNames,
+                                            final Collection<String> configStates) {
         final var queryStatement = new Statement();
         queryStatement.setNamespace(namespace);
         queryStatement.setSetName(AerospikeStorageConstants.CONFIG_SET);

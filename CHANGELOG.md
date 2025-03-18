@@ -4,7 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [0.0.1-RC9]
 
-- Moved CacheConfig and cache handling to ConfigService from Repository. This is now coupled with jersey resources sending an ignoreCache queryParam if real time fetch from datastores are required.
+- Moved CacheConfig and cache handling to ConfigService from Repository. This is now coupled with jersey resources
+  sending an ignoreCache queryParam if real time fetch from datastores are required.
 - Added an updateMessage on Config Creation, Update and on Append for configurations.
 
 ## [0.0.1-RC8]

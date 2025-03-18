@@ -1,5 +1,6 @@
 package com.grookage.concierge.core.services;
 
+import com.grookage.concierge.models.SearchRequest;
 import com.grookage.concierge.models.config.ConciergeRequestContext;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigKey;
@@ -17,11 +18,7 @@ public interface ConfigService {
                                                   String configName);
 
     List<ConfigDetails> getConfigs(ConciergeRequestContext requestContext,
-                                   Set<String> namespaces);
-
-    List<ConfigDetails> getConfigs(ConciergeRequestContext requestContext,
-                                   String namespace,
-                                   Set<String> configNames);
+                                   SearchRequest searchRequest);
 
     List<ConfigDetails> getActiveConfigs(ConciergeRequestContext requestContext,
                                          Set<String> namespaces);

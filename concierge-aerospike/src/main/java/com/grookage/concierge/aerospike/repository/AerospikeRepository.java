@@ -79,8 +79,8 @@ public class AerospikeRepository implements ConciergeRepository {
     }
 
     @Override
-    public List<ConfigDetails> getStoredRecords(String namespace, Set<String> configNames, Set<ConfigState> configStates) {
-        return aerospikeManager.getRecords(List.of(namespace), configNames.stream().toList(),
+    public List<ConfigDetails> getStoredRecords(Set<String> namespaces, Set<String> configNames, Set<ConfigState> configStates) {
+        return aerospikeManager.getRecords(namespaces, configNames,
                         configStates.stream().map(Enum::name).toList())
                 .stream().map(this::toConfigDetails).toList();
     }

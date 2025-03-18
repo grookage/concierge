@@ -19,7 +19,7 @@ package com.grookage.concierge.client.refresher;
 import com.google.common.base.Strings;
 import com.google.common.net.HttpHeaders;
 import com.grookage.concierge.models.MapperUtils;
-import com.grookage.concierge.models.NamespaceRequest;
+import com.grookage.concierge.models.SearchRequest;
 import com.grookage.concierge.models.ingestion.ConfigurationResponse;
 import com.grookage.leia.provider.config.LeiaHttpConfiguration;
 import com.grookage.leia.provider.suppliers.LeiaHttpSupplier;
@@ -59,7 +59,7 @@ public class ConciergeClientSupplier extends LeiaHttpSupplier<List<Configuration
     protected Request getRequest(String url) {
         final var requestBody = RequestBody.create(
                 okhttp3.MediaType.parse("application/json; charset=utf-8"),
-                MapperUtils.mapper().writeValueAsString(NamespaceRequest.builder()
+                MapperUtils.mapper().writeValueAsString(SearchRequest.builder()
                         .namespaces(namespaces)
                         .build()));
         final var requestBuilder = new Request.Builder()

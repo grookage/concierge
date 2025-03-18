@@ -45,4 +45,5 @@ public class ConfigDetails implements Comparable<ConfigDetails> {
     public int compareTo(ConfigDetails o) {
         return configKey.compareTo(o.getConfigKey());
     }
+
 }

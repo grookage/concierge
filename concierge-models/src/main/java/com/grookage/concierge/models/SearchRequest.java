@@ -17,6 +17,7 @@
 package com.grookage.concierge.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.grookage.concierge.models.config.ConfigState;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,6 +30,11 @@ import java.util.Set;
 @Data
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class NamespaceRequest {
-    private Set<String> namespaces;
+public class SearchRequest {
+    @Builder.Default
+    private Set<String> namespaces = Set.of();
+    @Builder.Default
+    private Set<String> configNames = Set.of();
+    @Builder.Default
+    private Set<ConfigState> configStates = Set.of();
 }
