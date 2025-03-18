@@ -13,16 +13,6 @@ public interface ConfigService {
 
     Optional<ConfigDetails> getConfig(ConciergeRequestContext requestContext, ConfigKey configKey);
 
-    Optional<ConfigDetails> getLatestActiveConfig(ConciergeRequestContext requestContext,
-                                                  String namespace,
-                                                  String configName);
-
-    List<ConfigDetails> getConfigs(ConciergeRequestContext requestContext,
-                                   SearchRequest searchRequest);
-
-    List<ConfigDetails> getActiveConfigs(ConciergeRequestContext requestContext,
-                                         Set<String> namespaces);
-
-    List<ConfigDetails> getConfigs(ConciergeRequestContext requestContext);
+    List<ConfigDetails> getConfigs(ConciergeRequestContext requestContext, SearchRequest searchRequest);
 
 }

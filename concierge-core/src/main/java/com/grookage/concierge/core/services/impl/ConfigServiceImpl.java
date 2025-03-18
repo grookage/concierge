@@ -43,11 +43,6 @@ public class ConfigServiceImpl implements ConfigService {
         }
     }
 
-    private boolean useRepositoryCache(final ConciergeRequestContext requestContext) {
-        return null != requestContext && !requestContext.isIgnoreCache()
-                && null != cacheConfig && cacheConfig.isEnabled();
-    }
-
     @Override
     public Optional<ConfigDetails> getConfig(ConciergeRequestContext requestContext, ConfigKey configKey) {
         final var useCache = useRepositoryCache(requestContext);
@@ -71,13 +66,19 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public Optional<ConfigDetails> getLatestActiveConfig(ConciergeRequestContext requestContext, String namespace, String configName) {
-        final var configKey = ConfigKey.builder()
-                .namespace(namespace)
-                .configName(configName)
-                .version("latest")
-                .build();
-        return getConfig(requestContext, configKey);
+    public List<ConfigDetails> getConfigs(ConciergeRequestContext requestContext, SearchRequest searchRequest) {
+        if (!useRepositoryCache(requestContext)) {
+            return repositorySupplier.get().getStoredRecords(searchRequest.getNamespaces(),
+                    searchRequest.getConfigNames(), searchRequest.getConfigStates());
+        }
+        return refresher.getData().getConfigs().stream()
+                .filter(each -> match(each, searchRequest))
+                .toList();
+    }
+
+    private boolean useRepositoryCache(final ConciergeRequestContext requestContext) {
+        return null != requestContext && !requestContext.isIgnoreCache()
+                && null != cacheConfig && cacheConfig.isEnabled();
     }
 
     private boolean match(ConfigDetails configDetails, SearchRequest searchRequest) {
@@ -89,34 +90,5 @@ public class ConfigServiceImpl implements ConfigService {
         final var configStateMatch = CollectionUtils.isNullOrEmpty(searchRequest.getConfigStates()) ||
                 searchRequest.getConfigStates().contains(configDetails.getConfigState());
         return namespaceMatch && configNameMatch && configStateMatch;
-    }
-
-    @Override
-    public List<ConfigDetails> getConfigs(ConciergeRequestContext requestContext, SearchRequest searchRequest) {
-        if (!useRepositoryCache(requestContext)) {
-            return repositorySupplier.get().getStoredRecords(searchRequest.getNamespaces(),
-                    searchRequest.getConfigNames(), searchRequest.getConfigStates());
-        }
-        return refresher.getData().getConfigs().stream()
-                .filter(each -> match(each, searchRequest))
-                .toList();
-    }
-
-    @Override
-    public List<ConfigDetails> getActiveConfigs(ConciergeRequestContext requestContext, Set<String> namespaces) {
-        if (!useRepositoryCache(requestContext)) {
-            return repositorySupplier.get().getActiveStoredRecords(namespaces);
-        }
-        return refresher.getData().getConfigs()
-                .stream()
-                .filter(each -> (CollectionUtils.isNullOrEmpty(namespaces) || namespaces.contains(each.getConfigKey().getNamespace()))
-                        && each.getConfigState() == ConfigState.ACTIVATED)
-                .toList();
-    }
-
-    @Override
-    public List<ConfigDetails> getConfigs(ConciergeRequestContext requestContext) {
-        return useRepositoryCache(requestContext) ? refresher.getData().getConfigs().stream().toList()
-                : repositorySupplier.get().getStoredRecords();
     }
 }

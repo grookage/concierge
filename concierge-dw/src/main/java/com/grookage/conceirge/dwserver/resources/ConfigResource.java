@@ -84,26 +84,20 @@ public class ConfigResource {
         return getConfigurationResponses(null == config ? List.of() : List.of(config));
     }
 
-    @POST
+    @GET
     @Timed
     @ExceptionMetered
-    @Path("/details/active")
-    public List<ConfigurationResponse> getActiveConfigs(
-            @QueryParam("ignoreCache") boolean ignoreCache, @Valid final SearchRequest searchRequest
-    ) {
-        return getConfigurationResponses(configService.getActiveConfigs(toRequestContext(ignoreCache), searchRequest.getNamespaces()));
-    }
-
-    @POST
-    @Timed
-    @ExceptionMetered
-    @Path("/details/active/{namespace}/{configName}/latest")
+    @Path("/details/{namespace}/{configName}/latest")
     public List<ConfigurationResponse> getLatestActiveConfigs(
             @QueryParam("ignoreCache") boolean ignoreCache,
-            @PathParam("namespace") final String namesapce,
+            @PathParam("namespace") final String namespace,
             @PathParam("configName") final String configName
     ) {
-        final var config = configService.getLatestActiveConfig(toRequestContext(ignoreCache), namesapce, configName).orElse(null);
+        final var config = configService.getConfig(toRequestContext(ignoreCache), ConfigKey.builder()
+                        .namespace(namespace)
+                        .configName(configName)
+                        .version("latest")
+                .build()).orElse(null);
         return getConfigurationResponses(null == config ? List.of() : List.of(config));
     }
 
@@ -114,13 +108,5 @@ public class ConfigResource {
     public List<ConfigurationResponse> getConfigs(
             @QueryParam("ignoreCache") boolean ignoreCache, @Valid final SearchRequest searchRequest) {
         return getConfigurationResponses(configService.getConfigs(toRequestContext(ignoreCache), searchRequest));
-    }
-
-    @GET
-    @Timed
-    @ExceptionMetered
-    @Path("/all")
-    public List<ConfigurationResponse> getConfigs(@QueryParam("ignoreCache") boolean ignoreCache) {
-        return getConfigurationResponses(configService.getConfigs(toRequestContext(ignoreCache)));
     }
 }

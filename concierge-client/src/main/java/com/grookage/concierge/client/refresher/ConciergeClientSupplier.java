@@ -20,6 +20,7 @@ import com.google.common.base.Strings;
 import com.google.common.net.HttpHeaders;
 import com.grookage.concierge.models.MapperUtils;
 import com.grookage.concierge.models.SearchRequest;
+import com.grookage.concierge.models.config.ConfigState;
 import com.grookage.concierge.models.ingestion.ConfigurationResponse;
 import com.grookage.leia.provider.config.LeiaHttpConfiguration;
 import com.grookage.leia.provider.suppliers.LeiaHttpSupplier;
@@ -51,7 +52,7 @@ public class ConciergeClientSupplier extends LeiaHttpSupplier<List<Configuration
 
     @Override
     protected String url() {
-        return "/v1/configs/details/active";
+        return "/v1/configs/details";
     }
 
     @Override
@@ -61,6 +62,7 @@ public class ConciergeClientSupplier extends LeiaHttpSupplier<List<Configuration
                 okhttp3.MediaType.parse("application/json; charset=utf-8"),
                 MapperUtils.mapper().writeValueAsString(SearchRequest.builder()
                         .namespaces(namespaces)
+                        .configStates(Set.of(ConfigState.ACTIVATED))
                         .build()));
         final var requestBuilder = new Request.Builder()
                 .url(endPoint(url))
