@@ -83,7 +83,7 @@ public class ConfigServiceImpl implements ConfigService {
     private boolean match(ConfigDetails configDetails, SearchRequest searchRequest) {
         final var configKey = configDetails.getConfigKey();
         final var namespaceMatch = CollectionUtils.isNullOrEmpty(searchRequest.getNamespaces()) ||
-                searchRequest.getConfigNames().contains(configKey.getNamespace());
+                searchRequest.getNamespaces().contains(configKey.getNamespace());
         final var configNameMatch = CollectionUtils.isNullOrEmpty(searchRequest.getConfigNames()) ||
                 searchRequest.getConfigNames().contains(configKey.getConfigName());
         final var configStateMatch = CollectionUtils.isNullOrEmpty(searchRequest.getConfigStates()) ||
