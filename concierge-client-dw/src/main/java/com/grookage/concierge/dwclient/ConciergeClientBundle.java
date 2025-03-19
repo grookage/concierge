@@ -21,7 +21,7 @@ import com.grookage.concierge.client.ConciergeClient;
 import com.grookage.concierge.client.refresher.ConciergeClientRefresher;
 import com.grookage.concierge.client.refresher.ConciergeClientSupplier;
 import com.grookage.concierge.client.serde.SerDeFactory;
-import com.grookage.leia.provider.config.LeiaHttpConfiguration;
+import com.grookage.korg.config.KorgHttpConfiguration;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Environment;
@@ -45,7 +45,7 @@ public abstract class ConciergeClientBundle<T extends Configuration> implements 
         return false;
     }
 
-    protected abstract LeiaHttpConfiguration getHttpConfiguration(T configuration);
+    protected abstract KorgHttpConfiguration getHttpConfiguration(T configuration);
 
     protected Supplier<String> getAuthHeaderSupplier(T configuration) {
         return () -> null;
