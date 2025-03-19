@@ -6,7 +6,8 @@ All notable changes to this project will be documented in this file.
 
 - Added SearchRequest to filter on namespaces, configNames and configStates
 - Minor code convention improvements
-- Removed the latest from config, makes sense to have the actual version fetched, since version is now being supplied by the user - VersionIdGenerator has been removed.
+- Removed the latest from config, makes sense to have the actual version fetched, since version is now being supplied by
+  the user - VersionIdGenerator has been removed.
 
 ## [0.0.1-RC9]
 

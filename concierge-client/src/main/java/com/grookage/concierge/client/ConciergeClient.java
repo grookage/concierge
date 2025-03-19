@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +33,7 @@ public class ConciergeClient {
             final ConfigKey configKey
     ) {
         return allConfigs.stream()
-                        .filter(each -> each.getConfigKey().getReferenceId().equals(configKey.getReferenceId()))
-                        .findFirst();
+                .filter(each -> each.getConfigKey().getReferenceId().equals(configKey.getReferenceId()))
+                .findFirst();
     }
 }

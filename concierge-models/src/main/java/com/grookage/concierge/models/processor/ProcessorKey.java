@@ -2,7 +2,6 @@ package com.grookage.concierge.models.processor;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.grookage.concierge.models.config.ConfigEvent;
-import com.grookage.concierge.models.config.ConfigType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,5 +23,5 @@ public class ProcessorKey {
     private String configName;
     @NotNull
     private ConfigEvent configEvent;
-    private ConfigType configType;
+    private String configType;
 }

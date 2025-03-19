@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.common.base.Joiner;
 import com.grookage.concierge.models.config.ConfigHistoryItem;
 import com.grookage.concierge.models.config.ConfigState;
-import com.grookage.concierge.models.config.ConfigType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,7 +30,8 @@ public class StoredElasticRecord {
     String version;
     @NotNull
     ConfigState configState;
-    ConfigType configType;
+    @NotBlank
+    String configType;
     String description;
     @NotNull
     byte[] data;

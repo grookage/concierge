@@ -46,6 +46,7 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
     protected abstract CacheConfig getCacheConfig(T configuration);
 
     protected abstract Supplier<ConciergeRepository> getRepositorySupplier(T configuration);
+
     protected abstract Supplier<PermissionValidator<U>> getPermissionResolver(T configuration);
 
     protected List<ConciergeHealthCheck> withHealthChecks(T configuration) {
@@ -70,6 +71,10 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
     }
 
     protected abstract Supplier<ConfigDataValidator> getConfigDataValidator(T configuration);
+
+    protected boolean includeResources(T configuration) {
+        return true;
+    }
 
     @Override
     public void run(T configuration, Environment environment) {
@@ -111,9 +116,12 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
 
         withHealthChecks(configuration)
                 .forEach(leiaHealthCheck -> environment.healthChecks().register(leiaHealthCheck.getName(), leiaHealthCheck));
-        environment.jersey().register(new IngestionResource<>(ingestionService, userResolver, permissionResolver, configDataValidator));
-        environment.jersey().register(new ConfigResource(configService));
         environment.jersey().register(new ConciergeExceptionMapper());
+        final var includeResources = includeResources(configuration);
+        if (includeResources) {
+            environment.jersey().register(new IngestionResource<>(ingestionService, userResolver, permissionResolver, configDataValidator));
+            environment.jersey().register(new ConfigResource(configService));
+        }
     }
 
     @Override

@@ -24,7 +24,8 @@ public class ConfigKey {
     String configName;
     @NotBlank
     String version;
-    ConfigType configType;
+    @NotBlank
+    String configType;
 
     @JsonIgnore
     public String getReferenceId() {
