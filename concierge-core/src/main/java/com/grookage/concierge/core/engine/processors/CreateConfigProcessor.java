@@ -9,7 +9,6 @@ import com.grookage.concierge.models.exception.ConciergeCoreErrorCode;
 import com.grookage.concierge.models.exception.ConciergeException;
 import com.grookage.concierge.models.ingestion.ConfigurationRequest;
 import com.grookage.concierge.repository.ConciergeRepository;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.experimental.SuperBuilder;

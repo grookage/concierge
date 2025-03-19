@@ -2,7 +2,6 @@ package com.grookage.concierge.core.services.impl;
 
 import com.grookage.concierge.core.engine.ConciergeContext;
 import com.grookage.concierge.core.engine.ConciergeHub;
-import com.grookage.concierge.core.managers.ProcessorFactory;
 import com.grookage.concierge.core.services.IngestionService;
 import com.grookage.concierge.core.utils.ContextUtils;
 import com.grookage.concierge.models.ConfigUpdater;

@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [0.0.1-RC11]
 
-- Moved to [Korg](https://github.com/grookage/korg) from Leia Refresher. 
+- Moved to [Korg](https://github.com/grookage/korg) from Leia Refresher.
 
 ## [0.0.1-RC10]
 
