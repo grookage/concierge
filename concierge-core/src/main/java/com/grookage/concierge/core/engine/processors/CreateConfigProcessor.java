@@ -41,7 +41,7 @@ public class CreateConfigProcessor extends ConciergeProcessor {
                     createConfigRequest.getNamespace(), createConfigRequest.getConfigName());
             throw ConciergeException.error(ConciergeCoreErrorCode.CONFIG_ALREADY_EXISTS);
         }
-        final var configDetails = ConfigurationUtils.toCreateConfigRequest(createConfigRequest);
+        final var configDetails = ConfigurationUtils.toConfigDetails(createConfigRequest);
         addHistory(context, configDetails, createConfigRequest.getMessage());
         getRepositorySupplier().get().create(configDetails);
         context.addContext(ConfigDetails.class.getSimpleName(), configDetails);

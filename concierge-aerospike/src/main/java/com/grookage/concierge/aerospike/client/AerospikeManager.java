@@ -9,6 +9,7 @@ import com.aerospike.client.query.Statement;
 import com.grookage.concierge.aerospike.storage.AerospikeRecord;
 import com.grookage.concierge.aerospike.storage.AerospikeStorageConstants;
 import com.grookage.concierge.models.MapperUtils;
+import java.util.Set;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -84,9 +85,9 @@ public class AerospikeManager {
     }
 
     @SneakyThrows
-    public List<AerospikeRecord> getRecords(final Collection<String> namespaces,
-                                            final Collection<String> configNames,
-                                            final Collection<String> configStates) {
+    public List<AerospikeRecord> getRecords(final Set<String> namespaces,
+                                            final Set<String> configNames,
+                                            final Set<String> configStates) {
         final var queryStatement = new Statement();
         queryStatement.setNamespace(namespace);
         queryStatement.setSetName(AerospikeStorageConstants.CONFIG_SET);
