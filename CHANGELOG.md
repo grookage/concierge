@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Minor code convention improvements
 - Removed the latest from config, makes sense to have the actual version fetched, since version is now being supplied by
   the user - VersionIdGenerator has been removed.
+- Removed the unnecessary configType interface and is now bound as a String
 
 ## [0.0.1-RC9]
 
