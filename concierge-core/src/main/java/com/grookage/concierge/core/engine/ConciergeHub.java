@@ -5,6 +5,7 @@ import com.grookage.concierge.core.engine.processors.*;
 import com.grookage.concierge.core.engine.resolver.AppendConfigResolver;
 import com.grookage.concierge.core.engine.resolver.ConfigVersionManager;
 import com.grookage.concierge.core.engine.resolver.DefaultAppendConfigResolver;
+import com.grookage.concierge.core.managers.ProcessorFactory;
 import com.grookage.concierge.models.config.ConfigEvent;
 import com.grookage.concierge.models.config.ConfigEventVisitor;
 import com.grookage.concierge.repository.ConciergeRepository;
@@ -23,6 +24,7 @@ public class ConciergeHub {
     private Supplier<ConciergeRepository> repositorySupplier;
     private Supplier<AppendConfigResolver> appendConfigResolverSupplier = DefaultAppendConfigResolver::new;
     private ConfigVersionManager configVersionManager;
+    private Supplier<ProcessorFactory> processorFactorySupplier;
 
     private ConciergeHub() {
 
@@ -54,6 +56,12 @@ public class ConciergeHub {
         return this;
     }
 
+    public ConciergeHub withProcessorFactory(Supplier<ProcessorFactory> pfSupplier) {
+        Preconditions.checkNotNull(pfSupplier, "Processor Factory can't be null");
+        this.processorFactorySupplier = pfSupplier;
+        return this;
+    }
+
     public ConciergeHub build() {
         Arrays.stream(ConfigEvent.values()).forEach(this::buildProcessor);
         return this;
@@ -63,32 +71,52 @@ public class ConciergeHub {
         processors.putIfAbsent(configEvent, configEvent.accept(new ConfigEventVisitor<>() {
             @Override
             public ConciergeProcessor configCreate() {
-                return new CreateConfigProcessor(repositorySupplier);
+                return CreateConfigProcessor.builder()
+                        .processorFactory(processorFactorySupplier)
+                        .repositorySupplier(repositorySupplier)
+                        .build();
             }
 
             @Override
             public ConciergeProcessor configAppend() {
-                return new AppendConfigProcessor(repositorySupplier, appendConfigResolverSupplier);
+                return AppendConfigProcessor.builder()
+                        .repositorySupplier(repositorySupplier)
+                        .appendConfigResolverSupplier(appendConfigResolverSupplier)
+                        .processorFactory(processorFactorySupplier)
+                        .build();
             }
 
             @Override
             public ConciergeProcessor configUpdate() {
-                return new UpdateConfigProcessor(repositorySupplier);
+                return UpdateConfigProcessor.builder()
+                        .repositorySupplier(repositorySupplier)
+                        .processorFactory(processorFactorySupplier)
+                        .build();
             }
 
             @Override
             public ConciergeProcessor configApprove() {
-                return new ApproveConfigProcessor(repositorySupplier);
+                return ApproveConfigProcessor.builder()
+                        .repositorySupplier(repositorySupplier)
+                        .processorFactory(processorFactorySupplier)
+                        .build();
             }
 
             @Override
             public ConciergeProcessor configReject() {
-                return new RejectConfigProcessor(repositorySupplier);
+                return RejectConfigProcessor.builder()
+                        .processorFactory(processorFactorySupplier)
+                        .repositorySupplier(repositorySupplier)
+                        .build();
             }
 
             @Override
             public ConciergeProcessor configActivate() {
-                return new ActivateConfigProcessor(repositorySupplier, configVersionManager);
+                return ActivateConfigProcessor.builder()
+                        .repositorySupplier(repositorySupplier)
+                        .configVersionManager(configVersionManager)
+                        .processorFactory(processorFactorySupplier)
+                        .build();
             }
         }));
     }

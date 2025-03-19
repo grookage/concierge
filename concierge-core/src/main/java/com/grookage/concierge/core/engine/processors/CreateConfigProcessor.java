@@ -12,11 +12,12 @@ import com.grookage.concierge.repository.ConciergeRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.function.Supplier;
 
-@AllArgsConstructor
+@SuperBuilder
 @Slf4j
 @Getter
 public class CreateConfigProcessor extends ConciergeProcessor {

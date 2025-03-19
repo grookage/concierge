@@ -17,7 +17,10 @@ import java.util.Optional;
 class ApproveConfigProcessorTest extends AbstractProcessorTest {
     @Override
     public ConciergeProcessor createConciergeProcessor() {
-        return new ApproveConfigProcessor(this::getConciergeRepository);
+        return ApproveConfigProcessor.builder()
+                .processorFactory(this.getProcessorFactory())
+                .repositorySupplier(this::getConciergeRepository)
+                .build();
     }
 
     @Test

@@ -58,7 +58,7 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
     }
 
     protected Supplier<ProcessorFactory> withProcessorFactory(T configuration) {
-        return null;
+        return () -> null;
     }
 
     protected Supplier<AppendConfigResolver> getAppendConfigResolver(T configuration) {
@@ -71,10 +71,6 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
     }
 
     protected abstract Supplier<ConfigDataValidator> getConfigDataValidator(T configuration);
-
-    protected boolean includeResources(T configuration) {
-        return true;
-    }
 
     @Override
     public void run(T configuration, Environment environment) {
@@ -98,8 +94,9 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
                 .withRepositoryResolver(repositorySupplier)
                 .withAppendConfigResolverSupplier(getAppendConfigResolver(configuration))
                 .withConfigVersionManager(configVersionManager)
+                .withProcessorFactory(withProcessorFactory(configuration))
                 .build();
-        this.ingestionService = new IngestionServiceImpl<>(withProcessorFactory(configuration), conciergeHub);
+        this.ingestionService = new IngestionServiceImpl<>(conciergeHub);
         this.configService = new ConfigServiceImpl(repositorySupplier, cacheConfig);
         withLifecycleManagers(configuration)
                 .forEach(lifecycle -> environment.lifecycle().manage(new Managed() {
@@ -117,11 +114,8 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
         withHealthChecks(configuration)
                 .forEach(leiaHealthCheck -> environment.healthChecks().register(leiaHealthCheck.getName(), leiaHealthCheck));
         environment.jersey().register(new ConciergeExceptionMapper());
-        final var includeResources = includeResources(configuration);
-        if (includeResources) {
-            environment.jersey().register(new IngestionResource<>(ingestionService, userResolver, permissionResolver, configDataValidator));
-            environment.jersey().register(new ConfigResource(configService));
-        }
+        environment.jersey().register(new IngestionResource<>(ingestionService, userResolver, permissionResolver, configDataValidator));
+        environment.jersey().register(new ConfigResource(configService));
     }
 
     @Override

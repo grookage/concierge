@@ -15,7 +15,10 @@ class CreateConfigProcessorTest extends AbstractProcessorTest {
 
     @Override
     public ConciergeProcessor createConciergeProcessor() {
-        return new CreateConfigProcessor(this::getConciergeRepository);
+        return CreateConfigProcessor.builder()
+                .processorFactory(this.getProcessorFactory())
+                .repositorySupplier(this::getConciergeRepository)
+                .build();
     }
 
 

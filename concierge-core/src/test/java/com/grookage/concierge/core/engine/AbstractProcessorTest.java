@@ -10,13 +10,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public abstract class AbstractProcessorTest {
 
     public static final ConfigUpdater configUpdater = new TestConfigUpdater();
     private static ConciergeProcessor conciergeProcessor;
     private static ConciergeRepository conciergeRepository;
-    private static ProcessorFactory processorFactory;
+    private static ProcessorFactory processorFactory = Mockito.mock(ProcessorFactory.class);
     private static EventProcessor eventProcessor;
 
     public ConfigUpdater getConfigUpdater() {
@@ -31,12 +32,15 @@ public abstract class AbstractProcessorTest {
         return conciergeProcessor;
     }
 
+    public Supplier<ProcessorFactory> getProcessorFactory() {
+        return () -> processorFactory;
+    }
+
     public abstract ConciergeProcessor createConciergeProcessor();
 
     @BeforeEach
     void setup() {
         conciergeRepository = Mockito.mock(ConciergeRepository.class);
-        processorFactory = Mockito.mock(ProcessorFactory.class);
         eventProcessor = Mockito.mock(EventProcessor.class);
         Mockito.when(processorFactory.getProcessor(Mockito.any(ProcessorKey.class)))
                 .thenReturn(Optional.of(eventProcessor));

@@ -13,14 +13,15 @@ import com.grookage.concierge.repository.ConciergeRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Set;
 import java.util.function.Supplier;
 
-@AllArgsConstructor
 @Slf4j
 @Getter
+@SuperBuilder
 public class ActivateConfigProcessor extends ConciergeProcessor {
 
     private static final Set<ConfigState> ACCEPTABLE_STATES = Set.of(ConfigState.APPROVED);
