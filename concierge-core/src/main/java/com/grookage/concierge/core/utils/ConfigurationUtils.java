@@ -12,7 +12,7 @@ import lombok.experimental.UtilityClass;
 public class ConfigurationUtils {
 
     @SneakyThrows
-    public ConfigDetails toCreateConfigRequest(ConfigurationRequest configurationRequest) {
+    public ConfigDetails toConfigDetails(ConfigurationRequest configurationRequest) {
         return ConfigDetails.builder()
                 .configKey(ConfigKey.builder()
                         .namespace(configurationRequest.getNamespace())
