@@ -74,35 +74,22 @@ public class AerospikeRepository implements ConciergeRepository {
 
     @Override
     public List<ConfigDetails> getStoredRecords() {
-        return aerospikeManager.getRecords(List.of(), List.of(), List.of())
+        return aerospikeManager.getRecords(Set.of(), Set.of(), Set.of())
                 .stream().map(this::toConfigDetails).toList();
     }
 
     @Override
-    public List<ConfigDetails> getStoredRecords(String namespace, Set<String> configNames, Set<ConfigState> configStates) {
-        return aerospikeManager.getRecords(List.of(namespace), configNames.stream().toList(),
-                        configStates.stream().map(Enum::name).toList())
-                .stream().map(this::toConfigDetails).toList();
-    }
-
-    @Override
-    public List<ConfigDetails> getActiveStoredRecords(Set<String> namespaces) {
-        return aerospikeManager.getRecords(namespaces.stream().toList(),
-                        List.of(), List.of(ConfigState.ACTIVATED.name())).stream()
-                .map(this::toConfigDetails).toList();
-    }
-
-    @Override
-    public List<ConfigDetails> getStoredRecords(Set<String> namespaces) {
-        return aerospikeManager.getRecords(namespaces.stream().toList(), List.of(), List.of())
+    public List<ConfigDetails> getStoredRecords(Set<String> namespaces, Set<String> configNames, Set<ConfigState> configStates) {
+        return aerospikeManager.getRecords(namespaces, configNames,
+                        configStates.stream().map(Enum::name).collect(Collectors.toSet()))
                 .stream().map(this::toConfigDetails).toList();
     }
 
     @Override
     public void rollOverAndUpdate(ConfigDetails configDetails) {
-        final var newRecords = aerospikeManager.getRecords(List.of(configDetails.getConfigKey().getNamespace()),
-                        List.of(configDetails.getConfigKey().getConfigName()),
-                        List.of(ConfigState.ACTIVATED.name()))
+        final var newRecords = aerospikeManager.getRecords(Set.of(configDetails.getConfigKey().getNamespace()),
+                        Set.of(configDetails.getConfigKey().getConfigName()),
+                        Set.of(ConfigState.ACTIVATED.name()))
                 .stream().peek(each -> each.setConfigState(ConfigState.ROLLED)).collect(Collectors.toList());
         newRecords.add(toStorageRecord(configDetails));
         aerospikeManager.bulkUpdate(newRecords);

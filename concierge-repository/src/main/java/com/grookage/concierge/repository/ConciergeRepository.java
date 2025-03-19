@@ -20,11 +20,7 @@ public interface ConciergeRepository {
 
     List<ConfigDetails> getStoredRecords();
 
-    List<ConfigDetails> getStoredRecords(String namespace, Set<String> configNames, Set<ConfigState> configStates);
-
-    List<ConfigDetails> getActiveStoredRecords(Set<String> namespaces);
-
-    List<ConfigDetails> getStoredRecords(Set<String> namespaces);
+    List<ConfigDetails> getStoredRecords(Set<String> namespaces, Set<String> configNames, Set<ConfigState> configStates);
 
     void rollOverAndUpdate(ConfigDetails configDetails);
 

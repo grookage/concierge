@@ -2,7 +2,6 @@ package com.grookage.concierge.core.engine.processors;
 
 import com.grookage.concierge.core.engine.ConciergeContext;
 import com.grookage.concierge.core.engine.ConciergeProcessor;
-import com.grookage.concierge.core.managers.VersionGenerator;
 import com.grookage.concierge.core.utils.ConfigurationUtils;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigEvent;
@@ -13,17 +12,17 @@ import com.grookage.concierge.repository.ConciergeRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.function.Supplier;
 
-@AllArgsConstructor
+@SuperBuilder
 @Slf4j
 @Getter
 public class CreateConfigProcessor extends ConciergeProcessor {
 
     private final Supplier<ConciergeRepository> repositorySupplier;
-    private final Supplier<VersionGenerator> versionSupplier;
 
     @Override
     public ConfigEvent name() {
@@ -43,9 +42,7 @@ public class CreateConfigProcessor extends ConciergeProcessor {
                     createConfigRequest.getNamespace(), createConfigRequest.getConfigName());
             throw ConciergeException.error(ConciergeCoreErrorCode.CONFIG_ALREADY_EXISTS);
         }
-        final var configDetails = ConfigurationUtils.toCreateConfigRequest(createConfigRequest,
-                getVersionSupplier().get()
-        );
+        final var configDetails = ConfigurationUtils.toConfigDetails(createConfigRequest);
         addHistory(context, configDetails, createConfigRequest.getMessage());
         getRepositorySupplier().get().create(configDetails);
         context.addContext(ConfigDetails.class.getSimpleName(), configDetails);

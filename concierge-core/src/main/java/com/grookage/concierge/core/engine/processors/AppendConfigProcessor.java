@@ -15,11 +15,12 @@ import com.grookage.concierge.repository.ConciergeRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.function.Supplier;
 
-@AllArgsConstructor
+@SuperBuilder
 @Getter
 @Slf4j
 public class AppendConfigProcessor extends ConciergeProcessor {

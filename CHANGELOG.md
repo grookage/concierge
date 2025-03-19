@@ -2,9 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.1-RC10]
+
+- Added SearchRequest to filter on namespaces, configNames and configStates
+- Minor code convention improvements
+- Removed the latest from config, makes sense to have the actual version fetched, since version is now being supplied by
+  the user - VersionIdGenerator has been removed.
+- Removed the unnecessary configType interface and is now bound as a String
+
 ## [0.0.1-RC9]
 
-- Moved CacheConfig and cache handling to ConfigService from Repository. This is now coupled with jersey resources sending an ignoreCache queryParam if real time fetch from datastores are required.
+- Moved CacheConfig and cache handling to ConfigService from Repository. This is now coupled with jersey resources
+  sending an ignoreCache queryParam if real time fetch from datastores are required.
 - Added an updateMessage on Config Creation, Update and on Append for configurations.
 
 ## [0.0.1-RC8]

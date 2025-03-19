@@ -1,4 +1,4 @@
-package com.grookage.concierge.core.utils;
+package com.grookage.concierge.models;
 
 import lombok.experimental.UtilityClass;
 

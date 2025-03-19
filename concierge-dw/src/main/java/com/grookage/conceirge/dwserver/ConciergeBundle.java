@@ -15,7 +15,6 @@ import com.grookage.concierge.core.engine.resolver.DefaultAppendConfigResolver;
 import com.grookage.concierge.core.engine.resolver.DefaultConfigVersionManager;
 import com.grookage.concierge.core.engine.validator.ConfigDataValidator;
 import com.grookage.concierge.core.managers.ProcessorFactory;
-import com.grookage.concierge.core.managers.VersionGenerator;
 import com.grookage.concierge.core.services.ConfigService;
 import com.grookage.concierge.core.services.IngestionService;
 import com.grookage.concierge.core.services.impl.ConfigServiceImpl;
@@ -33,6 +32,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.function.Supplier;
 
+@SuppressWarnings("unused")
 @NoArgsConstructor
 @Getter
 public abstract class ConciergeBundle<T extends Configuration, U extends ConfigUpdater> implements ConfiguredBundle<T> {
@@ -47,8 +47,6 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
 
     protected abstract Supplier<ConciergeRepository> getRepositorySupplier(T configuration);
 
-    protected abstract Supplier<VersionGenerator> getVersionSupplier();
-
     protected abstract Supplier<PermissionValidator<U>> getPermissionResolver(T configuration);
 
     protected List<ConciergeHealthCheck> withHealthChecks(T configuration) {
@@ -60,7 +58,7 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
     }
 
     protected Supplier<ProcessorFactory> withProcessorFactory(T configuration) {
-        return null;
+        return () -> null;
     }
 
     protected Supplier<AppendConfigResolver> getAppendConfigResolver(T configuration) {
@@ -94,11 +92,11 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
 
         final var conciergeHub = ConciergeHub.of()
                 .withRepositoryResolver(repositorySupplier)
-                .withVersionSupplier(getVersionSupplier())
                 .withAppendConfigResolverSupplier(getAppendConfigResolver(configuration))
                 .withConfigVersionManager(configVersionManager)
+                .withProcessorFactory(withProcessorFactory(configuration))
                 .build();
-        this.ingestionService = new IngestionServiceImpl<>(withProcessorFactory(configuration), conciergeHub);
+        this.ingestionService = new IngestionServiceImpl<>(conciergeHub);
         this.configService = new ConfigServiceImpl(repositorySupplier, cacheConfig);
         withLifecycleManagers(configuration)
                 .forEach(lifecycle -> environment.lifecycle().manage(new Managed() {
@@ -115,9 +113,9 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
 
         withHealthChecks(configuration)
                 .forEach(leiaHealthCheck -> environment.healthChecks().register(leiaHealthCheck.getName(), leiaHealthCheck));
+        environment.jersey().register(new ConciergeExceptionMapper());
         environment.jersey().register(new IngestionResource<>(ingestionService, userResolver, permissionResolver, configDataValidator));
         environment.jersey().register(new ConfigResource(configService));
-        environment.jersey().register(new ConciergeExceptionMapper());
     }
 
     @Override

@@ -6,9 +6,10 @@ import com.grookage.concierge.client.refresher.ConciergeClientRefresher;
 import com.grookage.concierge.client.refresher.ConciergeClientSupplier;
 import com.grookage.concierge.client.serde.SerDe;
 import com.grookage.concierge.client.serde.SerDeFactory;
-import com.grookage.concierge.models.NamespaceRequest;
 import com.grookage.concierge.models.ResourceHelper;
+import com.grookage.concierge.models.SearchRequest;
 import com.grookage.concierge.models.config.ConfigKey;
+import com.grookage.concierge.models.config.ConfigState;
 import com.grookage.concierge.models.ingestion.ConfigurationResponse;
 import com.grookage.leia.provider.config.LeiaHttpConfiguration;
 import com.grookage.leia.provider.endpoint.EndPointScheme;
@@ -29,13 +30,14 @@ class ConciergeClientTest {
     @Test
     @SneakyThrows
     void testConciergeClient(WireMockRuntimeInfo wireMockRuntimeInfo) {
-        final var namespaceRequest = NamespaceRequest.builder()
+        final var searchRequest = SearchRequest.builder()
                 .namespaces(Set.of("concierge"))
+                .configStates(Set.of(ConfigState.ACTIVATED))
                 .build();
         final var configResponse = ResourceHelper.getResource("configurationResponse.json",
                 ConfigurationResponse.class);
-        stubFor(post(urlEqualTo("/v1/configs/details/active"))
-                .withRequestBody(binaryEqualTo(ResourceHelper.getObjectMapper().writeValueAsBytes(namespaceRequest)))
+        stubFor(post(urlEqualTo("/v1/configs/details"))
+                .withRequestBody(binaryEqualTo(ResourceHelper.getObjectMapper().writeValueAsBytes(searchRequest)))
                 .willReturn(aResponse()
                         .withBody(ResourceHelper.getObjectMapper().writeValueAsBytes(configResponse))
                         .withStatus(200)));
