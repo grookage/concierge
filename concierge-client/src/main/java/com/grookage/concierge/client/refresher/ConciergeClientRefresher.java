@@ -17,12 +17,12 @@
 package com.grookage.concierge.client.refresher;
 
 import com.grookage.concierge.models.ingestion.ConfigurationResponse;
-import com.grookage.leia.provider.refresher.HttpLeiaRefresher;
+import com.grookage.korg.refresher.HttpKorgRefresher;
 import lombok.Builder;
 
 import java.util.List;
 
-public class ConciergeClientRefresher extends HttpLeiaRefresher<List<ConfigurationResponse>> {
+public class ConciergeClientRefresher extends HttpKorgRefresher<List<ConfigurationResponse>> {
 
     @Builder
     public ConciergeClientRefresher(ConciergeClientSupplier supplier, int refreshTimeInSeconds,

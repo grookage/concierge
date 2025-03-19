@@ -22,8 +22,8 @@ import com.grookage.concierge.models.MapperUtils;
 import com.grookage.concierge.models.SearchRequest;
 import com.grookage.concierge.models.config.ConfigState;
 import com.grookage.concierge.models.ingestion.ConfigurationResponse;
-import com.grookage.leia.provider.config.LeiaHttpConfiguration;
-import com.grookage.leia.provider.suppliers.LeiaHttpSupplier;
+import com.grookage.korg.config.KorgHttpConfiguration;
+import com.grookage.korg.suppliers.KorgHttpSupplier;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -36,13 +36,13 @@ import java.util.function.Supplier;
 
 @SuppressWarnings({"deprecation", "KotlinInternalInJava"})
 @Getter
-public class ConciergeClientSupplier extends LeiaHttpSupplier<List<ConfigurationResponse>> {
+public class ConciergeClientSupplier extends KorgHttpSupplier<List<ConfigurationResponse>> {
 
     private final Set<String> namespaces;
     private final Supplier<String> authHeaderSupplier;
 
     @Builder
-    public ConciergeClientSupplier(LeiaHttpConfiguration httpConfiguration,
+    public ConciergeClientSupplier(KorgHttpConfiguration httpConfiguration,
                                    Set<String> namespaces,
                                    Supplier<String> authHeaderSupplier) {
         super(httpConfiguration, ConciergeClientMarshallar.getInstance(), "getClientNamespaces");

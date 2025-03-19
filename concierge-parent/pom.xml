@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.grookage.concierge</groupId>
         <artifactId>concierge-bom</artifactId>
-        <version>0.0.1-RC10</version>
+        <version>0.0.1-RC11</version>
         <relativePath>../concierge-bom</relativePath>
     </parent>
 
@@ -39,6 +39,8 @@
 
         <dropwizard.version>2.1.10</dropwizard.version>
         <awaitility.version>4.1.1</awaitility.version>
+
+        <korg.version>0.0.1-RC2</korg.version>
     </properties>
 
     <dependencyManagement>

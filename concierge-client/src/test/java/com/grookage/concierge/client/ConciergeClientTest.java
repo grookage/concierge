@@ -11,8 +11,8 @@ import com.grookage.concierge.models.SearchRequest;
 import com.grookage.concierge.models.config.ConfigKey;
 import com.grookage.concierge.models.config.ConfigState;
 import com.grookage.concierge.models.ingestion.ConfigurationResponse;
-import com.grookage.leia.provider.config.LeiaHttpConfiguration;
-import com.grookage.leia.provider.endpoint.EndPointScheme;
+import com.grookage.korg.config.KorgHttpConfiguration;
+import com.grookage.korg.endpoint.EndPointScheme;
 import lombok.Builder;
 import lombok.Data;
 import lombok.SneakyThrows;
@@ -41,7 +41,7 @@ class ConciergeClientTest {
                 .willReturn(aResponse()
                         .withBody(ResourceHelper.getObjectMapper().writeValueAsBytes(configResponse))
                         .withStatus(200)));
-        val clientConfig = LeiaHttpConfiguration.builder()
+        val clientConfig = KorgHttpConfiguration.builder()
                 .host("127.0.0.1")
                 .port(wireMockRuntimeInfo.getHttpPort())
                 .scheme(EndPointScheme.HTTP)
@@ -58,19 +58,15 @@ class ConciergeClientTest {
                 1,
                 true
         );
+        clientRefresher.start();
         final var serDeFactory = new SerDeFactory() {
             @SuppressWarnings("unchecked")
             @Override
             public SerDe<CustomConvert> getSerDe(ConfigKey configKey) {
-                return new SerDe<CustomConvert>() {
-                    @Override
-                    public CustomConvert convert(ConfigurationResponse configurationResponse) {
-                        return CustomConvert.builder()
-                                .namespace(configurationResponse.getConfigKey().getNamespace())
-                                .configName(configurationResponse.getConfigKey().getConfigName())
-                                .build();
-                    }
-                };
+                return configurationResponse -> CustomConvert.builder()
+                        .namespace(configurationResponse.getConfigKey().getNamespace())
+                        .configName(configurationResponse.getConfigKey().getConfigName())
+                        .build();
             }
         };
         final var conciergeClient = new ConciergeClient(serDeFactory, clientRefresher);

@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.grookage.concierge</groupId>
         <artifactId>concierge-parent</artifactId>
-        <version>0.0.1-RC10</version>
+        <version>0.0.1-RC11</version>
         <relativePath>../concierge-parent</relativePath>
     </parent>
 
@@ -14,7 +14,6 @@
 
     <properties>
         <maven.deploy.skip>false</maven.deploy.skip>
-        <leia.refresher.version>0.0.1-RC9</leia.refresher.version>
         <wiremock.version>3.3.1</wiremock.version>
     </properties>
 
@@ -25,9 +24,9 @@
         </dependency>
 
         <dependency>
-            <artifactId>leia-refresher</artifactId>
-            <groupId>com.grookage.leia</groupId>
-            <version>${leia.refresher.version}</version>
+            <artifactId>korg</artifactId>
+            <groupId>com.grookage.apps</groupId>
+            <version>${korg.version}</version>
         </dependency>
 
         <dependency>

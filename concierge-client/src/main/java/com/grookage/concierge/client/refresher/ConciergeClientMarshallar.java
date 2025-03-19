@@ -19,7 +19,7 @@ package com.grookage.concierge.client.refresher;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.grookage.concierge.models.MapperUtils;
 import com.grookage.concierge.models.ingestion.ConfigurationResponse;
-import com.grookage.leia.provider.marshal.Marshaller;
+import com.grookage.korg.marshal.Marshaller;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 

@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.grookage.concierge</groupId>
         <artifactId>concierge-parent</artifactId>
-        <version>0.0.1-RC10</version>
+        <version>0.0.1-RC11</version>
         <relativePath>../concierge-parent</relativePath>
     </parent>
 
@@ -50,12 +50,6 @@
         </dependency>
 
         <dependency>
-            <artifactId>leia-refresher</artifactId>
-            <groupId>com.grookage.leia</groupId>
-            <version>${leia.refresher.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
             <version>4.1.0</version>
@@ -65,8 +59,7 @@
     </dependencies>
 
     <properties>
-        <maven.deploy.skip>false</maven.deploy.skip>
-        <leia.refresher.version>0.0.1-RC7</leia.refresher.version>
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
 </project>

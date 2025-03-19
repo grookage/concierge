@@ -1,9 +1,9 @@
 package com.grookage.concierge.core.cache;
 
-import com.grookage.leia.provider.refresher.AbstractLeiaRefresher;
+import com.grookage.korg.refresher.AbstractKorgRefresher;
 import lombok.Builder;
 
-public class RepositoryRefresher extends AbstractLeiaRefresher<ConfigRegistry> {
+public class RepositoryRefresher extends AbstractKorgRefresher<ConfigRegistry> {
 
     @Builder
     protected RepositoryRefresher(RepositorySupplier supplier,
