@@ -1,5 +1,10 @@
 {
-  "namespace": "testNamespace",
-  "configName": "testConfig",
+  "configKey" : {
+    "namespace": "testNamespace",
+    "configName": "testConfig",
+    "version": "V12345",
+    "orgId" : "testOrg",
+    "tenantId" : "default"
+  },
   "configEvent": "CREATE_CONFIG"
 }

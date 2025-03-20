@@ -32,10 +32,8 @@ public class IngestionServiceImpl<C extends ConfigUpdater> implements IngestionS
         conciergeContext.addContext(ConfigurationRequest.class.getSimpleName(), configurationRequest);
         ContextUtils.addConfigUpdaterContext(conciergeContext, configUpdater);
         final var processorKey = ProcessorKey.builder()
-                .namespace(configurationRequest.getNamespace())
-                .configName(configurationRequest.getConfigName())
+                .configKey(configurationRequest.getConfigKey())
                 .configEvent(ConfigEvent.CREATE_CONFIG)
-                .configType(configurationRequest.getConfigType())
                 .build();
         conciergeContext.addContext(ProcessorKey.class.getSimpleName(), processorKey);
         final var processor = conciergeHub.getProcessor(ConfigEvent.CREATE_CONFIG)
@@ -51,10 +49,8 @@ public class IngestionServiceImpl<C extends ConfigUpdater> implements IngestionS
         conciergeContext.addContext(UpdateConfigRequest.class.getSimpleName(), configurationRequest);
         ContextUtils.addConfigUpdaterContext(conciergeContext, configUpdater);
         final var processorKey = ProcessorKey.builder()
-                .namespace(configurationRequest.getNamespace())
-                .configName(configurationRequest.getConfigName())
+                .configKey(configurationRequest.getConfigKey())
                 .configEvent(ConfigEvent.APPEND_CONFIG)
-                .configType(configurationRequest.getConfigType())
                 .build();
         conciergeContext.addContext(ProcessorKey.class.getSimpleName(), processorKey);
         final var processor = conciergeHub.getProcessor(ConfigEvent.APPEND_CONFIG)
@@ -70,10 +66,8 @@ public class IngestionServiceImpl<C extends ConfigUpdater> implements IngestionS
         conciergeContext.addContext(UpdateConfigRequest.class.getSimpleName(), configurationRequest);
         ContextUtils.addConfigUpdaterContext(conciergeContext, configUpdater);
         final var processorKey = ProcessorKey.builder()
-                .namespace(configurationRequest.getNamespace())
-                .configName(configurationRequest.getConfigName())
+                .configKey(configurationRequest.getConfigKey())
                 .configEvent(ConfigEvent.CREATE_CONFIG)
-                .configType(configurationRequest.getConfigType())
                 .build();
         conciergeContext.addContext(ProcessorKey.class.getSimpleName(), processorKey);
         final var processor = conciergeHub.getProcessor(ConfigEvent.UPDATE_CONFIG)
@@ -89,10 +83,8 @@ public class IngestionServiceImpl<C extends ConfigUpdater> implements IngestionS
         conciergeContext.addContext(ConfigKey.class.getSimpleName(), configKey);
         ContextUtils.addConfigUpdaterContext(conciergeContext, configUpdater);
         final var processorKey = ProcessorKey.builder()
-                .namespace(configKey.getNamespace())
-                .configName(configKey.getConfigName())
+                .configKey(configKey)
                 .configEvent(ConfigEvent.CREATE_CONFIG)
-                .configType(configKey.getConfigType())
                 .build();
         conciergeContext.addContext(ProcessorKey.class.getSimpleName(), processorKey);
         final var processor = conciergeHub.getProcessor(ConfigEvent.APPROVE_CONFIG)
@@ -108,10 +100,8 @@ public class IngestionServiceImpl<C extends ConfigUpdater> implements IngestionS
         conciergeContext.addContext(ConfigKey.class.getSimpleName(), configKey);
         ContextUtils.addConfigUpdaterContext(conciergeContext, configUpdater);
         final var processorKey = ProcessorKey.builder()
-                .namespace(configKey.getNamespace())
-                .configName(configKey.getConfigName())
+                .configKey(configKey)
                 .configEvent(ConfigEvent.CREATE_CONFIG)
-                .configType(configKey.getConfigType())
                 .build();
         conciergeContext.addContext(ProcessorKey.class.getSimpleName(), processorKey);
         final var processor = conciergeHub.getProcessor(ConfigEvent.REJECT_CONFIG)
@@ -127,10 +117,8 @@ public class IngestionServiceImpl<C extends ConfigUpdater> implements IngestionS
         conciergeContext.addContext(ConfigKey.class.getSimpleName(), configKey);
         ContextUtils.addConfigUpdaterContext(conciergeContext, configUpdater);
         final var processorKey = ProcessorKey.builder()
-                .namespace(configKey.getNamespace())
-                .configName(configKey.getConfigName())
                 .configEvent(ConfigEvent.CREATE_CONFIG)
-                .configType(configKey.getConfigType())
+                .configKey(configKey)
                 .build();
         conciergeContext.addContext(ProcessorKey.class.getSimpleName(), processorKey);
         final var processor = conciergeHub.getProcessor(ConfigEvent.ACTIVATE_CONFIG)

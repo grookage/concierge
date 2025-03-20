@@ -17,32 +17,10 @@ import javax.validation.constraints.NotNull;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConfigurationRequest {
-    @NotBlank
-    String orgId;
-    @NotBlank
-    String namespace;
-    @NotBlank
-    String tenantId;
-    @NotBlank
-    String configName;
-    @NotBlank
-    String versionId;
     String description;
     @NotNull
     Object data;
-    @NotBlank
-    String configType;
+    @NotNull
+    ConfigKey configKey;
     String message;
-
-    @JsonIgnore
-    public ConfigKey getConfigKey() {
-        return ConfigKey.builder()
-                .namespace(namespace)
-                .configName(configName)
-                .configType(configType)
-                .version(versionId)
-                .orgId(orgId)
-                .tenantId(tenantId)
-                .build();
-    }
 }

@@ -15,8 +15,8 @@ class IngestionRequestTest {
         final var configurationRequest = ResourceHelper.getResource("configurationRequest.json",
                 ConfigurationRequest.class);
         Assertions.assertNotNull(configurationRequest);
-        Assertions.assertEquals("concierge", configurationRequest.getNamespace());
-        Assertions.assertEquals("testConfig", configurationRequest.getConfigName());
+        Assertions.assertEquals("concierge", configurationRequest.getConfigKey().getNamespace());
+        Assertions.assertEquals("testConfig", configurationRequest.getConfigKey().getConfigName());
         Assertions.assertNotNull(configurationRequest.getData());
     }
 
@@ -26,9 +26,9 @@ class IngestionRequestTest {
         final var updateConfigurationRequest = ResourceHelper.getResource("updateConfiguration.json",
                 UpdateConfigRequest.class);
         Assertions.assertNotNull(updateConfigurationRequest);
-        Assertions.assertEquals("concierge", updateConfigurationRequest.getNamespace());
-        Assertions.assertEquals("testConfig", updateConfigurationRequest.getConfigName());
-        Assertions.assertEquals("V12345", updateConfigurationRequest.getVersion());
+        Assertions.assertEquals("concierge", updateConfigurationRequest.getConfigKey().getNamespace());
+        Assertions.assertEquals("testConfig", updateConfigurationRequest.getConfigKey().getConfigName());
+        Assertions.assertEquals("V12345", updateConfigurationRequest.getConfigKey().getVersion());
         Assertions.assertNotNull(updateConfigurationRequest.getData());
     }
 

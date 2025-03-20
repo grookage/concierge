@@ -14,12 +14,7 @@ public class ConfigurationUtils {
     @SneakyThrows
     public ConfigDetails toConfigDetails(ConfigurationRequest configurationRequest) {
         return ConfigDetails.builder()
-                .configKey(ConfigKey.builder()
-                        .namespace(configurationRequest.getNamespace())
-                        .version(configurationRequest.getVersionId())
-                        .configName(configurationRequest.getConfigName())
-                        .configType(configurationRequest.getConfigType())
-                        .build())
+                .configKey(configurationRequest.getConfigKey())
                 .configState(ConfigState.CREATED)
                 .description(configurationRequest.getDescription())
                 .data(MapperUtils.mapper().writeValueAsBytes(configurationRequest.getData()))

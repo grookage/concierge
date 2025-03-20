@@ -37,16 +37,12 @@ public class UpdateConfigProcessor extends ConciergeProcessor {
                 .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.VALUE_NOT_FOUND));
         final var storedConfig = getRepositorySupplier()
                 .get()
-                .getStoredRecord(ConfigKey.builder()
-                        .version(updateConfigRequest.getVersion())
-                        .configName(updateConfigRequest.getConfigName())
-                        .namespace(updateConfigRequest.getNamespace())
-                        .build()).orElse(null);
+                .getStoredRecord(updateConfigRequest.getConfigKey()).orElse(null);
         if (null == storedConfig || storedConfig.getConfigState() != ConfigState.CREATED) {
             log.error("There are no stored configs present with namespace {}, version {} and configName {}. Please try updating them instead",
-                    updateConfigRequest.getNamespace(),
-                    updateConfigRequest.getVersion(),
-                    updateConfigRequest.getConfigName());
+                    updateConfigRequest.getConfigKey().getNamespace(),
+                    updateConfigRequest.getConfigKey().getVersion(),
+                    updateConfigRequest.getConfigKey().getConfigName());
             throw ConciergeException.error(ConciergeCoreErrorCode.NO_CONFIG_FOUND);
         }
         storedConfig.setDescription(updateConfigRequest.getDescription());

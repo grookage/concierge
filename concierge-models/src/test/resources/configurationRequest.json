@@ -1,8 +1,10 @@
 {
-  "namespace": "concierge",
-  "configName": "testConfig",
-  "orgId" : "testOrg",
-  "tenantId" : "default",
-  "version": "V12345",
+  "configKey" : {
+    "namespace": "concierge",
+    "configName": "testConfig",
+    "orgId" : "testOrg",
+    "tenantId" : "default",
+    "version": "V12345"
+  },
   "data": ""
 }
