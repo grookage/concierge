@@ -3,8 +3,8 @@
     "namespace": "concierge",
     "configName": "testConfig",
     "version": "V12345",
-    "orgId" : "testOrg",
-    "tenantId" : "default"
+    "orgId": "testOrg",
+    "tenantId": "default"
   },
   "configState": "CREATED",
   "data": ""

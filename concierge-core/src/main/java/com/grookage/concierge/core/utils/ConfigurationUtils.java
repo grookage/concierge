@@ -2,7 +2,6 @@ package com.grookage.concierge.core.utils;
 
 import com.grookage.concierge.models.MapperUtils;
 import com.grookage.concierge.models.config.ConfigDetails;
-import com.grookage.concierge.models.config.ConfigKey;
 import com.grookage.concierge.models.config.ConfigState;
 import com.grookage.concierge.models.ingestion.ConfigurationRequest;
 import lombok.SneakyThrows;

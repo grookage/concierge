@@ -28,7 +28,6 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Environment;
 import lombok.Getter;
 
-import java.util.Set;
 import java.util.function.Supplier;
 
 @SuppressWarnings("unused")

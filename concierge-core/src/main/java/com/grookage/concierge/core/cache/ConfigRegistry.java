@@ -1,7 +1,6 @@
 package com.grookage.concierge.core.cache;
 
 import com.grookage.concierge.models.config.ConfigDetails;
-import com.grookage.concierge.models.config.ConfigKey;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;

@@ -6,7 +6,6 @@ All notable changes to this project will be documented in this file.
 
 - Introduced orgId and tenantId to configKey
 
-
 ## [0.0.1-RC11]
 
 - Moved to [Korg](https://github.com/grookage/korg) from Leia Refresher.

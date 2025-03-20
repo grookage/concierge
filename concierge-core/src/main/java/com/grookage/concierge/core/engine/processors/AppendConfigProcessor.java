@@ -6,7 +6,6 @@ import com.grookage.concierge.core.engine.resolver.AppendConfigResolver;
 import com.grookage.concierge.models.MapperUtils;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigEvent;
-import com.grookage.concierge.models.config.ConfigKey;
 import com.grookage.concierge.models.config.ConfigState;
 import com.grookage.concierge.models.exception.ConciergeCoreErrorCode;
 import com.grookage.concierge.models.exception.ConciergeException;
