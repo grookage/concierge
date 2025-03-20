@@ -10,6 +10,8 @@ import java.util.Optional;
 
 public interface ConfigService {
 
+    Optional<ConfigDetails> getConfig(ConciergeRequestContext requestContext, String referenceId);
+
     Optional<ConfigDetails> getConfig(ConciergeRequestContext requestContext, ConfigKey configKey);
 
     List<ConfigDetails> getConfigs(ConciergeRequestContext requestContext, SearchRequest searchRequest);

@@ -87,11 +87,8 @@ public class ElasticRepository implements ConciergeRepository {
                 .data(configDetails.getData())
                 .configHistories(configDetails.getConfigHistories())
                 .configState(configDetails.getConfigState())
-                .version(configDetails.getConfigKey().getVersion())
                 .description(configDetails.getDescription())
-                .namespace(configDetails.getConfigKey().getNamespace())
-                .configName(configDetails.getConfigKey().getConfigName())
-                .configType(configDetails.getConfigKey().getConfigType())
+                .configKey(configDetails.getConfigKey())
                 .build();
     }
 
@@ -101,12 +98,7 @@ public class ElasticRepository implements ConciergeRepository {
                 .configHistories(storedElasticRecord.getConfigHistories())
                 .configState(storedElasticRecord.getConfigState())
                 .description(storedElasticRecord.getDescription())
-                .configKey(ConfigKey.builder()
-                        .version(storedElasticRecord.getVersion())
-                        .namespace(storedElasticRecord.getNamespace())
-                        .configName(storedElasticRecord.getConfigName())
-                        .configType(storedElasticRecord.getConfigType())
-                        .build())
+                .configKey(storedElasticRecord.getConfigKey())
                 .build();
     }
 
@@ -126,15 +118,6 @@ public class ElasticRepository implements ConciergeRepository {
                 .stream()
                 .filter(searchPredicate)
                 .map(each -> toConfigDetails(Objects.requireNonNull(each.source()))).toList();
-    }
-
-    @Override
-    @SneakyThrows
-    public Optional<ConfigDetails> getStoredRecord(ConfigKey configKey) {
-        final var getResponse = client.get(GetRequest.of(request ->
-                        request.index(CONFIG_INDEX).id(configKey.getReferenceId())),
-                StoredElasticRecord.class);
-        return Optional.ofNullable(getResponse.source()).map(this::toConfigDetails);
     }
 
     @Override
@@ -202,6 +185,15 @@ public class ElasticRepository implements ConciergeRepository {
 
     @Override
     @SneakyThrows
+    public Optional<ConfigDetails> getStoredRecord(String referenceId) {
+        final var getResponse = client.get(GetRequest.of(request ->
+                        request.index(CONFIG_INDEX).id(referenceId)),
+                StoredElasticRecord.class);
+        return Optional.ofNullable(getResponse.source()).map(this::toConfigDetails);
+    }
+
+    @Override
+    @SneakyThrows
     public List<ConfigDetails> getStoredRecords() {
         final var query = MatchAllQuery.of(q -> q)._toQuery();
         final var searchQuery = BoolQuery.of(q -> q.must(List.of(query)))._toQuery();
@@ -236,7 +228,7 @@ public class ElasticRepository implements ConciergeRepository {
                 .refresh(Refresh.WaitFor)
                 .timeout(Time.of(s -> s.time(elasticConfig.getTimeout())));
         newRecords.forEach(eachSchema -> br.operations(op ->
-                op.update(idx -> idx.index(CONFIG_INDEX).id(eachSchema.getReferenceId()).action(a -> a.doc(eachSchema)))));
+                op.update(idx -> idx.index(CONFIG_INDEX).id(eachSchema.getConfigKey().getReferenceId()).action(a -> a.doc(eachSchema)))));
         client.bulk(br.build());
     }
 }

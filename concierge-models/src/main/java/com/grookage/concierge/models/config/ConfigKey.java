@@ -52,5 +52,4 @@ public class ConfigKey {
         final var thatKey = (ConfigKey) obj;
         return (thatKey.getReferenceId().equals(this.getReferenceId()));
     }
-
 }

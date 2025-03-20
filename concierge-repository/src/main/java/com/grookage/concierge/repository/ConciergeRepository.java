@@ -3,11 +3,9 @@ package com.grookage.concierge.repository;
 import com.grookage.concierge.models.SearchRequest;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigKey;
-import com.grookage.concierge.models.config.ConfigState;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public interface ConciergeRepository {
 
@@ -15,7 +13,11 @@ public interface ConciergeRepository {
 
     void update(ConfigDetails configDetails);
 
-    Optional<ConfigDetails> getStoredRecord(final ConfigKey configKey);
+    Optional<ConfigDetails> getStoredRecord(final String referenceId);
+
+    default Optional<ConfigDetails> getStoredRecord(final ConfigKey configKey) {
+        return getStoredRecord(configKey.getReferenceId());
+    }
 
     boolean createdRecordExists(ConfigKey configKey);
 

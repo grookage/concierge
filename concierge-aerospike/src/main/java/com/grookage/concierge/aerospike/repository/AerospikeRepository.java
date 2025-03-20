@@ -29,11 +29,8 @@ public class AerospikeRepository implements ConciergeRepository {
                 .data(configDetails.getData())
                 .configHistories(configDetails.getConfigHistories())
                 .configState(configDetails.getConfigState())
-                .version(configDetails.getConfigKey().getVersion())
                 .description(configDetails.getDescription())
-                .namespace(configDetails.getConfigKey().getNamespace())
-                .configName(configDetails.getConfigKey().getConfigName())
-                .configType(configDetails.getConfigKey().getConfigType())
+                .configKey(configDetails.getConfigKey())
                 .build();
     }
 
@@ -43,12 +40,7 @@ public class AerospikeRepository implements ConciergeRepository {
                 .configHistories(aerospikeRecord.getConfigHistories())
                 .configState(aerospikeRecord.getConfigState())
                 .description(aerospikeRecord.getDescription())
-                .configKey(ConfigKey.builder()
-                        .version(aerospikeRecord.getVersion())
-                        .namespace(aerospikeRecord.getNamespace())
-                        .configName(aerospikeRecord.getConfigName())
-                        .configType(aerospikeRecord.getConfigType())
-                        .build())
+                .configKey(aerospikeRecord.getConfigKey())
                 .build();
     }
 
@@ -63,8 +55,8 @@ public class AerospikeRepository implements ConciergeRepository {
     }
 
     @Override
-    public Optional<ConfigDetails> getStoredRecord(ConfigKey configKey) {
-        return aerospikeManager.getRecord(configKey.getReferenceId())
+    public Optional<ConfigDetails> getStoredRecord(String referenceId) {
+        return aerospikeManager.getRecord(referenceId)
                 .map(this::toConfigDetails);
     }
 

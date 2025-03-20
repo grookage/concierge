@@ -48,17 +48,17 @@ public class AerospikeManager {
     private Collection<Bin> getBins(final AerospikeRecord aerospikeRecord) {
         final var bins = new ArrayList<Bin>();
         bins.add(new Bin(AerospikeStorageConstants.DEFAULT_BIN, MapperUtils.mapper().writeValueAsBytes(aerospikeRecord)));
-        bins.add(new Bin(AerospikeStorageConstants.NAMESPACE_BIN, aerospikeRecord.getNamespace()));
+        bins.add(new Bin(AerospikeStorageConstants.NAMESPACE_BIN, aerospikeRecord.getConfigKey().getNamespace()));
         bins.add(new Bin(AerospikeStorageConstants.CONFIG_STATE_BIN, aerospikeRecord.getConfigState().name()));
-        bins.add(new Bin(AerospikeStorageConstants.CONFIG_BIN, aerospikeRecord.getConfigName()));
-        bins.add(new Bin(AerospikeStorageConstants.ORG_BIN, aerospikeRecord.getOrgid()));
-        bins.add(new Bin(AerospikeStorageConstants.TENANT_BIN, aerospikeRecord.getTenantId()));
+        bins.add(new Bin(AerospikeStorageConstants.CONFIG_BIN, aerospikeRecord.getConfigKey().getConfigName()));
+        bins.add(new Bin(AerospikeStorageConstants.ORG_BIN, aerospikeRecord.getConfigKey().getOrgId()));
+        bins.add(new Bin(AerospikeStorageConstants.TENANT_BIN, aerospikeRecord.getConfigKey().getTenantId()));
         return bins;
     }
 
     private void save(AerospikeRecord aerospikeRecord,
                       RecordExistsAction recordExistsAction) {
-        final var key = getKey(aerospikeRecord.getReferenceId());
+        final var key = getKey(aerospikeRecord.getConfigKey().getReferenceId());
         final var bins = getBins(aerospikeRecord).toArray(Bin[]::new);
         final var writePolicy = new WritePolicy(client.getWritePolicyDefault());
         writePolicy.recordExistsAction = recordExistsAction;
@@ -129,7 +129,7 @@ public class AerospikeManager {
             final var writePolicy = client.copyWritePolicyDefault();
             writePolicy.txn = transaction;
             aerospikeRecords.forEach(storageRecord -> {
-                final var key = getKey(storageRecord.getReferenceId());
+                final var key = getKey(storageRecord.getConfigKey().getReferenceId());
                 final var bins = getBins(storageRecord).toArray(Bin[]::new);
                 client.put(writePolicy, key, bins);
             });
