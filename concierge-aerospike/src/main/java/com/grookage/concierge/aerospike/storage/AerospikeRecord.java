@@ -29,6 +29,10 @@ public class AerospikeRecord {
     String configName;
     @NotBlank
     String version;
+    @NotBlank
+    String orgid;
+    @NotBlank
+    String tenantId;
     @NotNull
     ConfigState configState;
     @NotBlank
@@ -41,6 +45,6 @@ public class AerospikeRecord {
 
     @JsonIgnore
     public String getReferenceId() {
-        return Joiner.on(".").join(namespace, configName, version).toUpperCase(Locale.ROOT);
+        return Joiner.on(".").join(orgid, namespace, tenantId, configName, version).toUpperCase(Locale.ROOT);
     }
 }

@@ -45,7 +45,9 @@ import java.util.stream.Collectors;
 public class ElasticRepository implements ConciergeRepository {
 
     private static final String CONFIG_INDEX = "config_registry";
+    private static final String ORG = "org";
     private static final String NAMESPACE = "namespace";
+    private static final String TENANT = "tenant";
     private static final String CONFIG_NAME = "configName";
     private static final String VERSION = "version";
     private static final String CONFIG_STATE = "configState";
@@ -137,11 +139,13 @@ public class ElasticRepository implements ConciergeRepository {
 
     @Override
     @SneakyThrows
-    public boolean createdRecordExists(String namespace, String configName) {
-        final var namespaceQuery = TermQuery.of(p -> p.field(NAMESPACE).value(namespace))._toQuery();
-        final var configQuery = TermQuery.of(p -> p.field(CONFIG_NAME).value(configName))._toQuery();
+    public boolean createdRecordExists(ConfigKey configKey) {
+        final var orgQuery = TermQuery.of(p -> p.field(NAMESPACE).value(configKey.getOrgId()))._toQuery();
+        final var namespaceQuery = TermQuery.of(p -> p.field(NAMESPACE).value(configKey.getNamespace()))._toQuery();
+        final var tenantQuery = TermQuery.of(p -> p.field(NAMESPACE).value(configKey.getTenantId()))._toQuery();
+        final var configQuery = TermQuery.of(p -> p.field(CONFIG_NAME).value(configKey.getConfigName()))._toQuery();
         final var configStateQuery = TermQuery.of(p -> p.field(CONFIG_STATE).value(ConfigState.CREATED.name()))._toQuery();
-        final var searchQuery = BoolQuery.of(q -> q.must(List.of(namespaceQuery, configQuery, configStateQuery)))._toQuery();
+        final var searchQuery = BoolQuery.of(q -> q.must(List.of(orgQuery, namespaceQuery, tenantQuery, configQuery, configStateQuery)))._toQuery();
         final var searchResponse = client.search(SearchRequest.of(
                         s -> s.query(searchQuery)
                                 .requestCache(true)
@@ -154,17 +158,20 @@ public class ElasticRepository implements ConciergeRepository {
     }
 
     @Override
-    public List<ConfigDetails> getStoredRecords(Set<String> namespaces,
-                                                Set<String> configNames,
-                                                Set<ConfigState> configStates) {
-        final var namespaceQuery = namespaces.isEmpty() ? MatchAllQuery.of(q -> q)._toQuery() :
-                TermsQuery.of(q -> q.field(NAMESPACE).terms(t -> t.value(getNormalizedValues(namespaces))))._toQuery();
-        final var configQuery = configNames.isEmpty() ? MatchAllQuery.of(q -> q)._toQuery() :
-                TermsQuery.of(q -> q.field(CONFIG_NAME).terms(t -> t.value(getNormalizedValues(configNames))))._toQuery();
-        final var configStateQuery = configStates.isEmpty() ? MatchAllQuery.of(q -> q)._toQuery() :
-                TermsQuery.of(q -> q.field(CONFIG_STATE).terms(t -> t.value(getNormalizedValues(configStates.stream().map(Enum::name).collect(Collectors.toSet()))))).
+    public List<ConfigDetails> getStoredRecords(com.grookage.concierge.models.SearchRequest searchRequest) {
+        final var orgQuery = searchRequest.getOrgs().isEmpty() ? MatchAllQuery.of(q -> q)._toQuery() :
+                TermsQuery.of(q -> q.field(ORG).terms(t -> t.value(getNormalizedValues(searchRequest.getOrgs()))))._toQuery();
+        final var namespaceQuery = searchRequest.getNamespaces().isEmpty() ? MatchAllQuery.of(q -> q)._toQuery() :
+                TermsQuery.of(q -> q.field(NAMESPACE).terms(t -> t.value(getNormalizedValues(searchRequest.getNamespaces()))))._toQuery();
+        final var tenantQuery = searchRequest.getTenants().isEmpty() ? MatchAllQuery.of(q -> q)._toQuery() :
+                TermsQuery.of(q -> q.field(TENANT).terms(t -> t.value(getNormalizedValues(searchRequest.getTenants()))))._toQuery();
+        final var configQuery = searchRequest.getConfigNames().isEmpty() ? MatchAllQuery.of(q -> q)._toQuery() :
+                TermsQuery.of(q -> q.field(CONFIG_NAME).terms(t -> t.value(getNormalizedValues(searchRequest.getConfigNames()))))._toQuery();
+        final var configStateQuery = searchRequest.getConfigStates().isEmpty() ? MatchAllQuery.of(q -> q)._toQuery() :
+                TermsQuery.of(q -> q.field(CONFIG_STATE).terms(t -> t.value(getNormalizedValues(searchRequest.getConfigStates().stream().map(Enum::name).collect(Collectors.toSet()))))).
                         _toQuery();
-        final var searchQuery = BoolQuery.of(q -> q.must(List.of(namespaceQuery, configQuery, configStateQuery)))._toQuery();
+        final var searchQuery = BoolQuery.of(q -> q.must(List.of(orgQuery, namespaceQuery, tenantQuery,
+                configQuery, configStateQuery)))._toQuery();
         return queryDetails(searchQuery, storedElasticRecordHit -> true);
     }
 
@@ -207,7 +214,10 @@ public class ElasticRepository implements ConciergeRepository {
         final var namespaceQuery = TermQuery.of(p -> p.field(NAMESPACE).value(configDetails.getConfigKey().getNamespace()))._toQuery();
         final var configQuery = TermQuery.of(p -> p.field(CONFIG_NAME).value(configDetails.getConfigKey().getConfigName()))._toQuery();
         final var stateQuery = TermQuery.of(p -> p.field(CONFIG_STATE).value(ConfigState.ACTIVATED.name()))._toQuery();
-        final var searchQuery = BoolQuery.of(q -> q.must(List.of(namespaceQuery, configQuery, stateQuery)))._toQuery();
+        final var orgQuery = TermQuery.of(p -> p.field(ORG).value(configDetails.getConfigKey().getOrgId()))._toQuery();
+        final var tenantQuery = TermQuery.of(p -> p.field(TENANT).value(configDetails.getConfigKey().getTenantId()))._toQuery();
+        final var searchQuery = BoolQuery.of(q -> q.must(List.of(orgQuery, namespaceQuery, tenantQuery,
+                configQuery, stateQuery)))._toQuery();
         final var searchResponse = client.search(SearchRequest.of(
                         s -> s.query(searchQuery)
                                 .requestCache(true)

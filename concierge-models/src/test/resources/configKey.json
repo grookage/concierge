@@ -1,5 +1,7 @@
 {
   "namespace": "concierge",
   "configName": "testConfig",
-  "version": "V12345"
+  "version": "V12345",
+  "orgId" : "testOrg",
+  "tenantId" : "default"
 }

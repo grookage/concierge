@@ -9,6 +9,8 @@ import com.aerospike.client.query.Statement;
 import com.grookage.concierge.aerospike.storage.AerospikeRecord;
 import com.grookage.concierge.aerospike.storage.AerospikeStorageConstants;
 import com.grookage.concierge.models.MapperUtils;
+import com.grookage.concierge.models.SearchRequest;
+import com.grookage.concierge.models.config.ConfigState;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +51,8 @@ public class AerospikeManager {
         bins.add(new Bin(AerospikeStorageConstants.NAMESPACE_BIN, aerospikeRecord.getNamespace()));
         bins.add(new Bin(AerospikeStorageConstants.CONFIG_STATE_BIN, aerospikeRecord.getConfigState().name()));
         bins.add(new Bin(AerospikeStorageConstants.CONFIG_BIN, aerospikeRecord.getConfigName()));
+        bins.add(new Bin(AerospikeStorageConstants.ORG_BIN, aerospikeRecord.getOrgid()));
+        bins.add(new Bin(AerospikeStorageConstants.TENANT_BIN, aerospikeRecord.getTenantId()));
         return bins;
     }
 
@@ -81,21 +85,23 @@ public class AerospikeManager {
     }
 
     @SneakyThrows
-    public List<AerospikeRecord> getRecords(final Set<String> namespaces,
-                                            final Set<String> configNames,
-                                            final Set<String> configStates) {
+    public List<AerospikeRecord> getRecords(SearchRequest searchRequest) {
         final var queryStatement = new Statement();
         queryStatement.setNamespace(namespace);
         queryStatement.setSetName(AerospikeStorageConstants.CONFIG_SET);
         queryStatement.setMaxRecords(10000);
         final var queryPolicy = client.copyQueryPolicyDefault();
         final var searchableExpressions = new ArrayList<Exp>();
-        namespaces.forEach(each ->
+        searchRequest.getOrgs().forEach(each ->
+                searchableExpressions.add(Exp.eq(Exp.stringBin(AerospikeStorageConstants.ORG_BIN), Exp.val(each))));
+        searchRequest.getNamespaces().forEach(each ->
                 searchableExpressions.add(Exp.eq(Exp.stringBin(AerospikeStorageConstants.NAMESPACE_BIN), Exp.val(each))));
-        configNames.forEach(cName ->
+        searchRequest.getTenants().forEach(each ->
+                searchableExpressions.add(Exp.eq(Exp.stringBin(AerospikeStorageConstants.TENANT_BIN), Exp.val(each))));
+        searchRequest.getConfigNames().forEach(cName ->
                 searchableExpressions.add(Exp.eq(Exp.stringBin(AerospikeStorageConstants.CONFIG_BIN), Exp.val(cName))));
-        configStates.forEach(sName ->
-                searchableExpressions.add(Exp.eq(Exp.stringBin(AerospikeStorageConstants.CONFIG_STATE_BIN), Exp.val(sName))));
+        searchRequest.getConfigStates().forEach(sName ->
+                searchableExpressions.add(Exp.eq(Exp.stringBin(AerospikeStorageConstants.CONFIG_STATE_BIN), Exp.val(sName.name()))));
         if (!searchableExpressions.isEmpty()) {
             queryPolicy.filterExp = Exp.build(Exp.and(searchableExpressions.toArray(Exp[]::new)));
         }
@@ -116,28 +122,6 @@ public class AerospikeManager {
         return aerospikeRecords;
     }
 
-    public boolean exists(final String namespace,
-                          final String configName,
-                          final String configState) {
-        final var queryStatement = new Statement();
-        queryStatement.setNamespace(namespace);
-        queryStatement.setSetName(AerospikeStorageConstants.CONFIG_SET);
-        final var queryPolicy = client.copyQueryPolicyDefault();
-        queryPolicy.filterExp = Exp.build(Exp.and(
-                Exp.eq(Exp.stringBin(AerospikeStorageConstants.NAMESPACE_BIN), Exp.val(namespace)),
-                Exp.eq(Exp.stringBin(AerospikeStorageConstants.CONFIG_BIN), Exp.val(configName)),
-                Exp.eq(Exp.stringBin(AerospikeStorageConstants.CONFIG_STATE_BIN), Exp.val(configState))
-        ));
-        final var resultSet = client.query(queryPolicy, queryStatement);
-        var resultCount = 0;
-        while (resultSet.next()) {
-            if (null != resultSet.getRecord()) {
-                resultCount++;
-            }
-        }
-        return resultCount > 0;
-    }
-
     public void bulkUpdate(List<AerospikeRecord> aerospikeRecords) {
         final var transaction = new Txn();
         log.debug("Started transaction with id {} and records {}", transaction.getId(), aerospikeRecords);
@@ -155,5 +139,30 @@ public class AerospikeManager {
         }
         client.commit(transaction);
         log.debug("Successfully completed the transaction with id {} and records {}", transaction.getId(), aerospikeRecords);
+    }
+
+    public boolean exists(final String orgId,
+                          final String namespace,
+                          final String tenantId,
+                          final String configName) {
+        final var queryStatement = new Statement();
+        queryStatement.setNamespace(namespace);
+        queryStatement.setSetName(AerospikeStorageConstants.CONFIG_SET);
+        final var queryPolicy = client.copyQueryPolicyDefault();
+        queryPolicy.filterExp = Exp.build(Exp.and(
+                Exp.eq(Exp.stringBin(AerospikeStorageConstants.ORG_BIN), Exp.val(orgId)),
+                Exp.eq(Exp.stringBin(AerospikeStorageConstants.NAMESPACE_BIN), Exp.val(namespace)),
+                Exp.eq(Exp.stringBin(AerospikeStorageConstants.TENANT_BIN), Exp.val(tenantId)),
+                Exp.eq(Exp.stringBin(AerospikeStorageConstants.CONFIG_BIN), Exp.val(configName)),
+                Exp.eq(Exp.stringBin(AerospikeStorageConstants.CONFIG_STATE_BIN), Exp.val(ConfigState.CREATED.name()))
+        ));
+        final var resultSet = client.query(queryPolicy, queryStatement);
+        var resultCount = 0;
+        while (resultSet.next()) {
+            if (null != resultSet.getRecord()) {
+                resultCount++;
+            }
+        }
+        return resultCount > 0;
     }
 }

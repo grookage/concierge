@@ -50,8 +50,7 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public List<ConfigDetails> getConfigs(ConciergeRequestContext requestContext, SearchRequest searchRequest) {
         if (!useRepositoryCache(requestContext)) {
-            return repositorySupplier.get().getStoredRecords(searchRequest.getNamespaces(),
-                    searchRequest.getConfigNames(), searchRequest.getConfigStates());
+            return repositorySupplier.get().getStoredRecords(searchRequest);
         }
         return refresher.getData().getConfigs().stream()
                 .filter(each -> match(each, searchRequest))

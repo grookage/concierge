@@ -18,6 +18,7 @@ package com.grookage.concierge.client.refresher;
 
 import com.google.common.base.Strings;
 import com.google.common.net.HttpHeaders;
+import com.grookage.concierge.client.ConciergeMeta;
 import com.grookage.concierge.models.MapperUtils;
 import com.grookage.concierge.models.SearchRequest;
 import com.grookage.concierge.models.config.ConfigState;
@@ -38,15 +39,15 @@ import java.util.function.Supplier;
 @Getter
 public class ConciergeClientSupplier extends KorgHttpSupplier<List<ConfigurationResponse>> {
 
-    private final Set<String> namespaces;
+    private final ConciergeMeta meta;
     private final Supplier<String> authHeaderSupplier;
 
     @Builder
     public ConciergeClientSupplier(KorgHttpConfiguration httpConfiguration,
-                                   Set<String> namespaces,
+                                   ConciergeMeta meta,
                                    Supplier<String> authHeaderSupplier) {
         super(httpConfiguration, ConciergeClientMarshallar.getInstance(), "getClientNamespaces");
-        this.namespaces = namespaces;
+        this.meta = meta;
         this.authHeaderSupplier = authHeaderSupplier;
     }
 
@@ -61,7 +62,9 @@ public class ConciergeClientSupplier extends KorgHttpSupplier<List<Configuration
         final var requestBody = RequestBody.create(
                 okhttp3.MediaType.parse("application/json; charset=utf-8"),
                 MapperUtils.mapper().writeValueAsString(SearchRequest.builder()
-                        .namespaces(namespaces)
+                        .namespaces(meta.getNamespaces())
+                        .orgs(meta.getOrgs())
+                        .tenants(meta.getTenants())
                         .configStates(Set.of(ConfigState.ACTIVATED))
                         .build()));
         final var requestBuilder = new Request.Builder()

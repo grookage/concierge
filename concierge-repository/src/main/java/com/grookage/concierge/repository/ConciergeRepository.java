@@ -1,5 +1,6 @@
 package com.grookage.concierge.repository;
 
+import com.grookage.concierge.models.SearchRequest;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigKey;
 import com.grookage.concierge.models.config.ConfigState;
@@ -16,11 +17,11 @@ public interface ConciergeRepository {
 
     Optional<ConfigDetails> getStoredRecord(final ConfigKey configKey);
 
-    boolean createdRecordExists(String namespace, String configName);
+    boolean createdRecordExists(ConfigKey configKey);
 
     List<ConfigDetails> getStoredRecords();
 
-    List<ConfigDetails> getStoredRecords(Set<String> namespaces, Set<String> configNames, Set<ConfigState> configStates);
+    List<ConfigDetails> getStoredRecords(SearchRequest searchRequest);
 
     void rollOverAndUpdate(ConfigDetails configDetails);
 

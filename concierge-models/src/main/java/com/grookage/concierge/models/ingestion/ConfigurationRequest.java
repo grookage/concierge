@@ -18,7 +18,11 @@ import javax.validation.constraints.NotNull;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ConfigurationRequest {
     @NotBlank
+    String orgId;
+    @NotBlank
     String namespace;
+    @NotBlank
+    String tenantId;
     @NotBlank
     String configName;
     @NotBlank
@@ -37,6 +41,8 @@ public class ConfigurationRequest {
                 .configName(configName)
                 .configType(configType)
                 .version(versionId)
+                .orgId(orgId)
+                .tenantId(tenantId)
                 .build();
     }
 }

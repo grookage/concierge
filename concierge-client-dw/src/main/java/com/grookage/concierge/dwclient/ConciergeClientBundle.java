@@ -18,6 +18,7 @@ package com.grookage.concierge.dwclient;
 
 import com.google.common.base.Preconditions;
 import com.grookage.concierge.client.ConciergeClient;
+import com.grookage.concierge.client.ConciergeMeta;
 import com.grookage.concierge.client.refresher.ConciergeClientRefresher;
 import com.grookage.concierge.client.refresher.ConciergeClientSupplier;
 import com.grookage.concierge.client.serde.SerDeFactory;
@@ -30,12 +31,13 @@ import lombok.Getter;
 import java.util.Set;
 import java.util.function.Supplier;
 
+@SuppressWarnings("unused")
 @Getter
 public abstract class ConciergeClientBundle<T extends Configuration> implements ConfiguredBundle<T> {
 
     private ConciergeClient conciergeClient;
 
-    protected abstract Set<String> getNamespaces(T configuration);
+    protected abstract ConciergeMeta getConciergeMeta(T configuration);
 
     protected int getRefreshIntervalSeconds(T configuration) {
         return 30;
@@ -55,8 +57,8 @@ public abstract class ConciergeClientBundle<T extends Configuration> implements 
 
     @Override
     public void run(T configuration, Environment environment) {
-        final var namespaces = getNamespaces(configuration);
-        Preconditions.checkNotNull(namespaces, "Namespaces can't be null");
+        final var meta = getConciergeMeta(configuration);
+        Preconditions.checkNotNull(meta, "Concierge Meta can't be null");
 
         final var httpConfiguration = getHttpConfiguration(configuration);
         Preconditions.checkNotNull(httpConfiguration, "Http Configuration can't be null");
@@ -70,7 +72,7 @@ public abstract class ConciergeClientBundle<T extends Configuration> implements 
                 .supplier(
                         ConciergeClientSupplier.builder()
                                 .httpConfiguration(httpConfiguration)
-                                .namespaces(namespaces)
+                                .meta(meta)
                                 .authHeaderSupplier(getAuthHeaderSupplier(configuration))
                                 .build()
                 )
