@@ -35,10 +35,10 @@ public class CreateConfigProcessor extends ConciergeProcessor {
                 .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.VALUE_NOT_FOUND));
         final var recordExists = getRepositorySupplier()
                 .get()
-                .createdRecordExists(createConfigRequest.getNamespace(), createConfigRequest.getConfigName());
+                .createdRecordExists(createConfigRequest.getConfigKey());
         if (recordExists) {
             log.error("There are already stored configs present with namespace {} and configName {}. Please try updating them instead",
-                    createConfigRequest.getNamespace(), createConfigRequest.getConfigName());
+                    createConfigRequest.getConfigKey().getNamespace(), createConfigRequest.getConfigKey().getConfigName());
             throw ConciergeException.error(ConciergeCoreErrorCode.CONFIG_ALREADY_EXISTS);
         }
         final var configDetails = ConfigurationUtils.toConfigDetails(createConfigRequest);

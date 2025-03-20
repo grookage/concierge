@@ -1,19 +1,17 @@
 package com.grookage.concierge.aerospike.storage;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.google.common.base.Joiner;
 import com.grookage.concierge.models.config.ConfigHistoryItem;
+import com.grookage.concierge.models.config.ConfigKey;
 import com.grookage.concierge.models.config.ConfigState;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -23,24 +21,13 @@ import java.util.Set;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AerospikeRecord {
 
-    @NotBlank
-    String namespace;
-    @NotBlank
-    String configName;
-    @NotBlank
-    String version;
     @NotNull
+    @Valid
+    ConfigKey configKey;
     ConfigState configState;
-    @NotBlank
-    String configType;
     String description;
     @NotNull
     byte[] data;
     @Builder.Default
     Set<ConfigHistoryItem> configHistories = new HashSet<>();
-
-    @JsonIgnore
-    public String getReferenceId() {
-        return Joiner.on(".").join(namespace, configName, version).toUpperCase(Locale.ROOT);
-    }
 }

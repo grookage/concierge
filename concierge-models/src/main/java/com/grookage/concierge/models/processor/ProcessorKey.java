@@ -2,12 +2,12 @@ package com.grookage.concierge.models.processor;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.grookage.concierge.models.config.ConfigEvent;
+import com.grookage.concierge.models.config.ConfigKey;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
@@ -17,11 +17,8 @@ import javax.validation.constraints.NotNull;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ProcessorKey {
 
-    @NotEmpty
-    private String namespace;
-    @NotEmpty
-    private String configName;
+    @NotNull
+    ConfigKey configKey;
     @NotNull
     private ConfigEvent configEvent;
-    private String configType;
 }

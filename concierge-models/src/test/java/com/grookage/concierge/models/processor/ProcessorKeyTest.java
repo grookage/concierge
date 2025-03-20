@@ -13,8 +13,8 @@ class ProcessorKeyTest {
         final var processorKey = ResourceHelper
                 .getResource("processorKey.json", ProcessorKey.class);
         Assertions.assertNotNull(processorKey);
-        Assertions.assertEquals("testNamespace", processorKey.getNamespace());
-        Assertions.assertEquals("testConfig", processorKey.getConfigName());
+        Assertions.assertEquals("testNamespace", processorKey.getConfigKey().getNamespace());
+        Assertions.assertEquals("testConfig", processorKey.getConfigKey().getConfigName());
         Assertions.assertEquals(ConfigEvent.CREATE_CONFIG, processorKey.getConfigEvent());
     }
 }

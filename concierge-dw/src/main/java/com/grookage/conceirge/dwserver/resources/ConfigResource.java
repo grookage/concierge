@@ -34,6 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.annotation.security.PermitAll;
 import javax.inject.Singleton;
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
@@ -71,6 +72,18 @@ public class ConfigResource {
         return ConciergeRequestContext.builder()
                 .ignoreCache(ignoreCache)
                 .build();
+    }
+
+    @GET
+    @Timed
+    @ExceptionMetered
+    @Path("/{referenceId}/summary")
+    public List<ConfigurationResponse> getSchemaDetails(
+            @QueryParam("ignoreCache") boolean ignoreCache,
+            @PathParam("referenceId") @NotEmpty final String referenceId
+    ) {
+        final var config = configService.getConfig(toRequestContext(ignoreCache), referenceId).orElse(null);
+        return getConfigurationResponses(null == config ? List.of() : List.of(config));
     }
 
     @POST

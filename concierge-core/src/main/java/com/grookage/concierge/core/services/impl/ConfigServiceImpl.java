@@ -41,17 +41,21 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public Optional<ConfigDetails> getConfig(ConciergeRequestContext requestContext, ConfigKey configKey) {
+    public Optional<ConfigDetails> getConfig(ConciergeRequestContext requestContext, String referenceId) {
         final var useCache = useRepositoryCache(requestContext);
-        return useCache ? refresher.getData().getConfiguration(configKey) :
-                repositorySupplier.get().getStoredRecord(configKey);
+        return useCache ? refresher.getData().getConfiguration(referenceId) :
+                repositorySupplier.get().getStoredRecord(referenceId);
+    }
+
+    @Override
+    public Optional<ConfigDetails> getConfig(ConciergeRequestContext requestContext, ConfigKey configKey) {
+        return getConfig(requestContext, configKey.getReferenceId());
     }
 
     @Override
     public List<ConfigDetails> getConfigs(ConciergeRequestContext requestContext, SearchRequest searchRequest) {
         if (!useRepositoryCache(requestContext)) {
-            return repositorySupplier.get().getStoredRecords(searchRequest.getNamespaces(),
-                    searchRequest.getConfigNames(), searchRequest.getConfigStates());
+            return repositorySupplier.get().getStoredRecords(searchRequest);
         }
         return refresher.getData().getConfigs().stream()
                 .filter(each -> match(each, searchRequest))

@@ -5,7 +5,6 @@ import com.grookage.concierge.core.engine.ConciergeProcessor;
 import com.grookage.concierge.models.MapperUtils;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigEvent;
-import com.grookage.concierge.models.config.ConfigKey;
 import com.grookage.concierge.models.config.ConfigState;
 import com.grookage.concierge.models.exception.ConciergeCoreErrorCode;
 import com.grookage.concierge.models.exception.ConciergeException;
@@ -37,16 +36,12 @@ public class UpdateConfigProcessor extends ConciergeProcessor {
                 .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.VALUE_NOT_FOUND));
         final var storedConfig = getRepositorySupplier()
                 .get()
-                .getStoredRecord(ConfigKey.builder()
-                        .version(updateConfigRequest.getVersion())
-                        .configName(updateConfigRequest.getConfigName())
-                        .namespace(updateConfigRequest.getNamespace())
-                        .build()).orElse(null);
+                .getStoredRecord(updateConfigRequest.getConfigKey()).orElse(null);
         if (null == storedConfig || storedConfig.getConfigState() != ConfigState.CREATED) {
             log.error("There are no stored configs present with namespace {}, version {} and configName {}. Please try updating them instead",
-                    updateConfigRequest.getNamespace(),
-                    updateConfigRequest.getVersion(),
-                    updateConfigRequest.getConfigName());
+                    updateConfigRequest.getConfigKey().getNamespace(),
+                    updateConfigRequest.getConfigKey().getVersion(),
+                    updateConfigRequest.getConfigKey().getConfigName());
             throw ConciergeException.error(ConciergeCoreErrorCode.NO_CONFIG_FOUND);
         }
         storedConfig.setDescription(updateConfigRequest.getDescription());

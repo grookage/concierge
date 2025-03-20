@@ -31,6 +31,8 @@ class ConciergeClientTest {
     @SneakyThrows
     void testConciergeClient(WireMockRuntimeInfo wireMockRuntimeInfo) {
         final var searchRequest = SearchRequest.builder()
+                .orgs(Set.of("testOrg"))
+                .tenants(Set.of("default"))
                 .namespaces(Set.of("concierge"))
                 .configStates(Set.of(ConfigState.ACTIVATED))
                 .build();
@@ -50,7 +52,7 @@ class ConciergeClientTest {
                 .build();
         final var clientSupplier = new ConciergeClientSupplier(
                 clientConfig,
-                Set.of("concierge"),
+                ConciergeMeta.builder().namespaces(Set.of("concierge")).orgs(Set.of("testOrg")).tenants(Set.of("default")).build(),
                 () -> "Auth"
         );
         final var clientRefresher = new ConciergeClientRefresher(

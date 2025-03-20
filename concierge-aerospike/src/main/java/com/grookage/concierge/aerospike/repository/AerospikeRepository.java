@@ -3,6 +3,7 @@ package com.grookage.concierge.aerospike.repository;
 import com.grookage.concierge.aerospike.client.AerospikeConfig;
 import com.grookage.concierge.aerospike.client.AerospikeManager;
 import com.grookage.concierge.aerospike.storage.AerospikeRecord;
+import com.grookage.concierge.models.SearchRequest;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigKey;
 import com.grookage.concierge.models.config.ConfigState;
@@ -28,11 +29,8 @@ public class AerospikeRepository implements ConciergeRepository {
                 .data(configDetails.getData())
                 .configHistories(configDetails.getConfigHistories())
                 .configState(configDetails.getConfigState())
-                .version(configDetails.getConfigKey().getVersion())
                 .description(configDetails.getDescription())
-                .namespace(configDetails.getConfigKey().getNamespace())
-                .configName(configDetails.getConfigKey().getConfigName())
-                .configType(configDetails.getConfigKey().getConfigType())
+                .configKey(configDetails.getConfigKey())
                 .build();
     }
 
@@ -42,12 +40,7 @@ public class AerospikeRepository implements ConciergeRepository {
                 .configHistories(aerospikeRecord.getConfigHistories())
                 .configState(aerospikeRecord.getConfigState())
                 .description(aerospikeRecord.getDescription())
-                .configKey(ConfigKey.builder()
-                        .version(aerospikeRecord.getVersion())
-                        .namespace(aerospikeRecord.getNamespace())
-                        .configName(aerospikeRecord.getConfigName())
-                        .configType(aerospikeRecord.getConfigType())
-                        .build())
+                .configKey(aerospikeRecord.getConfigKey())
                 .build();
     }
 
@@ -62,34 +55,39 @@ public class AerospikeRepository implements ConciergeRepository {
     }
 
     @Override
-    public Optional<ConfigDetails> getStoredRecord(ConfigKey configKey) {
-        return aerospikeManager.getRecord(configKey.getReferenceId())
+    public Optional<ConfigDetails> getStoredRecord(String referenceId) {
+        return aerospikeManager.getRecord(referenceId)
                 .map(this::toConfigDetails);
     }
 
     @Override
-    public boolean createdRecordExists(String namespace, String configName) {
-        return aerospikeManager.exists(namespace, configName, ConfigState.CREATED.name());
+    public boolean createdRecordExists(ConfigKey configKey) {
+        return aerospikeManager.exists(configKey.getOrgId(), configKey.getNamespace(),
+                configKey.getTenantId(), configKey.getConfigName());
     }
 
     @Override
     public List<ConfigDetails> getStoredRecords() {
-        return aerospikeManager.getRecords(Set.of(), Set.of(), Set.of())
+        return aerospikeManager.getRecords(SearchRequest.builder().build())
                 .stream().map(this::toConfigDetails).toList();
     }
 
     @Override
-    public List<ConfigDetails> getStoredRecords(Set<String> namespaces, Set<String> configNames, Set<ConfigState> configStates) {
-        return aerospikeManager.getRecords(namespaces, configNames,
-                        configStates.stream().map(Enum::name).collect(Collectors.toSet()))
+    public List<ConfigDetails> getStoredRecords(SearchRequest searchRequest) {
+        return aerospikeManager.getRecords(searchRequest)
                 .stream().map(this::toConfigDetails).toList();
     }
 
     @Override
     public void rollOverAndUpdate(ConfigDetails configDetails) {
-        final var newRecords = aerospikeManager.getRecords(Set.of(configDetails.getConfigKey().getNamespace()),
-                        Set.of(configDetails.getConfigKey().getConfigName()),
-                        Set.of(ConfigState.ACTIVATED.name()))
+        final var searchRequest = SearchRequest.builder()
+                .orgs(Set.of(configDetails.getConfigKey().getOrgId()))
+                .namespaces(Set.of(configDetails.getConfigKey().getNamespace()))
+                .tenants(Set.of(configDetails.getConfigKey().getTenantId()))
+                .configNames(Set.of(configDetails.getConfigKey().getConfigName()))
+                .configStates(Set.of(ConfigState.ACTIVATED))
+                .build();
+        final var newRecords = aerospikeManager.getRecords(searchRequest)
                 .stream().peek(each -> each.setConfigState(ConfigState.ROLLED)).collect(Collectors.toList());
         newRecords.add(toStorageRecord(configDetails));
         aerospikeManager.bulkUpdate(newRecords);

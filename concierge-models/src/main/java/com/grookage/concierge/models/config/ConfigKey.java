@@ -19,7 +19,11 @@ import java.util.Locale;
 public class ConfigKey {
 
     @NotBlank
+    String orgId;
+    @NotBlank
     String namespace;
+    @NotBlank
+    String tenantId;
     @NotBlank
     String configName;
     @NotBlank
@@ -29,7 +33,7 @@ public class ConfigKey {
 
     @JsonIgnore
     public String getReferenceId() {
-        return Joiner.on(".").join(namespace, configName, version).toUpperCase(Locale.ROOT);
+        return Joiner.on(".").join(orgId, namespace, tenantId, configName, version).toUpperCase(Locale.ROOT);
     }
 
     @Override
@@ -48,5 +52,4 @@ public class ConfigKey {
         final var thatKey = (ConfigKey) obj;
         return (thatKey.getReferenceId().equals(this.getReferenceId()));
     }
-
 }
