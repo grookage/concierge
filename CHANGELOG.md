@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [0.0.1-RC12]
 
 - Introduced orgId and tenantId to configKey
+- Cleaned up adhoc occurrences of namespace, configName et. al to a standard configKey
 
 ## [0.0.1-RC11]
 
