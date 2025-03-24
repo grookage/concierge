@@ -85,7 +85,7 @@ public class AerospikeRepository implements ConciergeRepository {
                 .namespaces(Set.of(configDetails.getConfigKey().getNamespace()))
                 .tenants(Set.of(configDetails.getConfigKey().getTenantId()))
                 .configNames(Set.of(configDetails.getConfigKey().getConfigName()))
-                .configStates(Set.of(ConfigState.ACTIVATED))
+                .configStates(Set.of(ConfigState.APPROVED))
                 .build();
         final var newRecords = aerospikeManager.getRecords(searchRequest)
                 .stream().peek(each -> each.setConfigState(ConfigState.ROLLED)).collect(Collectors.toList());

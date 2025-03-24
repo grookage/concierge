@@ -36,6 +36,7 @@
         <module>concierge-elastic-dw</module>
         <module>concierge-aerospike</module>
         <module>concierge-aerospike-dw</module>
+        <module>concierge-server-example</module>
     </modules>
     <description>RBAC enabled, versioned configuration service</description>
     <inceptionYear>2024</inceptionYear>

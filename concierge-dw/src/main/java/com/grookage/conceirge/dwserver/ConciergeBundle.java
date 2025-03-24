@@ -67,7 +67,6 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
 
     protected ConfigVersionManager getConfigVersionManageR(T configuration) {
         return new DefaultConfigVersionManager();
-
     }
 
     protected abstract Supplier<ConfigDataValidator> getConfigDataValidator(T configuration);

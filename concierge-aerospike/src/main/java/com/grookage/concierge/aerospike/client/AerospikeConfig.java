@@ -21,6 +21,7 @@ public class AerospikeConfig {
     private String namespace;
     private String username;
     private String password;
+    private boolean txnEnabled = false;
     private boolean tlsEnabled = false;
 
     @Builder.Default

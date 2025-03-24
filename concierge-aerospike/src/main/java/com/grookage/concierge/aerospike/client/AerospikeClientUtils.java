@@ -6,11 +6,19 @@ import com.aerospike.client.query.IndexType;
 import com.grookage.concierge.aerospike.exception.ConciergeAeroErrorCode;
 import com.grookage.concierge.aerospike.storage.AerospikeStorageConstants;
 import com.grookage.concierge.models.exception.ConciergeException;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStreamReader;
+import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 @UtilityClass
 @Slf4j
@@ -121,5 +129,29 @@ public class AerospikeClientUtils {
         readPolicy.totalTimeout = config.getTimeout();
         readPolicy.sendKey = true;
         return readPolicy;
+    }
+
+    @SneakyThrows
+    public static String compress(final byte[] bytes) {
+        final var bos = new ByteArrayOutputStream();
+        final var gzip = new GZIPOutputStream(bos);
+        gzip.write(bytes);
+        gzip.close();
+        return Base64.getEncoder().encodeToString(bos.toByteArray());
+    }
+
+    @SneakyThrows
+    public static String retrieve(final String value) {
+        final var gis = new GZIPInputStream(
+                new ByteArrayInputStream(
+                        Base64.getDecoder().decode(value)
+                ));
+        final var bf = new BufferedReader(new InputStreamReader(gis));
+        final var stringBuilder = new StringBuilder();
+        String line;
+        while ((line = bf.readLine()) != null) {
+            stringBuilder.append(line);
+        }
+        return stringBuilder.toString();
     }
 }

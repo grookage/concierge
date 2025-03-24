@@ -50,7 +50,9 @@ public class AerospikeManager {
     @SneakyThrows
     private Collection<Bin> getBins(final AerospikeRecord aerospikeRecord) {
         final var bins = new ArrayList<Bin>();
-        bins.add(new Bin(AerospikeStorageConstants.DEFAULT_BIN, MapperUtils.mapper().writeValueAsBytes(aerospikeRecord)));
+        bins.add(new Bin(AerospikeStorageConstants.DEFAULT_BIN, AerospikeClientUtils.compress(
+                MapperUtils.mapper().writeValueAsBytes(aerospikeRecord)))
+        );
         bins.add(new Bin(AerospikeStorageConstants.NAMESPACE_BIN, aerospikeRecord.getConfigKey().getNamespace()));
         bins.add(new Bin(AerospikeStorageConstants.CONFIG_STATE_BIN, aerospikeRecord.getConfigState().name()));
         bins.add(new Bin(AerospikeStorageConstants.CONFIG_BIN, aerospikeRecord.getConfigKey().getConfigName()));
@@ -84,7 +86,10 @@ public class AerospikeManager {
         if (null == storedRecord) return Optional.empty();
         final var aerospikeRecord = storedRecord.getString(AerospikeStorageConstants.DEFAULT_BIN);
         if (null == aerospikeRecord) return Optional.empty();
-        return Optional.ofNullable(MapperUtils.mapper().readValue(aerospikeRecord, AerospikeRecord.class));
+        return Optional.ofNullable(MapperUtils.mapper().readValue(
+                AerospikeClientUtils.retrieve(aerospikeRecord),
+                AerospikeRecord.class)
+        );
     }
 
     @SneakyThrows
@@ -116,7 +121,8 @@ public class AerospikeManager {
                     final var binRecord = storageRecord.getString(AerospikeStorageConstants.DEFAULT_BIN);
                     if (null != binRecord) {
                         aerospikeRecords.add(
-                                MapperUtils.mapper().readValue(binRecord, AerospikeRecord.class)
+                                MapperUtils.mapper().readValue(AerospikeClientUtils.retrieve(binRecord),
+                                        AerospikeRecord.class)
                         );
                     }
                 }
@@ -130,7 +136,9 @@ public class AerospikeManager {
         log.debug("Started transaction with id {} and records {}", transaction.getId(), aerospikeRecords);
         try {
             final var writePolicy = client.copyWritePolicyDefault();
-            writePolicy.txn = transaction;
+            if (aerospikeConfig.isTxnEnabled()) {
+                writePolicy.txn = transaction;
+            }
             aerospikeRecords.forEach(storageRecord -> {
                 final var key = getKey(storageRecord.getConfigKey().getReferenceId());
                 final var bins = getBins(storageRecord).toArray(Bin[]::new);
@@ -139,13 +147,15 @@ public class AerospikeManager {
         } catch (Exception e) {
             log.debug("There is an error trying to commit the transaction with id {}. Aborting the transaction", transaction.getId(), e);
             client.abort(transaction);
+            throw e;
+        } finally {
+            client.commit(transaction);
         }
-        client.commit(transaction);
         log.debug("Successfully completed the transaction with id {} and records {}", transaction.getId(), aerospikeRecords);
     }
 
     public boolean exists(final String orgId,
-                          final String namespace,
+                          final String configNamespace,
                           final String tenantId,
                           final String configName) {
         final var queryStatement = new Statement();
@@ -154,7 +164,7 @@ public class AerospikeManager {
         final var queryPolicy = client.copyQueryPolicyDefault();
         queryPolicy.filterExp = Exp.build(Exp.and(
                 Exp.eq(Exp.stringBin(AerospikeStorageConstants.ORG_BIN), Exp.val(orgId)),
-                Exp.eq(Exp.stringBin(AerospikeStorageConstants.NAMESPACE_BIN), Exp.val(namespace)),
+                Exp.eq(Exp.stringBin(AerospikeStorageConstants.NAMESPACE_BIN), Exp.val(configNamespace)),
                 Exp.eq(Exp.stringBin(AerospikeStorageConstants.TENANT_BIN), Exp.val(tenantId)),
                 Exp.eq(Exp.stringBin(AerospikeStorageConstants.CONFIG_BIN), Exp.val(configName)),
                 Exp.eq(Exp.stringBin(AerospikeStorageConstants.CONFIG_STATE_BIN), Exp.val(ConfigState.CREATED.name()))

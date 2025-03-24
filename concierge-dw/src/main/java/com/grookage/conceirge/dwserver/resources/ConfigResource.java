@@ -78,7 +78,7 @@ public class ConfigResource {
     @Timed
     @ExceptionMetered
     @Path("/{referenceId}/summary")
-    public List<ConfigurationResponse> getSchemaDetails(
+    public List<ConfigurationResponse> getConfigDetails(
             @QueryParam("ignoreCache") boolean ignoreCache,
             @PathParam("referenceId") @NotEmpty final String referenceId
     ) {
@@ -90,7 +90,7 @@ public class ConfigResource {
     @Timed
     @ExceptionMetered
     @Path("/summary")
-    public List<ConfigurationResponse> getSchemaDetails(
+    public List<ConfigurationResponse> getConfigDetails(
             @QueryParam("ignoreCache") boolean ignoreCache, @Valid final ConfigKey configKey
     ) {
         final var config = configService.getConfig(toRequestContext(ignoreCache), configKey).orElse(null);
