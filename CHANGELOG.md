@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.1-RC13]
+
+- Fixed the data saving format in Aerospike
+- Fixed the rollOverAndUpdate
+
 ## [0.0.1-RC12]
 
 - Introduced orgId and tenantId to configKey
