@@ -46,12 +46,12 @@ public class AerospikeRepository implements ConciergeRepository {
 
     @Override
     public void create(ConfigDetails configDetails) {
-        aerospikeManager.create(toStorageRecord(configDetails));
+        aerospikeManager.save(toStorageRecord(configDetails));
     }
 
     @Override
     public void update(ConfigDetails configDetails) {
-        aerospikeManager.update(toStorageRecord(configDetails));
+        aerospikeManager.save(toStorageRecord(configDetails));
     }
 
     @Override

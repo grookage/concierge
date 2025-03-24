@@ -132,19 +132,19 @@ public class AerospikeClientUtils {
     }
 
     @SneakyThrows
-    public static String compress(final byte[] bytes) {
+    public static byte[] compress(final byte[] bytes) {
         final var bos = new ByteArrayOutputStream();
         final var gzip = new GZIPOutputStream(bos);
         gzip.write(bytes);
         gzip.close();
-        return Base64.getEncoder().encodeToString(bos.toByteArray());
+        return bos.toByteArray();
     }
 
     @SneakyThrows
-    public static String retrieve(final String value) {
+    public static String retrieve(final byte[] value) {
         final var gis = new GZIPInputStream(
                 new ByteArrayInputStream(
-                        Base64.getDecoder().decode(value)
+                        value
                 ));
         final var bf = new BufferedReader(new InputStreamReader(gis));
         final var stringBuilder = new StringBuilder();

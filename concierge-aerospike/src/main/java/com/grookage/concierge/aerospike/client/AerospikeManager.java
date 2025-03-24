@@ -3,6 +3,7 @@ package com.grookage.concierge.aerospike.client;
 import com.aerospike.client.Record;
 import com.aerospike.client.*;
 import com.aerospike.client.exp.Exp;
+import com.aerospike.client.policy.QueryPolicy;
 import com.aerospike.client.policy.RecordExistsAction;
 import com.aerospike.client.policy.WritePolicy;
 import com.aerospike.client.query.Statement;
@@ -61,22 +62,13 @@ public class AerospikeManager {
         return bins;
     }
 
-    private void save(AerospikeRecord aerospikeRecord,
-                      RecordExistsAction recordExistsAction) {
+    public void save(AerospikeRecord aerospikeRecord) {
         final var key = getKey(aerospikeRecord.getConfigKey().getReferenceId());
         final var bins = getBins(aerospikeRecord).toArray(Bin[]::new);
         final var writePolicy = new WritePolicy(client.getWritePolicyDefault());
-        writePolicy.recordExistsAction = recordExistsAction;
+        writePolicy.recordExistsAction = RecordExistsAction.UPDATE;
         writePolicy.sendKey = true;
         client.put(writePolicy, key, bins);
-    }
-
-    public void create(AerospikeRecord aerospikeRecord) {
-        save(aerospikeRecord, RecordExistsAction.CREATE_ONLY);
-    }
-
-    public void update(AerospikeRecord aerospikeRecord) {
-        save(aerospikeRecord, RecordExistsAction.REPLACE);
     }
 
     @SneakyThrows
@@ -84,7 +76,7 @@ public class AerospikeManager {
         final var recordKey = getKey(key);
         final var storedRecord = getRecord(recordKey, AerospikeStorageConstants.DEFAULT_BIN);
         if (null == storedRecord) return Optional.empty();
-        final var aerospikeRecord = storedRecord.getString(AerospikeStorageConstants.DEFAULT_BIN);
+        final var aerospikeRecord = storedRecord.getBytes(AerospikeStorageConstants.DEFAULT_BIN);
         if (null == aerospikeRecord) return Optional.empty();
         return Optional.ofNullable(MapperUtils.mapper().readValue(
                 AerospikeClientUtils.retrieve(aerospikeRecord),
@@ -98,7 +90,7 @@ public class AerospikeManager {
         queryStatement.setNamespace(namespace);
         queryStatement.setSetName(AerospikeStorageConstants.CONFIG_SET);
         queryStatement.setMaxRecords(10000);
-        final var queryPolicy = client.copyQueryPolicyDefault();
+        final var queryPolicy = new QueryPolicy();
         final var searchableExpressions = new ArrayList<Exp>();
         searchRequest.getOrgs().forEach(each ->
                 searchableExpressions.add(Exp.eq(Exp.stringBin(AerospikeStorageConstants.ORG_BIN), Exp.val(each))));
@@ -118,7 +110,7 @@ public class AerospikeManager {
             while (rs.next()) {
                 final var storageRecord = rs.getRecord();
                 if (null != storageRecord) {
-                    final var binRecord = storageRecord.getString(AerospikeStorageConstants.DEFAULT_BIN);
+                    final var binRecord = storageRecord.getBytes(AerospikeStorageConstants.DEFAULT_BIN);
                     if (null != binRecord) {
                         aerospikeRecords.add(
                                 MapperUtils.mapper().readValue(AerospikeClientUtils.retrieve(binRecord),
