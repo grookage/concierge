@@ -18,7 +18,7 @@ server:
 logging:
   level: INFO
   loggers:
-    com.phonepe.concierge: DEBUG
+    com.grookage.concierge: DEBUG
   appenders:
     - type: console
       threshold: INFO
