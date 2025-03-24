@@ -45,7 +45,7 @@ public class App extends Application<AppConfiguration> {
             protected CacheConfig getCacheConfig(AppConfiguration configuration) {
                 return CacheConfig.builder()
                         .enabled(true)
-                        .refreshCacheSeconds(10)
+                        .refreshCacheSeconds(600)
                         .build();
             }
 

@@ -14,7 +14,6 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
-import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.zip.GZIPInputStream;
@@ -75,6 +74,7 @@ public class AerospikeClientUtils {
         final var writePolicy = getWritePolicy(config);
         final var scanPolicy = getScanPolicy(config);
         final var batchPolicy = getBatchPolicy(config);
+        final var queryPolicy = getQueryPolicy(config);
 
         clientPolicy.user = config.getUsername();
         clientPolicy.password = config.getPassword();
@@ -83,6 +83,7 @@ public class AerospikeClientUtils {
         clientPolicy.writePolicyDefault = writePolicy;
         clientPolicy.scanPolicyDefault = scanPolicy;
         clientPolicy.batchPolicyDefault = batchPolicy;
+        clientPolicy.queryPolicyDefault = queryPolicy;
         clientPolicy.failIfNotConnected = true;
         clientPolicy.threadPool = Executors.newFixedThreadPool(config.getThreadPoolSize());
 
@@ -93,8 +94,18 @@ public class AerospikeClientUtils {
 
     }
 
+    public QueryPolicy getQueryPolicy(final AerospikeConfig config) {
+        final var queryPolicy = new QueryPolicy();
+        queryPolicy.readModeAP = ReadModeAP.ONE;
+        queryPolicy.replica = Replica.MASTER_PROLES;
+        queryPolicy.maxConcurrentNodes = config.getBatchMaxConcurrentNodes();
+        return queryPolicy;
+    }
+
     public BatchPolicy getBatchPolicy(final AerospikeConfig config) {
         final var batchPolicy = new BatchPolicy();
+        batchPolicy.readModeAP = ReadModeAP.ONE;
+        batchPolicy.replica = Replica.MASTER_PROLES;
         batchPolicy.maxConcurrentThreads = config.getBatchMaxConcurrentNodes();
         batchPolicy.allowInline = true;
         return batchPolicy;

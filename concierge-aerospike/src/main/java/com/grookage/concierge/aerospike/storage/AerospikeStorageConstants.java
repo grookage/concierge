@@ -5,8 +5,8 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class AerospikeStorageConstants {
 
-    public static final String DEFAULT_BIN = "default";
     public static final String CONFIG_SET = "configs";
+    public static final String DEFAULT_BIN = "default";
     public static final String NAMESPACE_BIN = "namespace";
     public static final String CONFIG_BIN = "configName";
     public static final String CONFIG_STATE_BIN = "configState";
