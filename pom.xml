@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.grookage.concierge</groupId>
     <artifactId>concierge</artifactId>
-    <version>0.0.1-RC12</version>
+    <version>0.0.1-RC13</version>
     <packaging>pom</packaging>
 
     <name>Concierge</name>
@@ -36,6 +36,7 @@
         <module>concierge-elastic-dw</module>
         <module>concierge-aerospike</module>
         <module>concierge-aerospike-dw</module>
+        <module>concierge-server-example</module>
     </modules>
     <description>RBAC enabled, versioned configuration service</description>
     <inceptionYear>2024</inceptionYear>

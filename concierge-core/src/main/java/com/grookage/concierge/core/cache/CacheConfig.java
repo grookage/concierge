@@ -14,5 +14,6 @@ import lombok.NoArgsConstructor;
 public class CacheConfig {
 
     private boolean enabled;
-    private int refreshCacheSeconds;
+    @Builder.Default
+    private int refreshCacheSeconds = 10;
 }

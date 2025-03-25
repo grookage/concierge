@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.1-RC13]
+
+- Fixed the data saving format in Aerospike
+- Fixed the rollOverAndUpdate
+- Identified a weird client bug in Aerospike. If there are no records OR only one record Predicate.or/and don't work. They need special handling. And there's barely any documentation on the same 
+
 ## [0.0.1-RC12]
 
 - Introduced orgId and tenantId to configKey

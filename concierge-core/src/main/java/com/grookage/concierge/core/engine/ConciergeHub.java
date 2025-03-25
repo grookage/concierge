@@ -51,7 +51,7 @@ public class ConciergeHub {
     }
 
     public ConciergeHub withConfigVersionManager(ConfigVersionManager manager) {
-        Preconditions.checkNotNull(configVersionManager, "Config Version Manager can't be null");
+        Preconditions.checkNotNull(manager, "Config Version Manager can't be null");
         this.configVersionManager = manager;
         return this;
     }

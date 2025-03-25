@@ -10,14 +10,9 @@
         <relativePath>../concierge-parent</relativePath>
     </parent>
 
-    <artifactId>concierge-client-dw</artifactId>
+    <artifactId>concierge-server-example</artifactId>
 
     <dependencies>
-        <dependency>
-            <groupId>com.grookage.concierge</groupId>
-            <artifactId>concierge-client</artifactId>
-        </dependency>
-
         <dependency>
             <artifactId>dropwizard-core</artifactId>
             <groupId>io.dropwizard</groupId>
@@ -28,6 +23,18 @@
             <artifactId>dropwizard-validation</artifactId>
             <groupId>io.dropwizard</groupId>
         </dependency>
+
+        <dependency>
+            <groupId>com.grookage.concierge</groupId>
+            <artifactId>concierge-aerospike-dw</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.grookage.concierge</groupId>
+            <artifactId>concierge-models</artifactId>
+        </dependency>
+
     </dependencies>
+
 
 </project>
