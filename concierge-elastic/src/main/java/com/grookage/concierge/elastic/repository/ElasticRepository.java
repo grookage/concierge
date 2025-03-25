@@ -208,7 +208,7 @@ public class ElasticRepository implements ConciergeRepository {
     public void rollOverAndUpdate(ConfigDetails configDetails) {
         final var namespaceQuery = TermQuery.of(p -> p.field(NAMESPACE).value(configDetails.getConfigKey().getNamespace()))._toQuery();
         final var configQuery = TermQuery.of(p -> p.field(CONFIG_NAME).value(configDetails.getConfigKey().getConfigName()))._toQuery();
-        final var stateQuery = TermQuery.of(p -> p.field(CONFIG_STATE).value(ConfigState.APPROVED.name()))._toQuery();
+        final var stateQuery = TermQuery.of(p -> p.field(CONFIG_STATE).value(ConfigState.ACTIVATED.name()))._toQuery();
         final var orgQuery = TermQuery.of(p -> p.field(ORG).value(configDetails.getConfigKey().getOrgId()))._toQuery();
         final var tenantQuery = TermQuery.of(p -> p.field(TENANT).value(configDetails.getConfigKey().getTenantId()))._toQuery();
         final var searchQuery = BoolQuery.of(q -> q.must(List.of(orgQuery, namespaceQuery, tenantQuery,
