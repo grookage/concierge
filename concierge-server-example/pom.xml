@@ -33,8 +33,11 @@
             <groupId>com.grookage.concierge</groupId>
             <artifactId>concierge-models</artifactId>
         </dependency>
-
     </dependencies>
+
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
 
 
 </project>
