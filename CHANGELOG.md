@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.1-RC15]
+
+- Changed the elasticSearch schema structure
+
+## [0.0.1-RC14]
+
+- Release to fix RC13 maven push
+
 ## [0.0.1-RC13]
 
 - Fixed the data saving format in Aerospike

@@ -29,7 +29,6 @@ import co.elastic.clients.elasticsearch.indices.IndexSettings;
 import com.google.common.base.Preconditions;
 import com.grookage.concierge.elastic.client.ElasticClientManager;
 import com.grookage.concierge.elastic.config.ElasticConfig;
-import com.grookage.concierge.elastic.storage.StoredElasticRecord;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigKey;
 import com.grookage.concierge.models.config.ConfigState;
@@ -85,42 +84,22 @@ public class ElasticRepository implements ConciergeRepository {
         return terms.stream().map(FieldValue::of).toList();
     }
 
-    private StoredElasticRecord toStorageRecord(ConfigDetails configDetails) {
-        return StoredElasticRecord.builder()
-                .data(configDetails.getData())
-                .configHistories(configDetails.getConfigHistories())
-                .configState(configDetails.getConfigState())
-                .description(configDetails.getDescription())
-                .configKey(configDetails.getConfigKey())
-                .build();
-    }
-
-    private ConfigDetails toConfigDetails(StoredElasticRecord storedElasticRecord) {
-        return ConfigDetails.builder()
-                .data(storedElasticRecord.getData())
-                .configHistories(storedElasticRecord.getConfigHistories())
-                .configState(storedElasticRecord.getConfigState())
-                .description(storedElasticRecord.getDescription())
-                .configKey(storedElasticRecord.getConfigKey())
-                .build();
-    }
-
     @SneakyThrows
     private List<ConfigDetails> queryDetails(final Query searchQuery,
-                                             final Predicate<Hit<StoredElasticRecord>> searchPredicate) {
+                                             final Predicate<Hit<ConfigDetails>> searchPredicate) {
         final var searchResponse = client.search(SearchRequest.of(
                         s -> s.query(searchQuery)
                                 .requestCache(true)
                                 .index(List.of(CONFIG_INDEX))
                                 .size(elasticConfig.getMaxResultSize()) //If you have more than 10K schemas, this will hold you up!
                                 .timeout(elasticConfig.getTimeout())),
-                StoredElasticRecord.class
+                ConfigDetails.class
         );
         return searchResponse.hits()
                 .hits()
                 .stream()
                 .filter(searchPredicate)
-                .map(each -> toConfigDetails(Objects.requireNonNull(each.source()))).toList();
+                .map(each -> Objects.requireNonNull(each.source())).toList();
     }
 
     @Override
@@ -138,7 +117,7 @@ public class ElasticRepository implements ConciergeRepository {
                                 .index(List.of(CONFIG_INDEX))
                                 .size(elasticConfig.getMaxResultSize()) //If you have more than 10K schemas, this will hold you up!
                                 .timeout(elasticConfig.getTimeout())),
-                StoredElasticRecord.class
+                ConfigDetails.class
         );
         return !searchResponse.hits().hits().isEmpty();
     }
@@ -159,13 +138,13 @@ public class ElasticRepository implements ConciergeRepository {
                         _toQuery();
         final var searchQuery = BoolQuery.of(q -> q.must(List.of(orgQuery, namespaceQuery, tenantQuery,
                 configQuery, configStateQuery)))._toQuery();
-        return queryDetails(searchQuery, storedElasticRecordHit -> true);
+        return queryDetails(searchQuery, configDetailsHit -> true);
     }
 
     @Override
     @SneakyThrows
     public void create(ConfigDetails configDetails) {
-        final var createDocument = new IndexRequest.Builder<>().document(toStorageRecord(configDetails))
+        final var createDocument = new IndexRequest.Builder<>().document(configDetails)
                 .index(CONFIG_INDEX)
                 .refresh(Refresh.WaitFor)
                 .id(configDetails.getReferenceId())
@@ -180,11 +159,11 @@ public class ElasticRepository implements ConciergeRepository {
         final var updateRequest = new UpdateRequest.Builder<>()
                 .index(CONFIG_INDEX)
                 .id(configDetails.getReferenceId())
-                .doc(toStorageRecord(configDetails))
+                .doc(configDetails)
                 .refresh(Refresh.WaitFor)
                 .timeout(Time.of(s -> s.time(elasticConfig.getTimeout())))
                 .build();
-        client.update(updateRequest, StoredElasticRecord.class);
+        client.update(updateRequest, ConfigDetails.class);
     }
 
     @Override
@@ -192,8 +171,8 @@ public class ElasticRepository implements ConciergeRepository {
     public Optional<ConfigDetails> getStoredRecord(String referenceId) {
         final var getResponse = client.get(GetRequest.of(request ->
                         request.index(CONFIG_INDEX).id(referenceId)),
-                StoredElasticRecord.class);
-        return Optional.ofNullable(getResponse.source()).map(this::toConfigDetails);
+                ConfigDetails.class);
+        return Optional.ofNullable(getResponse.source());
     }
 
     @Override
@@ -220,13 +199,13 @@ public class ElasticRepository implements ConciergeRepository {
                                 .index(List.of(CONFIG_INDEX))
                                 .size(elasticConfig.getMaxResultSize()) //If you have more than 10K schemas, this will hold you up!
                                 .timeout(elasticConfig.getTimeout())),
-                StoredElasticRecord.class
+                ConfigDetails.class
         );
         final var newRecords = searchResponse.hits().hits().stream()
                 .map(Hit::source).filter(Objects::nonNull)
                 .peek(rec -> rec.setConfigState(ConfigState.ROLLED))
                 .collect(Collectors.toList());
-        newRecords.add(toStorageRecord(configDetails));
+        newRecords.add(configDetails);
         final var br = new BulkRequest.Builder()
                 .index(CONFIG_INDEX)
                 .refresh(Refresh.WaitFor)

@@ -3,12 +3,14 @@ package com.grookage.concierge.aerospike.repository;
 import com.grookage.concierge.aerospike.client.AerospikeConfig;
 import com.grookage.concierge.aerospike.client.AerospikeManager;
 import com.grookage.concierge.aerospike.storage.AerospikeRecord;
+import com.grookage.concierge.models.MapperUtils;
 import com.grookage.concierge.models.SearchRequest;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigKey;
 import com.grookage.concierge.models.config.ConfigState;
 import com.grookage.concierge.repository.ConciergeRepository;
 import lombok.Getter;
+import lombok.SneakyThrows;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,24 +26,18 @@ public class AerospikeRepository implements ConciergeRepository {
         this.aerospikeManager = new AerospikeManager(aerospikeConfig);
     }
 
+    @SneakyThrows
     private AerospikeRecord toStorageRecord(ConfigDetails configDetails) {
         return AerospikeRecord.builder()
-                .data(configDetails.getData())
-                .configHistories(configDetails.getConfigHistories())
-                .configState(configDetails.getConfigState())
-                .description(configDetails.getDescription())
+                .data(MapperUtils.mapper().writeValueAsBytes(configDetails))
                 .configKey(configDetails.getConfigKey())
+                .configState(configDetails.getConfigState())
                 .build();
     }
 
+    @SneakyThrows
     private ConfigDetails toConfigDetails(AerospikeRecord aerospikeRecord) {
-        return ConfigDetails.builder()
-                .data(aerospikeRecord.getData())
-                .configHistories(aerospikeRecord.getConfigHistories())
-                .configState(aerospikeRecord.getConfigState())
-                .description(aerospikeRecord.getDescription())
-                .configKey(aerospikeRecord.getConfigKey())
-                .build();
+        return MapperUtils.mapper().readValue(aerospikeRecord.getData(), ConfigDetails.class);
     }
 
     @Override
