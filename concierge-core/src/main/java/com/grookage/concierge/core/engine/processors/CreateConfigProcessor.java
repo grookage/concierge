@@ -37,8 +37,8 @@ public class CreateConfigProcessor extends ConciergeProcessor {
                 .get()
                 .createdRecordExists(createConfigRequest.getConfigKey());
         if (recordExists) {
-            log.error("There are already stored configs present with namespace {} and configName {}. Please try updating them instead",
-                    createConfigRequest.getConfigKey().getNamespace(), createConfigRequest.getConfigKey().getConfigName());
+            log.error("There are already stored configs present with configKey {}. Please try updating them instead",
+                    createConfigRequest.getConfigKey());
             throw ConciergeException.error(ConciergeCoreErrorCode.CONFIG_ALREADY_EXISTS);
         }
         final var configDetails = ConfigurationUtils.toConfigDetails(createConfigRequest);

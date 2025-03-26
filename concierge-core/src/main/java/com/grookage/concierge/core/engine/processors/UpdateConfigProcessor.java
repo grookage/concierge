@@ -38,10 +38,9 @@ public class UpdateConfigProcessor extends ConciergeProcessor {
                 .get()
                 .getStoredRecord(updateConfigRequest.getConfigKey()).orElse(null);
         if (null == storedConfig || storedConfig.getConfigState() != ConfigState.CREATED) {
-            log.error("There are no stored configs present with namespace {}, version {} and configName {}. Please try updating them instead",
-                    updateConfigRequest.getConfigKey().getNamespace(),
-                    updateConfigRequest.getConfigKey().getVersion(),
-                    updateConfigRequest.getConfigKey().getConfigName());
+            log.error("There are no stored configs present with configKey {}. Please try creating them instead",
+                    updateConfigRequest.getConfigKey()
+            );
             throw ConciergeException.error(ConciergeCoreErrorCode.NO_CONFIG_FOUND);
         }
         storedConfig.setDescription(updateConfigRequest.getDescription());
