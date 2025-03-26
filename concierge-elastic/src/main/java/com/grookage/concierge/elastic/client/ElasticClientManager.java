@@ -28,6 +28,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHost;
 import org.elasticsearch.client.RestClient;
 
+
+@SuppressWarnings("unchecked")
 @Slf4j
 @Getter
 public class ElasticClientManager {
@@ -69,5 +71,6 @@ public class ElasticClientManager {
         ));
         log.info("Started the elastic client");
     }
+
 
 }
