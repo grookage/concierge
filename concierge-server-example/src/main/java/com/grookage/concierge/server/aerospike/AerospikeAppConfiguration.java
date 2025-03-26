@@ -1,4 +1,4 @@
-package com.grookage.concierge.server;
+package com.grookage.concierge.server.aerospike;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.grookage.concierge.aerospike.client.AerospikeConfig;
@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 @EqualsAndHashCode(callSuper = true)
-public class AppConfiguration extends Configuration {
+public class AerospikeAppConfiguration extends Configuration {
 
     @NotEmpty
     @NotNull

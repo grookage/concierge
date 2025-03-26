@@ -1,4 +1,4 @@
-package com.grookage.concierge.server;
+package com.grookage.concierge.server.elastic;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -11,13 +11,14 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.grookage.conceirge.dwserver.permissions.PermissionValidator;
 import com.grookage.conceirge.dwserver.resolvers.ConfigUpdaterResolver;
-import com.grookage.concierge.aerospike.client.AerospikeConfig;
-import com.grookage.concierge.aerospikedw.ConciergeAerospikeBundle;
 import com.grookage.concierge.core.cache.CacheConfig;
 import com.grookage.concierge.core.engine.validator.ConfigDataValidator;
+import com.grookage.concierge.elastic.config.ElasticConfig;
+import com.grookage.concierge.elasticdw.ConciergeElasticBundle;
 import com.grookage.concierge.models.config.ConfigKey;
 import com.grookage.concierge.models.ingestion.ConfigurationRequest;
 import com.grookage.concierge.models.ingestion.UpdateConfigRequest;
+import com.grookage.concierge.server.ConciergeConfigUpdater;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -27,22 +28,27 @@ import javax.ws.rs.core.HttpHeaders;
 import java.util.function.Supplier;
 
 @Slf4j
-public class App extends Application<AppConfiguration> {
-
+public class ElasticApp extends Application<ElasticAppConfiguration> {
     public static void main(final String[] args) throws Exception {
-        new App().run(args);
+        new ElasticApp().run(args);
     }
 
     @Override
-    public void initialize(final Bootstrap<AppConfiguration> bootstrap) {
-        final var bundle = new ConciergeAerospikeBundle<AppConfiguration, ConciergeConfigUpdater>() {
+    public void initialize(final Bootstrap<ElasticAppConfiguration> bootstrap) {
+        final var bundle = new ConciergeElasticBundle<ElasticAppConfiguration, ConciergeConfigUpdater>() {
+
             @Override
-            protected Supplier<ConfigUpdaterResolver<ConciergeConfigUpdater>> userResolver(AppConfiguration configuration) {
+            protected ElasticConfig getElasticConfig(ElasticAppConfiguration configuration) {
+                return configuration.getElasticConfig();
+            }
+
+            @Override
+            protected Supplier<ConfigUpdaterResolver<ConciergeConfigUpdater>> userResolver(ElasticAppConfiguration configuration) {
                 return () -> httpHeaders -> new ConciergeConfigUpdater();
             }
 
             @Override
-            protected CacheConfig getCacheConfig(AppConfiguration configuration) {
+            protected CacheConfig getCacheConfig(ElasticAppConfiguration configuration) {
                 return CacheConfig.builder()
                         .enabled(true)
                         .refreshCacheSeconds(600)
@@ -50,7 +56,7 @@ public class App extends Application<AppConfiguration> {
             }
 
             @Override
-            protected Supplier<PermissionValidator<ConciergeConfigUpdater>> getPermissionResolver(AppConfiguration configuration) {
+            protected Supplier<PermissionValidator<ConciergeConfigUpdater>> getPermissionResolver(ElasticAppConfiguration configuration) {
                 return () -> new PermissionValidator<>() {
                     @Override
                     public void authorize(HttpHeaders headers, ConciergeConfigUpdater schemaUpdater, ConfigurationRequest configurationRequest) {
@@ -80,21 +86,16 @@ public class App extends Application<AppConfiguration> {
             }
 
             @Override
-            protected Supplier<ConfigDataValidator> getConfigDataValidator(AppConfiguration configuration) {
+            protected Supplier<ConfigDataValidator> getConfigDataValidator(ElasticAppConfiguration configuration) {
                 return () -> (configKey, configData) -> {
                 };
-            }
-
-            @Override
-            protected AerospikeConfig getAerospikeConfig(AppConfiguration configuration) {
-                return configuration.getAerospikeConfig();
             }
         };
         bootstrap.addBundle(bundle);
     }
 
     @Override
-    public void run(AppConfiguration appConfiguration, Environment environment) {
+    public void run(ElasticAppConfiguration elasticAppConfiguration, Environment environment) {
         environment.getObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         environment.getObjectMapper().registerModule(new GuavaModule())
                 .registerModule(new Jdk8Module())
@@ -103,5 +104,4 @@ public class App extends Application<AppConfiguration> {
                 .enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES)
                 .registerModule(new ParameterNamesModule(JsonCreator.Mode.PROPERTIES));
     }
-
 }

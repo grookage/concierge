@@ -1,0 +1,34 @@
+name: concierge
+
+server:
+  maxThreads: 128
+  minThreads: 128
+  applicationConnectors:
+    - type: http
+      port: 18080
+  adminConnectors:
+    - type: http
+      port: 18081
+  applicationContextPath: /
+  requestLog:
+    appenders:
+      - type: console
+        timeZone: IST
+
+logging:
+  level: INFO
+  loggers:
+    com.grookage.concierge: DEBUG
+  appenders:
+    - type: console
+      threshold: INFO
+      timeZone: IST
+      logFormat: "%(%-5level) [%date] [%thread] [%logger{0}]: %message%n"
+
+elasticConfig:
+  clusterName: stg-es7_17_8_docinfo-test
+  servers:
+    - host: stg-es701.phonepe.nb6
+      port: 9200
+  maxResultSize: 10000
+  operationTimeoutMs: 10000
