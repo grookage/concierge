@@ -3,5 +3,6 @@
   "configName": "testConfig",
   "version": "V12345",
   "orgId": "testOrg",
-  "tenantId": "default"
+  "tenantId": "default",
+  "configType" : "default"
 }

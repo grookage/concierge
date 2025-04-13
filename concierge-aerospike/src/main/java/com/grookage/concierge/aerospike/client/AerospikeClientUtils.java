@@ -24,11 +24,14 @@ import java.util.zip.GZIPOutputStream;
 public class AerospikeClientUtils {
 
     private static final List<String> BIN_INDEXES =
-            List.of(AerospikeStorageConstants.CONFIG_BIN,
+            List.of(
+                    AerospikeStorageConstants.CONFIG_BIN,
                     AerospikeStorageConstants.CONFIG_STATE_BIN,
                     AerospikeStorageConstants.NAMESPACE_BIN,
                     AerospikeStorageConstants.ORG_BIN,
-                    AerospikeStorageConstants.TENANT_BIN);
+                    AerospikeStorageConstants.TENANT_BIN,
+                    AerospikeStorageConstants.CONFIG_TYPE_BIN
+            );
 
     /*
       Having to do this to have control at the code level, and also checkIndex doesn't exist.

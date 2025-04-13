@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.0.1-RC16]
+
+- Made configType part of the referenceId as well. So in a set we can fetch by configTypes as required and ser/de-ser
+
 ## [0.0.1-RC15]
 
 - Changed the elasticSearch schema structure
@@ -14,7 +18,8 @@ All notable changes to this project will be documented in this file.
 
 - Fixed the data saving format in Aerospike
 - Fixed the rollOverAndUpdate
-- Identified a weird client bug in Aerospike. If there are no records OR only one record Predicate.or/and don't work. They need special handling. And there's barely any documentation on the same 
+- Identified a weird client bug in Aerospike. If there are no records OR only one record Predicate.or/and don't work.
+  They need special handling. And there's barely any documentation on the same
 
 ## [0.0.1-RC12]
 

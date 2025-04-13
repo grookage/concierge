@@ -41,4 +41,6 @@ public class SearchRequest {
     private Set<String> configNames = Set.of();
     @Builder.Default
     private Set<ConfigState> configStates = Set.of();
+    @Builder.Default
+    private Set<String> configTypes = Set.of();
 }

@@ -58,8 +58,7 @@ public class AerospikeRepository implements ConciergeRepository {
 
     @Override
     public boolean createdRecordExists(ConfigKey configKey) {
-        return aerospikeManager.exists(configKey.getOrgId(), configKey.getNamespace(),
-                configKey.getTenantId(), configKey.getConfigName());
+        return aerospikeManager.exists(configKey);
     }
 
     @Override

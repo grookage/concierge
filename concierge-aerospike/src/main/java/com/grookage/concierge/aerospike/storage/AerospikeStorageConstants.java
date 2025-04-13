@@ -12,4 +12,5 @@ public class AerospikeStorageConstants {
     public static final String CONFIG_STATE_BIN = "configState";
     public static final String ORG_BIN = "org";
     public static final String TENANT_BIN = "tenant";
+    public static final String CONFIG_TYPE_BIN = "configType";
 }
