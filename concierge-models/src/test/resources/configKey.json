@@ -4,5 +4,5 @@
   "version": "V12345",
   "orgId": "testOrg",
   "tenantId": "default",
-  "configType" : "default"
+  "configType": "default"
 }

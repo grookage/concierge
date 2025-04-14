@@ -36,7 +36,7 @@ public class AerospikeManager {
     private Key getKey(
             final String recordKey
     ) {
-        return new Key(namespace, AerospikeStorageConstants.CONFIG_SET, recordKey);
+        return new Key(namespace, aerospikeConfig.getConfigSet(), recordKey);
     }
 
     private Record getRecord(
@@ -102,7 +102,7 @@ public class AerospikeManager {
         final var queryStatement = new Statement();
         queryStatement.setNamespace(namespace);
         queryStatement.setBinNames(AerospikeStorageConstants.DEFAULT_BIN);
-        queryStatement.setSetName(AerospikeStorageConstants.CONFIG_SET);
+        queryStatement.setSetName(aerospikeConfig.getConfigSet());
         queryStatement.setMaxRecords(10000);
         final var queryPolicy = client.copyQueryPolicyDefault();
         final var searchableExpressions = new ArrayList<Exp>();
@@ -165,7 +165,7 @@ public class AerospikeManager {
         final var queryStatement = new Statement();
         queryStatement.setNamespace(namespace);
         queryStatement.setBinNames(AerospikeStorageConstants.DEFAULT_BIN);
-        queryStatement.setSetName(AerospikeStorageConstants.CONFIG_SET);
+        queryStatement.setSetName(aerospikeConfig.getConfigSet());
         final var queryPolicy = client.copyQueryPolicyDefault();
         queryPolicy.filterExp = Exp.build(Exp.and(
                 Exp.eq(Exp.stringBin(AerospikeStorageConstants.ORG_BIN), Exp.val(configKey.getOrgId())),

@@ -27,6 +27,7 @@ logging:
 
 aerospikeConfig:
   namespace: test
+  configSet: configRegistry
   hosts:
     - host: localhost
       port: 3000

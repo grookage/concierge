@@ -1,6 +1,7 @@
 package com.grookage.concierge.aerospike.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.grookage.concierge.aerospike.storage.AerospikeStorageConstants;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,6 +24,8 @@ public class AerospikeConfig {
     private String password;
     private boolean txnEnabled = false;
     private boolean tlsEnabled = false;
+    @Builder.Default
+    private String configSet = AerospikeStorageConstants.CONFIG_SET;
 
     @Builder.Default
     private int maxConnectionsPerNode = 10;

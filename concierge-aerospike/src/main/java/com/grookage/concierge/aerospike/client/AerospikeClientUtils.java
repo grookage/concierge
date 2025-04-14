@@ -36,16 +36,17 @@ public class AerospikeClientUtils {
     /*
       Having to do this to have control at the code level, and also checkIndex doesn't exist.
      */
-    private static void createIndex(final String namespace,
+    private static void createIndex(final AerospikeConfig aerospikeConfig,
                                     final IAerospikeClient client) {
 
         BIN_INDEXES.forEach(bin -> {
             try {
-                final var indexTask = client.createIndex(null, namespace, AerospikeStorageConstants.CONFIG_SET,
+                final var indexTask = client.createIndex(null, aerospikeConfig.getNamespace(),
+                        aerospikeConfig.getConfigSet(),
                         bin, bin, IndexType.STRING);
                 indexTask.waitTillComplete();
-                log.debug("Index successfully created for namespace {} with indexName {} and binName {}",
-                        namespace,
+                log.debug("Index successfully created for config {} with indexName {} and binName {}",
+                        aerospikeConfig,
                         bin, bin);
             } catch (final AerospikeException ex) {
                 if (ex.getResultCode() != ResultCode.INDEX_ALREADY_EXISTS) {
@@ -66,7 +67,7 @@ public class AerospikeClientUtils {
                 .map(
                         connection -> new Host(connection.getHost(), connection.getTls(), connection.getPort()))
                 .toArray(Host[]::new));
-        createIndex(config.getNamespace(), aerospikeClient);
+        createIndex(config, aerospikeClient);
         log.info("Started the Aerospike Client after creating indexes");
         return aerospikeClient;
     }
