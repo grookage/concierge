@@ -1,8 +1,11 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.0.1-RC17]
 
-## [0.0.1-RC16]
+- Bug fix in RC17, configKey needs to remain without configType. Just making it part of search
+
+## [0.0.1-RC16] : [Broken]
 
 - Made configType part of the referenceId as well. So in a set we can fetch by configTypes as required and ser/de-ser
 

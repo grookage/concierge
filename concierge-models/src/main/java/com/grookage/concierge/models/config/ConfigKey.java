@@ -33,7 +33,7 @@ public class ConfigKey {
 
     @JsonIgnore
     public String getReferenceId() {
-        return Joiner.on(".").join(orgId, namespace, tenantId, configName, configType, version).toUpperCase(Locale.ROOT);
+        return Joiner.on(".").join(orgId, namespace, tenantId, configName, version).toUpperCase(Locale.ROOT);
     }
 
     @Override

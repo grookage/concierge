@@ -172,7 +172,6 @@ public class AerospikeManager {
                 Exp.eq(Exp.stringBin(AerospikeStorageConstants.NAMESPACE_BIN), Exp.val(configKey.getNamespace())),
                 Exp.eq(Exp.stringBin(AerospikeStorageConstants.TENANT_BIN), Exp.val(configKey.getTenantId())),
                 Exp.eq(Exp.stringBin(AerospikeStorageConstants.CONFIG_BIN), Exp.val(configKey.getConfigName())),
-                Exp.eq(Exp.stringBin(AerospikeStorageConstants.CONFIG_TYPE_BIN), Exp.val(configKey.getConfigType())),
                 Exp.eq(Exp.stringBin(AerospikeStorageConstants.CONFIG_STATE_BIN), Exp.val(ConfigState.CREATED.name()))
         ));
         try (final var resultSet = client.query(queryPolicy, queryStatement)) {

@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.grookage.concierge</groupId>
         <artifactId>concierge</artifactId>
-        <version>0.0.1-RC16</version>
+        <version>0.0.1-RC17</version>
     </parent>
 
     <artifactId>concierge-bom</artifactId>

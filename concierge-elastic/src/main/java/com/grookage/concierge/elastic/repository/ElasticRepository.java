@@ -140,8 +140,7 @@ public class ElasticRepository implements ConciergeRepository {
         final var tenantQuery = TermQuery.of(p -> p.field(TENANT).value(getNormalizedValue(configKey.getTenantId())))._toQuery();
         final var configQuery = TermQuery.of(p -> p.field(CONFIG_NAME).value(getNormalizedValue(configKey.getConfigName())))._toQuery();
         final var configStateQuery = TermQuery.of(p -> p.field(CONFIG_STATE).value(getNormalizedValue(ConfigState.CREATED.name())))._toQuery();
-        final var configTypeQuery = TermQuery.of(p -> p.field(CONFIG_TYPE).value(getNormalizedValue(configKey.getConfigType())))._toQuery();
-        final var searchQuery = BoolQuery.of(q -> q.must(List.of(orgQuery, namespaceQuery, tenantQuery, configQuery, configTypeQuery, configStateQuery)))._toQuery();
+        final var searchQuery = BoolQuery.of(q -> q.must(List.of(orgQuery, namespaceQuery, tenantQuery, configQuery, configStateQuery)))._toQuery();
         final var searchResponse = client.search(SearchRequest.of(
                         s -> s.query(searchQuery)
                                 .requestCache(true)
@@ -220,12 +219,11 @@ public class ElasticRepository implements ConciergeRepository {
     public void rollOverAndUpdate(ConfigDetails configDetails) {
         final var namespaceQuery = TermQuery.of(p -> p.field(NAMESPACE).value(getNormalizedValue(configDetails.getConfigKey().getNamespace())))._toQuery();
         final var configQuery = TermQuery.of(p -> p.field(CONFIG_NAME).value(getNormalizedValue(configDetails.getConfigKey().getConfigName())))._toQuery();
-        final var configTypeQuery = TermQuery.of(p -> p.field(CONFIG_TYPE).value(getNormalizedValue(configDetails.getConfigKey().getConfigType())))._toQuery();
         final var stateQuery = TermQuery.of(p -> p.field(CONFIG_STATE).value(getNormalizedValue(ConfigState.ACTIVATED.name())))._toQuery();
         final var orgQuery = TermQuery.of(p -> p.field(ORG).value(getNormalizedValue(configDetails.getConfigKey().getOrgId())))._toQuery();
         final var tenantQuery = TermQuery.of(p -> p.field(TENANT).value(getNormalizedValue(configDetails.getConfigKey().getTenantId())))._toQuery();
         final var searchQuery = BoolQuery.of(q -> q.must(List.of(orgQuery, namespaceQuery, tenantQuery,
-                configQuery, configTypeQuery, stateQuery)))._toQuery();
+                configQuery, stateQuery)))._toQuery();
         final var searchResponse = client.search(SearchRequest.of(
                         s -> s.query(searchQuery)
                                 .requestCache(true)
