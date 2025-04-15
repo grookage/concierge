@@ -3,9 +3,7 @@ package com.grookage.concierge.core.engine;
 import com.grookage.concierge.core.engine.processors.ApproveConfigProcessor;
 import com.grookage.concierge.core.utils.ContextUtils;
 import com.grookage.concierge.models.ResourceHelper;
-import com.grookage.concierge.models.config.ConfigDetails;
-import com.grookage.concierge.models.config.ConfigKey;
-import com.grookage.concierge.models.config.ConfigState;
+import com.grookage.concierge.models.config.*;
 import com.grookage.concierge.models.exception.ConciergeException;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
@@ -36,6 +34,12 @@ class ApproveConfigProcessorTest extends AbstractProcessorTest {
         final var processor = getConciergeProcessor();
         Assertions.assertThrows(ConciergeException.class, () -> processor.process(conciergeContext));
         final var configDetails = ResourceHelper.getResource("configDetails.json", ConfigDetails.class);
+        configDetails.addHistory(
+                ConfigHistoryItem.builder()
+                        .configEvent(ConfigEvent.CREATE_CONFIG)
+                        .configUpdaterId("updaterId")
+                        .build()
+        );
         configDetails.setConfigState(ConfigState.APPROVED);
         Mockito.when(getConciergeRepository().getStoredRecord(configKey))
                 .thenReturn(Optional.of(configDetails));
@@ -52,6 +56,12 @@ class ApproveConfigProcessorTest extends AbstractProcessorTest {
         conciergeContext.addContext(ConfigKey.class.getSimpleName(), configKey);
         ContextUtils.addConfigUpdaterContext(conciergeContext, getConfigUpdater());
         final var configDetails = ResourceHelper.getResource("configDetails.json", ConfigDetails.class);
+        configDetails.addHistory(
+                ConfigHistoryItem.builder()
+                        .configEvent(ConfigEvent.CREATE_CONFIG)
+                        .configUpdaterId("updaterId")
+                        .build()
+        );
         Mockito.when(getConciergeRepository().getStoredRecord(configKey))
                 .thenReturn(Optional.of(configDetails));
         getConciergeProcessor().process(conciergeContext);

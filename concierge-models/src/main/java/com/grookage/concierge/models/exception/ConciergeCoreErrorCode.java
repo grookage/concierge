@@ -21,7 +21,13 @@ import lombok.Getter;
 @Getter
 public enum ConciergeCoreErrorCode implements ConciergeErrorCode {
 
+    INVALID_USER(400),
+
     PROCESSOR_NOT_FOUND(400),
+
+    PROCESSOR_KEY_NOT_FOUND(400),
+
+    USER_NOT_FOUND(400),
 
     VALUE_NOT_FOUND(400),
 

@@ -3,9 +3,7 @@ package com.grookage.concierge.core.engine;
 import com.grookage.concierge.core.engine.processors.UpdateConfigProcessor;
 import com.grookage.concierge.core.utils.ContextUtils;
 import com.grookage.concierge.models.ResourceHelper;
-import com.grookage.concierge.models.config.ConfigDetails;
-import com.grookage.concierge.models.config.ConfigKey;
-import com.grookage.concierge.models.config.ConfigState;
+import com.grookage.concierge.models.config.*;
 import com.grookage.concierge.models.exception.ConciergeException;
 import com.grookage.concierge.models.ingestion.UpdateConfigRequest;
 import lombok.SneakyThrows;
@@ -46,6 +44,12 @@ class UpdateConfigProcessorTest extends AbstractProcessorTest {
         conciergeContext.addContext(UpdateConfigRequest.class.getSimpleName(), updateConfigRequest);
         final var processor = getConciergeProcessor();
         final var configDetails = ResourceHelper.getResource("configDetails.json", ConfigDetails.class);
+        configDetails.addHistory(
+                ConfigHistoryItem.builder()
+                        .configEvent(ConfigEvent.CREATE_CONFIG)
+                        .configUpdaterId("updaterId")
+                        .build()
+        );
         Mockito.when(getConciergeRepository().getStoredRecord(Mockito.any(ConfigKey.class)))
                 .thenReturn(Optional.of(configDetails));
         processor.process(conciergeContext);
