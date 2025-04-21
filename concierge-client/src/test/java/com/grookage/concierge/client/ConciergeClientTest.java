@@ -58,7 +58,8 @@ class ConciergeClientTest {
         final var clientRefresher = new ConciergeClientRefresher(
                 clientSupplier,
                 1,
-                true
+                true,
+                () -> null
         );
         clientRefresher.start();
         final var serDeFactory = new SerDeFactory() {

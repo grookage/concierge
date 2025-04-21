@@ -40,7 +40,7 @@
         <dropwizard.version>2.1.10</dropwizard.version>
         <awaitility.version>4.1.1</awaitility.version>
 
-        <korg.version>0.0.1-RC2</korg.version>
+        <korg.version>1.0.2</korg.version>
     </properties>
 
     <dependencyManagement>
