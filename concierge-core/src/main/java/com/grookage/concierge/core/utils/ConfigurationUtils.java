@@ -18,18 +18,33 @@ import java.util.function.BiPredicate;
 @Slf4j
 public class ConfigurationUtils {
 
-    public static final BiPredicate<ConfigDetails, ConciergeContext> CONFIG_MAINTAINER_PREDICATE = (configDetails, context) -> {
+    private static final boolean LOCAL_ENV = Boolean.parseBoolean(System.getProperty("localEnv", "false"));
+
+    private static final BiPredicate<ConfigDetails, ConciergeContext> CONFIG_PREDICATE = (configDetails, context) -> {
         final var requestingUser = ContextUtils.getUserId(context);
         final var configCreatorId = ConfigurationUtils.getConfigCreatorId(configDetails);
         return !requestingUser.equals(configCreatorId);
     };
 
-    public static final BiPredicate<ConfigDetails, ConciergeContext> CONFIG_UPDATER_PREDICATE = (configDetails, context) -> {
-        final var requestingUser = ContextUtils.getUserId(context);
-        final var configCreatorId = ConfigurationUtils.getConfigCreatorId(configDetails);
-        return requestingUser.equals(configCreatorId);
-    };
+    public static void validateConfigApproveAccess(final ConfigDetails configDetails, final ConciergeContext context) {
+        if (!LOCAL_ENV && !CONFIG_PREDICATE.test(configDetails, context)) {
+            log.error("User {} is not allowed to approve the config {}. The userId is same as the config creator {}",
+                    ContextUtils.getUserId(context),
+                    configDetails.getConfigKey(),
+                    getConfigCreatorId(configDetails));
+            throw ConciergeException.error(ConciergeCoreErrorCode.INVALID_USER);
+        }
+    }
 
+    public static void validateConfigUpdateAccess(final ConfigDetails configDetails, final ConciergeContext context) {
+        if (!LOCAL_ENV && CONFIG_PREDICATE.test(configDetails, context)) {
+            log.error("User {} is not allowed to update the config {}. Please contact the config creator {}",
+                    ContextUtils.getUserId(context),
+                    configDetails.getConfigKey(),
+                    getConfigCreatorId(configDetails));
+            throw ConciergeException.error(ConciergeCoreErrorCode.INVALID_USER);
+        }
+    }
 
     @SneakyThrows
     public ConfigDetails toConfigDetails(ConfigurationRequest configurationRequest) {

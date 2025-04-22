@@ -4,9 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [1.0.1]
 
-**Feature Addition** 
+**Feature Addition**
 
-Korg added a configConsumer when configs are getting refreshed, like a latch should the client want to consume the latch and do any post-processing. 
+Korg added a configConsumer when configs are getting refreshed, like a latch should the client want to consume the latch
+and do any post-processing.
 Updated korg version to have the changes reflected
 
 ## [1.0.0]

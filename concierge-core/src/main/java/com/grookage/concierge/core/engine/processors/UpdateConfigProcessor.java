@@ -44,7 +44,7 @@ public class UpdateConfigProcessor extends ConciergeProcessor {
             );
             throw ConciergeException.error(ConciergeCoreErrorCode.NO_CONFIG_FOUND);
         }
-        ConfigurationUtils.CONFIG_UPDATER_PREDICATE.test(storedConfig, context);
+        ConfigurationUtils.validateConfigUpdateAccess(storedConfig, context);
         storedConfig.setDescription(updateConfigRequest.getDescription());
         storedConfig.setData(MapperUtils.mapper().writeValueAsBytes(updateConfigRequest.getData()));
         addHistory(context, storedConfig, updateConfigRequest.getMessage());
