@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.List;
+
 class CreateConfigProcessorTest extends AbstractProcessorTest {
 
     @Override
@@ -21,17 +23,18 @@ class CreateConfigProcessorTest extends AbstractProcessorTest {
                 .build();
     }
 
-
     @Test
     @SneakyThrows
     void testConfigCreationActiveRecordExists() {
         final var conciergeContext = new ConciergeContext();
         final var createConfigRequest = ResourceHelper.getResource("configurationRequest.json",
                 ConfigurationRequest.class);
+        final var configDetails = ResourceHelper.getResource("configDetails.json",
+                ConfigDetails.class);
         conciergeContext.addContext(ConfigurationRequest.class.getSimpleName(), createConfigRequest);
         ContextUtils.addConfigUpdaterContext(conciergeContext, getConfigUpdater());
-        Mockito.when(getConciergeRepository().createdRecordExists(Mockito.any()))
-                .thenReturn(true);
+        Mockito.when(getConciergeRepository().getStoredRecords(Mockito.any()))
+                .thenReturn(List.of(configDetails));
         final var processor = getConciergeProcessor();
         Assertions.assertThrows(ConciergeException.class, () -> processor.process(conciergeContext));
     }
@@ -44,8 +47,8 @@ class CreateConfigProcessorTest extends AbstractProcessorTest {
                 ConfigurationRequest.class);
         conciergeContext.addContext(ConfigurationRequest.class.getSimpleName(), createConfigRequest);
         ContextUtils.addConfigUpdaterContext(conciergeContext, getConfigUpdater());
-        Mockito.when(getConciergeRepository().createdRecordExists(Mockito.any()))
-                .thenReturn(false);
+        Mockito.when(getConciergeRepository().getStoredRecords(Mockito.any()))
+                .thenReturn(List.of());
         final var processor = getConciergeProcessor();
         processor.process(conciergeContext);
         Mockito.verify(getConciergeRepository(), Mockito.times(1))

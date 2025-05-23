@@ -31,7 +31,6 @@ import com.grookage.concierge.elastic.client.ElasticClientManager;
 import com.grookage.concierge.elastic.config.ElasticConfig;
 import com.grookage.concierge.elastic.storage.StoredElasticRecord;
 import com.grookage.concierge.models.config.ConfigDetails;
-import com.grookage.concierge.models.config.ConfigKey;
 import com.grookage.concierge.models.config.ConfigState;
 import com.grookage.concierge.repository.ConciergeRepository;
 import lombok.Getter;
@@ -130,26 +129,6 @@ public class ElasticRepository implements ConciergeRepository {
                 .stream()
                 .filter(searchPredicate)
                 .map(each -> toConfigDetails(Objects.requireNonNull(each.source()))).toList();
-    }
-
-    @Override
-    @SneakyThrows
-    public boolean createdRecordExists(ConfigKey configKey) {
-        final var orgQuery = TermQuery.of(p -> p.field(ORG).value(getNormalizedValue(configKey.getOrgId())))._toQuery();
-        final var namespaceQuery = TermQuery.of(p -> p.field(NAMESPACE).value(getNormalizedValue(configKey.getNamespace())))._toQuery();
-        final var tenantQuery = TermQuery.of(p -> p.field(TENANT).value(getNormalizedValue(configKey.getTenantId())))._toQuery();
-        final var configQuery = TermQuery.of(p -> p.field(CONFIG_NAME).value(getNormalizedValue(configKey.getConfigName())))._toQuery();
-        final var configStateQuery = TermQuery.of(p -> p.field(CONFIG_STATE).value(getNormalizedValue(ConfigState.CREATED.name())))._toQuery();
-        final var searchQuery = BoolQuery.of(q -> q.must(List.of(orgQuery, namespaceQuery, tenantQuery, configQuery, configStateQuery)))._toQuery();
-        final var searchResponse = client.search(SearchRequest.of(
-                        s -> s.query(searchQuery)
-                                .requestCache(true)
-                                .index(List.of(CONFIG_INDEX))
-                                .size(elasticConfig.getMaxResultSize()) //If you have more than 10K schemas, this will hold you up!
-                                .timeout(elasticConfig.getTimeout())),
-                StoredElasticRecord.class
-        );
-        return !searchResponse.hits().hits().isEmpty();
     }
 
     @Override

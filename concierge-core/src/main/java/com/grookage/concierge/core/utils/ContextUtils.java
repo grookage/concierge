@@ -33,11 +33,11 @@ public class ContextUtils {
 
     private static final String USER_ID = "USER_ID";
 
-    public static void addConfigUpdaterContext(final ConciergeContext schemaContext,
+    public static void addConfigUpdaterContext(final ConciergeContext conciergeContext,
                                                final ConfigUpdater configUpdater) {
-        schemaContext.addContext(USER_NAME, configUpdater.name());
-        schemaContext.addContext(EMAIL, configUpdater.email());
-        schemaContext.addContext(USER_ID, configUpdater.userId());
+        conciergeContext.addContext(USER_NAME, configUpdater.name());
+        conciergeContext.addContext(EMAIL, configUpdater.email());
+        conciergeContext.addContext(USER_ID, configUpdater.userId());
     }
 
     @SneakyThrows

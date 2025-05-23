@@ -19,8 +19,6 @@ public interface ConciergeRepository {
         return getStoredRecord(configKey.getReferenceId());
     }
 
-    boolean createdRecordExists(ConfigKey configKey);
-
     List<ConfigDetails> getStoredRecords();
 
     List<ConfigDetails> getStoredRecords(SearchRequest searchRequest);

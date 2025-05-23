@@ -18,18 +18,25 @@ import java.util.function.BiPredicate;
 @Slf4j
 public class ConfigurationUtils {
 
-    public static final BiPredicate<ConfigDetails, ConciergeContext> CONFIG_MAINTAINER_PREDICATE = (configDetails, context) -> {
+    private static final boolean LOCAL_ENV = Boolean.parseBoolean(System.getProperty("localEnv", "false"));
+    //Both config creator and configUpdater can't approve the config.
+    private static final BiPredicate<ConfigDetails, ConciergeContext> CONFIG_PREDICATE = (configDetails, context) -> {
         final var requestingUser = ContextUtils.getUserId(context);
-        final var configCreatorId = ConfigurationUtils.getConfigCreatorId(configDetails);
-        return !requestingUser.equals(configCreatorId);
+        return configDetails.getConfigHistories()
+                .stream()
+                .filter(each -> each.getConfigEvent() == ConfigEvent.CREATE_CONFIG ||
+                        each.getConfigEvent() == ConfigEvent.UPDATE_CONFIG)
+                .anyMatch(each -> each.getConfigUpdaterId().equals(requestingUser));
     };
 
-    public static final BiPredicate<ConfigDetails, ConciergeContext> CONFIG_UPDATER_PREDICATE = (configDetails, context) -> {
-        final var requestingUser = ContextUtils.getUserId(context);
-        final var configCreatorId = ConfigurationUtils.getConfigCreatorId(configDetails);
-        return requestingUser.equals(configCreatorId);
-    };
-
+    public static void validateConfigApproveAccess(final ConfigDetails configDetails, final ConciergeContext context) {
+        if (!LOCAL_ENV && CONFIG_PREDICATE.test(configDetails, context)) {
+            log.error("User {} is not allowed to approve the config {}. The userId is same as the config creator",
+                    ContextUtils.getUserId(context),
+                    configDetails.getConfigKey());
+            throw ConciergeException.error(ConciergeCoreErrorCode.INVALID_USER);
+        }
+    }
 
     @SneakyThrows
     public ConfigDetails toConfigDetails(ConfigurationRequest configurationRequest) {
@@ -39,18 +46,5 @@ public class ConfigurationUtils {
                 .description(configurationRequest.getDescription())
                 .data(MapperUtils.mapper().writeValueAsBytes(configurationRequest.getData()))
                 .build();
-    }
-
-    public String getConfigCreatorId(final ConfigDetails configDetails) {
-        final var createConfigHistory = configDetails.getConfigHistories()
-                .stream()
-                .filter(each -> each.getConfigEvent() == ConfigEvent.CREATE_CONFIG)
-                .findFirst().orElse(null);
-        if (null == createConfigHistory) {
-            log.error("There is no history present for createConfig event for configKey {}. Please try creating the config first",
-                    configDetails.getConfigKey());
-            throw ConciergeException.error(ConciergeCoreErrorCode.NO_CONFIG_FOUND);
-        }
-        return createConfigHistory.getConfigUpdaterId();
     }
 }

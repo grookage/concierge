@@ -22,6 +22,7 @@ public class ConfigHistoryItem {
     long timestamp;
     @NotBlank
     String configUpdaterName;
+    @NotBlank
     String configUpdaterId;
     String configUpdaterEmail;
     String message;

@@ -2,7 +2,6 @@ package com.grookage.concierge.core.engine.processors;
 
 import com.grookage.concierge.core.engine.ConciergeContext;
 import com.grookage.concierge.core.engine.ConciergeProcessor;
-import com.grookage.concierge.core.utils.ConfigurationUtils;
 import com.grookage.concierge.models.MapperUtils;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigEvent;
@@ -44,7 +43,6 @@ public class UpdateConfigProcessor extends ConciergeProcessor {
             );
             throw ConciergeException.error(ConciergeCoreErrorCode.NO_CONFIG_FOUND);
         }
-        ConfigurationUtils.CONFIG_UPDATER_PREDICATE.test(storedConfig, context);
         storedConfig.setDescription(updateConfigRequest.getDescription());
         storedConfig.setData(MapperUtils.mapper().writeValueAsBytes(updateConfigRequest.getData()));
         addHistory(context, storedConfig, updateConfigRequest.getMessage());
