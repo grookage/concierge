@@ -2,7 +2,6 @@ package com.grookage.concierge.core.engine.processors;
 
 import com.grookage.concierge.core.engine.ConciergeContext;
 import com.grookage.concierge.core.engine.ConciergeProcessor;
-import com.grookage.concierge.core.utils.ConfigurationUtils;
 import com.grookage.concierge.models.MapperUtils;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigEvent;
