@@ -36,16 +36,6 @@ public class ConfigurationUtils {
         }
     }
 
-    public static void validateConfigUpdateAccess(final ConfigDetails configDetails, final ConciergeContext context) {
-        if (!LOCAL_ENV && CONFIG_PREDICATE.test(configDetails, context)) {
-            log.error("User {} is not allowed to update the config {}. Please contact the config creator {}",
-                    ContextUtils.getUserId(context),
-                    configDetails.getConfigKey(),
-                    getConfigCreatorId(configDetails));
-            throw ConciergeException.error(ConciergeCoreErrorCode.INVALID_USER);
-        }
-    }
-
     @SneakyThrows
     public ConfigDetails toConfigDetails(ConfigurationRequest configurationRequest) {
         return ConfigDetails.builder()
