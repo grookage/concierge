@@ -6,7 +6,6 @@ import com.grookage.concierge.aerospike.storage.AerospikeRecord;
 import com.grookage.concierge.models.MapperUtils;
 import com.grookage.concierge.models.SearchRequest;
 import com.grookage.concierge.models.config.ConfigDetails;
-import com.grookage.concierge.models.config.ConfigKey;
 import com.grookage.concierge.models.config.ConfigState;
 import com.grookage.concierge.repository.ConciergeRepository;
 import lombok.Getter;
@@ -54,11 +53,6 @@ public class AerospikeRepository implements ConciergeRepository {
     public Optional<ConfigDetails> getStoredRecord(String referenceId) {
         return aerospikeManager.getRecord(referenceId)
                 .map(this::toConfigDetails);
-    }
-
-    @Override
-    public boolean createdRecordExists(ConfigKey configKey) {
-        return aerospikeManager.exists(configKey);
     }
 
     @Override

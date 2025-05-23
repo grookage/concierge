@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.3]
+
+- BugFix : Not allowing config create if configMeta exists already (org, namespace, configName, tenantId) or if there's
+  any config in the created state with that meta
+- Removed the unnecessary recordExists method.
+
 ## [1.0.1]
 
 **Feature Addition**
