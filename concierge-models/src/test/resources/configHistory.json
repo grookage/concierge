@@ -1,5 +1,6 @@
 {
   "configEvent": "CREATE_CONFIG",
   "timestamp": "0",
-  "configUpdaterName": "conciergeUser"
+  "configUpdaterName": "conciergeUser",
+  "configUpdaterId": "U1"
 }

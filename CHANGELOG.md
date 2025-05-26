@@ -2,11 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.4]
+
+BugFix : History items were not getting saved correctly because of equals and hashCode on configEvent - multiple updates are not getting saved properly. 
+
+## [1.0.3]
+
+- BugFix : Not allowing config create if configMeta exists already (org, namespace, configName, tenantId) or if there's
+  any config in the created state with that meta
+- BugFix : Not allowing the config creator or updater to approve the config, previously it was only creator.
+- Removed the unnecessary recordExists method.
+
 ## [1.0.1]
 
-**Feature Addition** 
+**Feature Addition**
 
-Korg added a configConsumer when configs are getting refreshed, like a latch should the client want to consume the latch and do any post-processing. 
+Korg added a configConsumer when configs are getting refreshed, like a latch should the client want to consume the latch
+and do any post-processing.
 Updated korg version to have the changes reflected
 
 ## [1.0.0]

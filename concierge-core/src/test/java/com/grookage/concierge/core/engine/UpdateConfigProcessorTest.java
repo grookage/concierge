@@ -47,7 +47,7 @@ class UpdateConfigProcessorTest extends AbstractProcessorTest {
         configDetails.addHistory(
                 ConfigHistoryItem.builder()
                         .configEvent(ConfigEvent.CREATE_CONFIG)
-                        .configUpdaterId("updaterId")
+                        .configUpdaterId("userId")
                         .build()
         );
         Mockito.when(getConciergeRepository().getStoredRecord(Mockito.any(ConfigKey.class)))
