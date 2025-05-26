@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.4]
+
+BugFix : History items 
+
 ## [1.0.3]
 
 - BugFix : Not allowing config create if configMeta exists already (org, namespace, configName, tenantId) or if there's

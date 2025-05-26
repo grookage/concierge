@@ -26,21 +26,4 @@ public class ConfigHistoryItem {
     String configUpdaterId;
     String configUpdaterEmail;
     String message;
-
-    @Override
-    public int hashCode() {
-        return this.getConfigEvent().hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null || obj.getClass() != this.getClass()) {
-            return false;
-        }
-        final var thatKey = (ConfigHistoryItem) obj;
-        return (thatKey.getConfigEvent().equals(this.configEvent));
-    }
 }
