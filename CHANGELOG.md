@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [1.0.4]
 
-BugFix : History items 
+BugFix : History items were not getting saved correctly because of equals and hashCode on configEvent - multiple updates are not getting saved properly. 
 
 ## [1.0.3]
 
