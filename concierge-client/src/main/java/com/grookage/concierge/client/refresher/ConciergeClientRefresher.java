@@ -17,17 +17,21 @@
 package com.grookage.concierge.client.refresher;
 
 import com.grookage.concierge.models.ingestion.ConfigurationResponse;
+import com.grookage.korg.consumer.KorgConsumer;
 import com.grookage.korg.refresher.HttpKorgRefresher;
 import lombok.Builder;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class ConciergeClientRefresher extends HttpKorgRefresher<List<ConfigurationResponse>> {
 
     @Builder
-    public ConciergeClientRefresher(ConciergeClientSupplier supplier, int refreshTimeInSeconds,
-                                    boolean periodicRefresh) {
-        super(supplier, refreshTimeInSeconds, periodicRefresh);
+    public ConciergeClientRefresher(ConciergeClientSupplier supplier,
+                                    int refreshTimeInSeconds,
+                                    boolean periodicRefresh,
+                                    Supplier<KorgConsumer<List<ConfigurationResponse>>> configConsumer) {
+        super(supplier, refreshTimeInSeconds, periodicRefresh, configConsumer);
     }
 
 }

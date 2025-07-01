@@ -33,28 +33,28 @@ public class ContextUtils {
 
     private static final String USER_ID = "USER_ID";
 
-    public static void addConfigUpdaterContext(final ConciergeContext schemaContext,
+    public static void addConfigUpdaterContext(final ConciergeContext conciergeContext,
                                                final ConfigUpdater configUpdater) {
-        schemaContext.addContext(USER_NAME, configUpdater.name());
-        schemaContext.addContext(EMAIL, configUpdater.email());
-        schemaContext.addContext(USER_ID, configUpdater.userId());
+        conciergeContext.addContext(USER_NAME, configUpdater.name());
+        conciergeContext.addContext(EMAIL, configUpdater.email());
+        conciergeContext.addContext(USER_ID, configUpdater.userId());
     }
 
     @SneakyThrows
     public static String getUser(final ConciergeContext conciergeContext) {
         return conciergeContext.getValue(USER_NAME)
-                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.VALUE_NOT_FOUND));
+                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.USER_NOT_FOUND));
     }
 
     @SneakyThrows
     public static String getEmail(final ConciergeContext conciergeContext) {
         return conciergeContext.getValue(EMAIL)
-                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.VALUE_NOT_FOUND));
+                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.USER_NOT_FOUND));
     }
 
     @SneakyThrows
     public static String getUserId(final ConciergeContext conciergeContext) {
         return conciergeContext.getValue(USER_ID)
-                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.VALUE_NOT_FOUND));
+                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.USER_NOT_FOUND));
     }
 }

@@ -10,8 +10,6 @@ import com.grookage.concierge.aerospike.storage.AerospikeRecord;
 import com.grookage.concierge.aerospike.storage.AerospikeStorageConstants;
 import com.grookage.concierge.models.MapperUtils;
 import com.grookage.concierge.models.SearchRequest;
-import com.grookage.concierge.models.config.ConfigKey;
-import com.grookage.concierge.models.config.ConfigState;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -159,29 +157,5 @@ public class AerospikeManager {
             client.commit(transaction);
         }
         log.debug("Successfully completed the transaction with id {} and records {}", transaction.getId(), aerospikeRecords);
-    }
-
-    public boolean exists(final ConfigKey configKey) {
-        final var queryStatement = new Statement();
-        queryStatement.setNamespace(namespace);
-        queryStatement.setBinNames(AerospikeStorageConstants.DEFAULT_BIN);
-        queryStatement.setSetName(aerospikeConfig.getConfigSet());
-        final var queryPolicy = client.copyQueryPolicyDefault();
-        queryPolicy.filterExp = Exp.build(Exp.and(
-                Exp.eq(Exp.stringBin(AerospikeStorageConstants.ORG_BIN), Exp.val(configKey.getOrgId())),
-                Exp.eq(Exp.stringBin(AerospikeStorageConstants.NAMESPACE_BIN), Exp.val(configKey.getNamespace())),
-                Exp.eq(Exp.stringBin(AerospikeStorageConstants.TENANT_BIN), Exp.val(configKey.getTenantId())),
-                Exp.eq(Exp.stringBin(AerospikeStorageConstants.CONFIG_BIN), Exp.val(configKey.getConfigName())),
-                Exp.eq(Exp.stringBin(AerospikeStorageConstants.CONFIG_STATE_BIN), Exp.val(ConfigState.CREATED.name()))
-        ));
-        try (final var resultSet = client.query(queryPolicy, queryStatement)) {
-            var resultCount = 0;
-            while (resultSet.next()) {
-                if (null != resultSet.getRecord()) {
-                    resultCount++;
-                }
-            }
-            return resultCount > 0;
-        }
     }
 }

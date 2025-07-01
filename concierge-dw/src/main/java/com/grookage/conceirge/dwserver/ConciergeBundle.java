@@ -8,6 +8,7 @@ import com.grookage.conceirge.dwserver.resolvers.ConfigUpdaterResolver;
 import com.grookage.conceirge.dwserver.resources.ConfigResource;
 import com.grookage.conceirge.dwserver.resources.IngestionResource;
 import com.grookage.concierge.core.cache.CacheConfig;
+import com.grookage.concierge.core.cache.ConfigRegistry;
 import com.grookage.concierge.core.engine.ConciergeHub;
 import com.grookage.concierge.core.engine.resolver.AppendConfigResolver;
 import com.grookage.concierge.core.engine.resolver.ConfigVersionManager;
@@ -21,6 +22,7 @@ import com.grookage.concierge.core.services.impl.ConfigServiceImpl;
 import com.grookage.concierge.core.services.impl.IngestionServiceImpl;
 import com.grookage.concierge.models.ConfigUpdater;
 import com.grookage.concierge.repository.ConciergeRepository;
+import com.grookage.korg.consumer.KorgConsumer;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.lifecycle.Managed;
@@ -71,6 +73,10 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
 
     protected abstract Supplier<ConfigDataValidator> getConfigDataValidator(T configuration);
 
+    protected Supplier<KorgConsumer<ConfigRegistry>> getConfigConsumer(T configuration) {
+        return () -> null;
+    }
+
     @Override
     public void run(T configuration, Environment environment) {
         final var userResolver = userResolver(configuration);
@@ -88,6 +94,7 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
         Preconditions.checkNotNull(configVersionManager, "Config Version Manager can't be null");
 
         final var cacheConfig = getCacheConfig(configuration);
+        final var configConsumer = getConfigConsumer(configuration);
 
         final var conciergeHub = ConciergeHub.of()
                 .withRepositoryResolver(repositorySupplier)
@@ -96,7 +103,7 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
                 .withProcessorFactory(withProcessorFactory(configuration))
                 .build();
         this.ingestionService = new IngestionServiceImpl<>(conciergeHub);
-        this.configService = new ConfigServiceImpl(repositorySupplier, cacheConfig);
+        this.configService = new ConfigServiceImpl(repositorySupplier, cacheConfig, configConsumer);
         withLifecycleManagers(configuration)
                 .forEach(lifecycle -> environment.lifecycle().manage(new Managed() {
                     @Override

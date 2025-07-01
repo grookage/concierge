@@ -2,6 +2,7 @@ package com.grookage.concierge.core.engine.processors;
 
 import com.grookage.concierge.core.engine.ConciergeContext;
 import com.grookage.concierge.core.engine.ConciergeProcessor;
+import com.grookage.concierge.core.utils.ConfigurationUtils;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigEvent;
 import com.grookage.concierge.models.config.ConfigKey;
@@ -41,6 +42,7 @@ public class ApproveConfigProcessor extends ConciergeProcessor {
                     configKey.getConfigName());
             throw ConciergeException.error(ConciergeCoreErrorCode.NO_CONFIG_FOUND);
         }
+        ConfigurationUtils.validateConfigApproveAccess(storedConfig, context);
         addHistory(context, storedConfig, null);
         storedConfig.setConfigState(ConfigState.APPROVED);
         getRepositorySupplier().get().update(storedConfig);

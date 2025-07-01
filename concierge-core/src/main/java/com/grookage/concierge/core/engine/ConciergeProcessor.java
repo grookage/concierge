@@ -46,7 +46,7 @@ public abstract class ConciergeProcessor {
     @SneakyThrows
     public void fire(ConciergeContext context) {
         final var processorKey = context.getContext(ProcessorKey.class)
-                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.VALUE_NOT_FOUND));
+                .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.PROCESSOR_KEY_NOT_FOUND));
         final var processor = null != processorFactory && null != processorFactory.get() ?
                 processorFactory.get().getProcessor(processorKey).orElse(null) : null;
 

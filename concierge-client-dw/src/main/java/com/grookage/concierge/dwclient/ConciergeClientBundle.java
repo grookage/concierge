@@ -22,12 +22,15 @@ import com.grookage.concierge.client.ConciergeMeta;
 import com.grookage.concierge.client.refresher.ConciergeClientRefresher;
 import com.grookage.concierge.client.refresher.ConciergeClientSupplier;
 import com.grookage.concierge.client.serde.SerDeFactory;
+import com.grookage.concierge.models.ingestion.ConfigurationResponse;
 import com.grookage.korg.config.KorgHttpConfiguration;
+import com.grookage.korg.consumer.KorgConsumer;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Environment;
 import lombok.Getter;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
@@ -54,6 +57,10 @@ public abstract class ConciergeClientBundle<T extends Configuration> implements 
 
     protected abstract SerDeFactory getSerDeFactory(T configuration);
 
+    protected Supplier<KorgConsumer<List<ConfigurationResponse>>> getConfigConsumer(T configuration) {
+        return () -> null;
+    }
+
     @Override
     public void run(T configuration, Environment environment) {
         final var meta = getConciergeMeta(configuration);
@@ -66,6 +73,7 @@ public abstract class ConciergeClientBundle<T extends Configuration> implements 
         Preconditions.checkNotNull(serdeFactory, "SerDeFactory can't be null");
 
         final var dataRefreshSeconds = getRefreshIntervalSeconds(configuration);
+        final var configConsumer = getConfigConsumer(configuration);
 
         final var clientRefresher = ConciergeClientRefresher.builder()
                 .supplier(
@@ -77,6 +85,7 @@ public abstract class ConciergeClientBundle<T extends Configuration> implements 
                 )
                 .refreshTimeInSeconds(dataRefreshSeconds)
                 .periodicRefresh(refreshEnabled(configuration))
+                .configConsumer(configConsumer)
                 .build();
 
         conciergeClient = ConciergeClient.builder()
