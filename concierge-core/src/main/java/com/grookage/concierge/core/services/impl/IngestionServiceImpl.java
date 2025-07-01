@@ -67,7 +67,7 @@ public class IngestionServiceImpl<C extends ConfigUpdater> implements IngestionS
         ContextUtils.addConfigUpdaterContext(conciergeContext, configUpdater);
         final var processorKey = ProcessorKey.builder()
                 .configKey(configurationRequest.getConfigKey())
-                .configEvent(ConfigEvent.CREATE_CONFIG)
+                .configEvent(ConfigEvent.UPDATE_CONFIG)
                 .build();
         conciergeContext.addContext(ProcessorKey.class.getSimpleName(), processorKey);
         final var processor = conciergeHub.getProcessor(ConfigEvent.UPDATE_CONFIG)
@@ -84,7 +84,7 @@ public class IngestionServiceImpl<C extends ConfigUpdater> implements IngestionS
         ContextUtils.addConfigUpdaterContext(conciergeContext, configUpdater);
         final var processorKey = ProcessorKey.builder()
                 .configKey(configKey)
-                .configEvent(ConfigEvent.CREATE_CONFIG)
+                .configEvent(ConfigEvent.APPROVE_CONFIG)
                 .build();
         conciergeContext.addContext(ProcessorKey.class.getSimpleName(), processorKey);
         final var processor = conciergeHub.getProcessor(ConfigEvent.APPROVE_CONFIG)
@@ -101,7 +101,7 @@ public class IngestionServiceImpl<C extends ConfigUpdater> implements IngestionS
         ContextUtils.addConfigUpdaterContext(conciergeContext, configUpdater);
         final var processorKey = ProcessorKey.builder()
                 .configKey(configKey)
-                .configEvent(ConfigEvent.CREATE_CONFIG)
+                .configEvent(ConfigEvent.REJECT_CONFIG)
                 .build();
         conciergeContext.addContext(ProcessorKey.class.getSimpleName(), processorKey);
         final var processor = conciergeHub.getProcessor(ConfigEvent.REJECT_CONFIG)
@@ -117,7 +117,7 @@ public class IngestionServiceImpl<C extends ConfigUpdater> implements IngestionS
         conciergeContext.addContext(ConfigKey.class.getSimpleName(), configKey);
         ContextUtils.addConfigUpdaterContext(conciergeContext, configUpdater);
         final var processorKey = ProcessorKey.builder()
-                .configEvent(ConfigEvent.CREATE_CONFIG)
+                .configEvent(ConfigEvent.ACTIVATE_CONFIG)
                 .configKey(configKey)
                 .build();
         conciergeContext.addContext(ProcessorKey.class.getSimpleName(), processorKey);
