@@ -8,7 +8,8 @@ BugFix : ConfigKey has a configEvent that is incorrectly encoded in IngestionSer
 
 ## [1.0.4]
 
-BugFix : History items were not getting saved correctly because of equals and hashCode on configEvent - multiple updates are not getting saved properly. 
+BugFix : History items were not getting saved correctly because of equals and hashCode on configEvent - multiple updates
+are not getting saved properly.
 
 ## [1.0.3]
 
