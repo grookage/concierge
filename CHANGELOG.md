@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.5]
+
+BugFix : ConfigKey has a configEvent that is incorrectly encoded in IngestionService
+
 ## [1.0.4]
 
 BugFix : History items were not getting saved correctly because of equals and hashCode on configEvent - multiple updates are not getting saved properly. 
