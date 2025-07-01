@@ -2,6 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
+
 ## [0.0.1-RC17]
 
 - Bug fix in RC17, configKey needs to remain without configType. Just making it part of search
