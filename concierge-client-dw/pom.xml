@@ -10,6 +10,7 @@
         <relativePath>../concierge-parent</relativePath>
     </parent>
 
+    <name>Concierge Client DW</name>
     <artifactId>concierge-client-dw</artifactId>
 
     <dependencies>

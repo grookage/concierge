@@ -9,10 +9,10 @@
         <version>1.0.5</version>
     </parent>
 
+    <name>Concierge BOM</name>
     <artifactId>concierge-bom</artifactId>
 
     <packaging>pom</packaging>
-    <name>Concierge BOM</name>
 
     <description>
         Bill of materials to make sure a consistent set of versions is used for Concierge modules.

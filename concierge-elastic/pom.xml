@@ -10,6 +10,7 @@
         <relativePath>../concierge-parent</relativePath>
     </parent>
 
+    <name>Concierge Elastic</name>
     <artifactId>concierge-elastic</artifactId>
 
     <properties>

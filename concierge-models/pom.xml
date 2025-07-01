@@ -10,6 +10,7 @@
         <relativePath>../concierge-parent</relativePath>
     </parent>
 
+    <name>Concierge Models</name>
     <artifactId>concierge-models</artifactId>
 
     <properties>

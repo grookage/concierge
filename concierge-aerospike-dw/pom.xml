@@ -10,6 +10,7 @@
         <relativePath>../concierge-parent</relativePath>
     </parent>
 
+    <name>Concierge Aerospike DW</name>
     <artifactId>concierge-aerospike-dw</artifactId>
 
     <properties>
