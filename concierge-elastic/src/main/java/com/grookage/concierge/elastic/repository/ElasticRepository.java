@@ -196,26 +196,19 @@ public class ElasticRepository implements ConciergeRepository {
     @Override
     @SneakyThrows
     public void rollOverAndUpdate(ConfigDetails configDetails) {
-        final var namespaceQuery = TermQuery.of(p -> p.field(NAMESPACE).value(getNormalizedValue(configDetails.getConfigKey().getNamespace())))._toQuery();
-        final var configQuery = TermQuery.of(p -> p.field(CONFIG_NAME).value(getNormalizedValue(configDetails.getConfigKey().getConfigName())))._toQuery();
-        final var stateQuery = TermQuery.of(p -> p.field(CONFIG_STATE).value(getNormalizedValue(ConfigState.ACTIVATED.name())))._toQuery();
-        final var orgQuery = TermQuery.of(p -> p.field(ORG).value(getNormalizedValue(configDetails.getConfigKey().getOrgId())))._toQuery();
-        final var tenantQuery = TermQuery.of(p -> p.field(TENANT).value(getNormalizedValue(configDetails.getConfigKey().getTenantId())))._toQuery();
-        final var searchQuery = BoolQuery.of(q -> q.must(List.of(orgQuery, namespaceQuery, tenantQuery,
-                configQuery, stateQuery)))._toQuery();
-        final var searchResponse = client.search(SearchRequest.of(
-                        s -> s.query(searchQuery)
-                                .requestCache(true)
-                                .index(List.of(CONFIG_INDEX))
-                                .size(elasticConfig.getMaxResultSize()) //If you have more than 10K schemas, this will hold you up!
-                                .timeout(elasticConfig.getTimeout())),
-                StoredElasticRecord.class
-        );
-        final var newRecords = searchResponse.hits().hits().stream()
-                .map(Hit::source).filter(Objects::nonNull)
-                .peek(rec -> rec.setConfigState(ConfigState.ROLLED))
+        final var searchRequest = com.grookage.concierge.models.SearchRequest.builder()
+                .orgs(Set.of(configDetails.getConfigKey().getOrgId()))
+                .namespaces(Set.of(configDetails.getConfigKey().getNamespace()))
+                .tenants(Set.of(configDetails.getConfigKey().getTenantId()))
+                .configNames(Set.of(configDetails.getConfigKey().getConfigName()))
+                .configTypes(Set.of(configDetails.getConfigKey().getConfigType()))
+                .configStates(Set.of(ConfigState.ACTIVATED))
+                .build();
+        final var searchResponse = getStoredRecords(searchRequest);
+        final var newRecords = searchResponse.stream()
+                .peek(each -> each.setConfigState(ConfigState.ROLLED))
                 .collect(Collectors.toList());
-        newRecords.add(toStorageRecord(configDetails));
+        newRecords.add(configDetails);
         final var br = new BulkRequest.Builder()
                 .index(CONFIG_INDEX)
                 .refresh(Refresh.WaitFor)
