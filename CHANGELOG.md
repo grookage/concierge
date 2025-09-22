@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.6]
+- BugFix: Data in repository record is not getting updated correctly as part of bulkUpdate
+- BugFix: Added missing configType in searchRequest during bulkUpdate
+
 ## [1.0.5]
 - BugFix: ProcessorKey configEvent was not getting saved correctly in the `IngestionServiceImpl` for different configTypes.
 - Added tests for the IngestionService
