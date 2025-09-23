@@ -10,12 +10,14 @@ import com.grookage.concierge.models.config.ConfigState;
 import com.grookage.concierge.repository.ConciergeRepository;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Getter
 public class AerospikeRepository implements ConciergeRepository {
 
@@ -74,10 +76,14 @@ public class AerospikeRepository implements ConciergeRepository {
                 .namespaces(Set.of(configDetails.getConfigKey().getNamespace()))
                 .tenants(Set.of(configDetails.getConfigKey().getTenantId()))
                 .configNames(Set.of(configDetails.getConfigKey().getConfigName()))
+                .configTypes(Set.of(configDetails.getConfigKey().getConfigType()))
                 .configStates(Set.of(ConfigState.ACTIVATED))
                 .build();
-        final var newRecords = aerospikeManager.getRecords(searchRequest)
-                .stream().peek(each -> each.setConfigState(ConfigState.ROLLED)).collect(Collectors.toList());
+        final var newRecords = getStoredRecords(searchRequest)
+                .stream()
+                .peek(each -> each.setConfigState(ConfigState.ROLLED))
+                .map(this::toStorageRecord)
+                .collect(Collectors.toList());
         newRecords.add(toStorageRecord(configDetails));
         aerospikeManager.bulkUpdate(newRecords);
     }

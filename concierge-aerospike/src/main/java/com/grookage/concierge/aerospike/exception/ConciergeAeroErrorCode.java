@@ -5,9 +5,8 @@ import lombok.Getter;
 
 @Getter
 public enum ConciergeAeroErrorCode implements ConciergeErrorCode {
-
     INDEX_CREATION_FAILED(412),
-
+    BULK_UPDATE_FAILED(500),
     WRITE_FAILED(500);
 
     final int status;

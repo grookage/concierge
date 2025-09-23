@@ -6,10 +6,12 @@ import com.aerospike.client.exp.Exp;
 import com.aerospike.client.policy.RecordExistsAction;
 import com.aerospike.client.policy.WritePolicy;
 import com.aerospike.client.query.Statement;
+import com.grookage.concierge.aerospike.exception.ConciergeAeroErrorCode;
 import com.grookage.concierge.aerospike.storage.AerospikeRecord;
 import com.grookage.concierge.aerospike.storage.AerospikeStorageConstants;
 import com.grookage.concierge.models.MapperUtils;
 import com.grookage.concierge.models.SearchRequest;
+import com.grookage.concierge.models.exception.ConciergeException;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -150,11 +152,15 @@ public class AerospikeManager {
                 client.put(writePolicy, key, bins);
             });
         } catch (Exception e) {
-            log.debug("There is an error trying to commit the transaction with id {}. Aborting the transaction", transaction.getId(), e);
-            client.abort(transaction);
-            throw e;
+            log.error("There is an error trying to commit the transaction with id {}. Aborting the transaction", transaction.getId(), e);
+            if (aerospikeConfig.isTxnEnabled()) {
+                client.abort(transaction);
+            }
+            throw ConciergeException.error(ConciergeAeroErrorCode.BULK_UPDATE_FAILED,e);
         } finally {
-            client.commit(transaction);
+            if (aerospikeConfig.isTxnEnabled()) {
+                client.commit(transaction);
+            }
         }
         log.debug("Successfully completed the transaction with id {} and records {}", transaction.getId(), aerospikeRecords);
     }
