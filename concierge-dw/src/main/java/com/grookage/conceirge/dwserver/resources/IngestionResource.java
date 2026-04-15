@@ -20,6 +20,7 @@ import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Timed;
 import com.grookage.conceirge.dwserver.permissions.PermissionValidator;
 import com.grookage.conceirge.dwserver.resolvers.ConfigUpdaterResolver;
+import com.grookage.concierge.core.engine.resolver.ConfigVersionManager;
 import com.grookage.concierge.core.engine.validator.ConfigDataValidator;
 import com.grookage.concierge.core.services.IngestionService;
 import com.grookage.concierge.models.ConfigUpdater;
@@ -56,6 +57,7 @@ public class IngestionResource<U extends ConfigUpdater> {
     private final Supplier<ConfigUpdaterResolver<U>> updaterResolver;
     private final Supplier<PermissionValidator<U>> permissionValidatorSupplier;
     private final Supplier<ConfigDataValidator> configDataValidatorSupplier;
+    private final ConfigVersionManager versionManager;
 
     @PUT
     @Timed
@@ -66,6 +68,8 @@ public class IngestionResource<U extends ConfigUpdater> {
         final var updater = updaterResolver.get().resolve(headers);
         permissionValidatorSupplier.get().authorize(headers, updater, configurationRequest);
         configDataValidatorSupplier.get().validate(configurationRequest.getConfigKey(), configurationRequest.getData());
+        final var versionId = versionManager.generateConfigVersion(configurationRequest.getConfigKey());
+        configurationRequest.addVersion(versionId);
         return ingestionService.createConfiguration(updater, configurationRequest);
     }
 

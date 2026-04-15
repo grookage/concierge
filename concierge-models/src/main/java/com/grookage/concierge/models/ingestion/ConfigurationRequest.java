@@ -21,4 +21,8 @@ public class ConfigurationRequest {
     @NotNull
     ConfigKey configKey;
     String message;
+
+    public void addVersion(final String version) {
+        this.configKey.setVersion(version);
+    }
 }

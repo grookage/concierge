@@ -26,7 +26,6 @@ public class ConfigKey {
     String tenantId;
     @NotBlank
     String configName;
-    @NotBlank
     String version;
     @NotBlank
     String configType;
