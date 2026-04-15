@@ -35,6 +35,12 @@ public class ApproveConfigProcessor extends ConciergeProcessor {
         final var configKey = context.getContext(ConfigKey.class)
                 .orElseThrow((Supplier<Throwable>) () -> ConciergeException.error(ConciergeCoreErrorCode.VALUE_NOT_FOUND));
         final var storedConfig = getRepositorySupplier().get().getStoredRecord(configKey).orElse(null);
+
+        if (null != storedConfig && storedConfig.getConfigState() == ConfigState.APPROVED) {
+            log.warn("Looks like the ApproveConfigProcessor is being retried, the config is already in approved state, for Configkey {}, Doing nothing.", configKey);
+            return;
+        }
+
         if (null == storedConfig || storedConfig.getConfigState() != ConfigState.CREATED) {
             log.error("There are no stored configs present with namespace {}, version {} and configName {}. Please try updating them instead",
                     configKey.getNamespace(),
@@ -42,6 +48,7 @@ public class ApproveConfigProcessor extends ConciergeProcessor {
                     configKey.getConfigName());
             throw ConciergeException.error(ConciergeCoreErrorCode.NO_CONFIG_FOUND);
         }
+
         ConfigurationUtils.validateConfigApproveAccess(storedConfig, context);
         addHistory(context, storedConfig, null);
         storedConfig.setConfigState(ConfigState.APPROVED);
@@ -49,3 +56,4 @@ public class ApproveConfigProcessor extends ConciergeProcessor {
         context.addContext(ConfigDetails.class.getSimpleName(), storedConfig);
     }
 }
+

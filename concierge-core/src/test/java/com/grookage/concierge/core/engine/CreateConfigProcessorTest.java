@@ -36,7 +36,9 @@ class CreateConfigProcessorTest extends AbstractProcessorTest {
         Mockito.when(getConciergeRepository().getStoredRecords(Mockito.any()))
                 .thenReturn(List.of(configDetails));
         final var processor = getConciergeProcessor();
-        Assertions.assertThrows(ConciergeException.class, () -> processor.process(conciergeContext));
+        processor.process(conciergeContext);
+        Mockito.verify(getConciergeRepository(), Mockito.times(0))
+                        .create(Mockito.any(ConfigDetails.class));
     }
 
     @Test

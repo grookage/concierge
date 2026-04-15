@@ -48,10 +48,19 @@ public class CreateConfigProcessor extends ConciergeProcessor {
         final var storedConfigs = getRepositorySupplier()
                 .get()
                 .getStoredRecords(searchRequest);
-        final var anyCreatedOrMatchingVersionConfig = storedConfigs.stream()
-                .anyMatch(each -> each.getConfigState() == ConfigState.CREATED ||
-                        each.getConfigKey().getVersion().equalsIgnoreCase(configKey.getVersion()));
-        if (anyCreatedOrMatchingVersionConfig) {
+
+        final var alreadyCreatedConfig = storedConfigs.stream()
+                .anyMatch(each -> each.getConfigState() == ConfigState.CREATED);
+
+        if (alreadyCreatedConfig) {
+            log.warn("The config {} has been created already. Doing nothing. Possibly a retry of the same action", configKey);
+            return;
+        }
+
+        final var anyMatchingVersionConfig = storedConfigs.stream()
+                .anyMatch(each -> each.getConfigKey().getVersion().equalsIgnoreCase(configKey.getVersion()));
+
+        if (anyMatchingVersionConfig) {
             log.error("There are already stored configs present with configMeta {}. Please try updating them instead",
                     createConfigRequest.getConfigKey());
             throw ConciergeException.error(ConciergeCoreErrorCode.CONFIG_ALREADY_EXISTS);
@@ -62,3 +71,4 @@ public class CreateConfigProcessor extends ConciergeProcessor {
         context.addContext(ConfigDetails.class.getSimpleName(), configDetails);
     }
 }
+

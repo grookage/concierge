@@ -43,7 +43,7 @@ class ApproveConfigProcessorTest extends AbstractProcessorTest {
         configDetails.setConfigState(ConfigState.APPROVED);
         Mockito.when(getConciergeRepository().getStoredRecord(configKey))
                 .thenReturn(Optional.of(configDetails));
-        Assertions.assertThrows(ConciergeException.class, () -> processor.process(conciergeContext));
+        processor.process(conciergeContext);
         Mockito.verify(getConciergeRepository(), Mockito.times(0)).update(configDetails);
     }
 
