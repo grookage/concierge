@@ -28,7 +28,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Builder
+@Builder(toBuilder = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SearchRequest {
     @Builder.Default
@@ -43,4 +43,6 @@ public class SearchRequest {
     private Set<ConfigState> configStates = Set.of();
     @Builder.Default
     private Set<String> configTypes = Set.of();
+    @Builder.Default
+    private PageWindow pageWindow = new PageWindow();
 }

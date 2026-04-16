@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @AllArgsConstructor
 @Data
 @Builder
@@ -15,5 +17,12 @@ public class CacheConfig {
 
     private boolean enabled;
     @Builder.Default
+    private Set<String> configTypes = Set.of();
+    @Builder.Default
     private int refreshCacheSeconds = 10;
+
+    public boolean cachedType(final String configType) {
+        return configTypes != null && configTypes.stream()
+                .anyMatch(each -> each.equalsIgnoreCase(configType));
+    }
 }

@@ -1,9 +1,11 @@
 package com.grookage.concierge.core.cache;
 
+import com.grookage.concierge.models.SearchRequest;
 import com.grookage.concierge.repository.ConciergeRepository;
 import com.grookage.korg.suppliers.KorgSupplier;
 import lombok.AllArgsConstructor;
 
+import java.util.Set;
 import java.util.function.Supplier;
 
 
@@ -11,6 +13,7 @@ import java.util.function.Supplier;
 public class RepositorySupplier implements KorgSupplier<ConfigRegistry> {
 
     private final Supplier<ConciergeRepository> repositorySupplier;
+    private final Set<String> configTypes;
 
     @Override
     public void start() {
@@ -24,7 +27,10 @@ public class RepositorySupplier implements KorgSupplier<ConfigRegistry> {
 
     @Override
     public ConfigRegistry get() {
-        final var configDetails = repositorySupplier.get().getStoredRecords();
+        final var searchRequest = SearchRequest.builder()
+                .configTypes(configTypes)
+                .build();
+        final var configDetails = repositorySupplier.get().getStoredRecords(searchRequest);
         final var registry = new ConfigRegistry();
         configDetails.forEach(registry::add);
         return registry;

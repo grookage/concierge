@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 
 public interface ConfigService {
 
-    Optional<ConfigDetails> getConfig(ConciergeRequestContext requestContext, String referenceId);
+    Optional<ConfigDetails> getConfig(ConciergeRequestContext requestContext, String configType, String referenceId);
 
     Optional<ConfigDetails> getConfig(ConciergeRequestContext requestContext, ConfigKey configKey);
 

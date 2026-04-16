@@ -20,7 +20,10 @@ import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.FieldValue;
 import co.elastic.clients.elasticsearch._types.Refresh;
 import co.elastic.clients.elasticsearch._types.Time;
-import co.elastic.clients.elasticsearch._types.query_dsl.*;
+import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.MatchAllQuery;
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.elasticsearch._types.query_dsl.TermsQuery;
 import co.elastic.clients.elasticsearch.core.*;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import co.elastic.clients.elasticsearch.indices.CreateIndexRequest;
@@ -30,6 +33,7 @@ import com.google.common.base.Preconditions;
 import com.grookage.concierge.elastic.client.ElasticClientManager;
 import com.grookage.concierge.elastic.config.ElasticConfig;
 import com.grookage.concierge.elastic.storage.StoredElasticRecord;
+import com.grookage.concierge.models.PageWindow;
 import com.grookage.concierge.models.config.ConfigDetails;
 import com.grookage.concierge.models.config.ConfigState;
 import com.grookage.concierge.repository.ConciergeRepository;
@@ -115,11 +119,13 @@ public class ElasticRepository implements ConciergeRepository {
 
     @SneakyThrows
     private List<ConfigDetails> queryDetails(final Query searchQuery,
+                                             final PageWindow pageWindow,
                                              final Predicate<Hit<StoredElasticRecord>> searchPredicate) {
         final var searchResponse = client.search(SearchRequest.of(
                         s -> s.query(searchQuery)
                                 .requestCache(true)
                                 .index(List.of(CONFIG_INDEX))
+                                .from(pageWindow.offset())
                                 .size(elasticConfig.getMaxResultSize()) //If you have more than 10K schemas, this will hold you up!
                                 .timeout(elasticConfig.getTimeout())),
                 StoredElasticRecord.class
@@ -148,7 +154,7 @@ public class ElasticRepository implements ConciergeRepository {
                         _toQuery();
         final var searchQuery = BoolQuery.of(q -> q.must(List.of(orgQuery, namespaceQuery, tenantQuery,
                 configQuery, configTypeQuery, configStateQuery)))._toQuery();
-        return queryDetails(searchQuery, storedElasticRecordHit -> true);
+        return queryDetails(searchQuery, searchRequest.getPageWindow(), storedElasticRecordHit -> true);
     }
 
     @Override
@@ -178,19 +184,11 @@ public class ElasticRepository implements ConciergeRepository {
 
     @Override
     @SneakyThrows
-    public Optional<ConfigDetails> getStoredRecord(String referenceId) {
+    public Optional<ConfigDetails> getStoredRecord(String configType, String referenceId) {
         final var getResponse = client.get(GetRequest.of(request ->
                         request.index(CONFIG_INDEX).id(referenceId)),
                 StoredElasticRecord.class);
         return Optional.ofNullable(getResponse.source()).map(this::toConfigDetails);
-    }
-
-    @Override
-    @SneakyThrows
-    public List<ConfigDetails> getStoredRecords() {
-        final var query = MatchAllQuery.of(q -> q)._toQuery();
-        final var searchQuery = BoolQuery.of(q -> q.must(List.of(query)))._toQuery();
-        return queryDetails(searchQuery, storedElasticRecordHit -> true);
     }
 
     @Override

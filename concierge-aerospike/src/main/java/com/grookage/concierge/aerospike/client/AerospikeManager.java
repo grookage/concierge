@@ -1,7 +1,7 @@
 package com.grookage.concierge.aerospike.client;
 
-import com.aerospike.client.Record;
 import com.aerospike.client.*;
+import com.aerospike.client.Record;
 import com.aerospike.client.exp.Exp;
 import com.aerospike.client.policy.RecordExistsAction;
 import com.aerospike.client.policy.WritePolicy;
@@ -103,7 +103,8 @@ public class AerospikeManager {
         queryStatement.setNamespace(namespace);
         queryStatement.setBinNames(AerospikeStorageConstants.DEFAULT_BIN);
         queryStatement.setSetName(aerospikeConfig.getConfigSet());
-        queryStatement.setMaxRecords(10000);
+        final var pageWindow = searchRequest.getPageWindow();
+        queryStatement.setMaxRecords(pageWindow.offset() + pageWindow.getPageSize());
         final var queryPolicy = client.copyQueryPolicyDefault();
         final var searchableExpressions = new ArrayList<Exp>();
         augmentExpressions(AerospikeStorageConstants.NAMESPACE_BIN, searchRequest.getNamespaces(), searchableExpressions);
@@ -121,20 +122,26 @@ public class AerospikeManager {
             }
         }
         final var aerospikeRecords = new ArrayList<AerospikeRecord>();
+        int skipped = 0;
+        int collected = 0;
         try (final var rs = client.query(queryPolicy, queryStatement)) {
-            while (rs.next()) {
+            while (rs.next() && collected < pageWindow.getPageSize()) {
                 final var storageRecord = rs.getRecord();
-                if (null != storageRecord) {
-                    final var binRecord = storageRecord.getBytes(AerospikeStorageConstants.DEFAULT_BIN);
-                    if (null != binRecord) {
-                        aerospikeRecords.add(
-                                MapperUtils.mapper().readValue(AerospikeClientUtils.retrieve(binRecord),
-                                        AerospikeRecord.class)
-                        );
-                    }
-                }
+                if (storageRecord == null) continue;
+
+                final var binRecord = storageRecord.getBytes(AerospikeStorageConstants.DEFAULT_BIN);
+                if (binRecord == null) continue;
+
+                if (skipped++ < pageWindow.offset()) continue;
+
+                aerospikeRecords.add(
+                        MapperUtils.mapper().readValue(AerospikeClientUtils.retrieve(binRecord),
+                                AerospikeRecord.class)
+                );
+                collected++;
             }
         }
+
         return aerospikeRecords;
     }
 
@@ -156,7 +163,7 @@ public class AerospikeManager {
             if (aerospikeConfig.isTxnEnabled()) {
                 client.abort(transaction);
             }
-            throw ConciergeException.error(ConciergeAeroErrorCode.BULK_UPDATE_FAILED,e);
+            throw ConciergeException.error(ConciergeAeroErrorCode.BULK_UPDATE_FAILED, e);
         } finally {
             if (aerospikeConfig.isTxnEnabled()) {
                 client.commit(transaction);

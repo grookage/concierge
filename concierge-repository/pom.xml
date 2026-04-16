@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.grookage.concierge</groupId>
         <artifactId>concierge-parent</artifactId>
-        <version>1.0.6</version>
+        <version>1.0.7</version>
         <relativePath>../concierge-parent</relativePath>
     </parent>
 
@@ -56,11 +56,6 @@
             <version>4.1.0</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
-
-    <properties>
-        <maven.deploy.skip>true</maven.deploy.skip>
-    </properties>
 
 </project>

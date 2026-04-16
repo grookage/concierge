@@ -5,7 +5,6 @@ import com.grookage.concierge.core.cache.ConfigRegistry;
 import com.grookage.concierge.core.cache.RepositoryRefresher;
 import com.grookage.concierge.core.cache.RepositorySupplier;
 import com.grookage.concierge.core.services.ConfigService;
-import com.grookage.concierge.models.CollectionUtils;
 import com.grookage.concierge.models.SearchRequest;
 import com.grookage.concierge.models.config.ConciergeRequestContext;
 import com.grookage.concierge.models.config.ConfigDetails;
@@ -17,8 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 public class ConfigServiceImpl implements ConfigService {
@@ -34,7 +36,7 @@ public class ConfigServiceImpl implements ConfigService {
         this.repositorySupplier = repositorySupplier;
         this.cacheConfig = cacheConfig;
         if (null != cacheConfig && cacheConfig.isEnabled()) {
-            final var supplier = new RepositorySupplier(repositorySupplier);
+            final var supplier = new RepositorySupplier(repositorySupplier, cacheConfig.getConfigTypes());
             supplier.start();
             this.refresher = RepositoryRefresher.builder()
                     .supplier(supplier)
@@ -47,57 +49,63 @@ public class ConfigServiceImpl implements ConfigService {
     }
 
     @Override
-    public Optional<ConfigDetails> getConfig(ConciergeRequestContext requestContext, String referenceId) {
-        final var useCache = useRepositoryCache(requestContext);
-        return useCache ? refresher.getData().getConfiguration(referenceId) :
-                repositorySupplier.get().getStoredRecord(referenceId);
+    public Optional<ConfigDetails> getConfig(ConciergeRequestContext requestContext, String configType, String referenceId) {
+        final var useCache = useRepositoryCache(requestContext, configType);
+        return useCache ? refresher.getData().getConfigDetails(configType, referenceId) :
+                repositorySupplier.get().getStoredRecord(configType, referenceId);
     }
 
     @Override
     public Optional<ConfigDetails> getConfig(ConciergeRequestContext requestContext, ConfigKey configKey) {
-        return getConfig(requestContext, configKey.getReferenceId());
+        return getConfig(requestContext, configKey.getConfigType(), configKey.getReferenceId());
     }
 
     @Override
     public List<ConfigDetails> getConfigs(ConciergeRequestContext requestContext, SearchRequest searchRequest) {
-        if (!useRepositoryCache(requestContext)) {
+        if (!cacheEnabled(requestContext)) {
+            log.debug("There is no cache enabled for the requestContext, fetching the configs directly from the repository directly");
             return repositorySupplier.get().getStoredRecords(searchRequest);
         }
-        return refresher.getData().getConfigs().stream()
-                .filter(each -> match(each, searchRequest))
-                .toList();
+
+        var partitioned = searchRequest.getConfigTypes().stream()
+                .collect(Collectors.partitioningBy(cacheConfig::cachedType, Collectors.toSet()));
+        var cachedTypes = partitioned.get(true);
+        var nonCachedTypes = partitioned.get(false);
+
+        var cacheFuture = cachedTypes.isEmpty()
+                ? CompletableFuture.completedFuture(List.<ConfigDetails>of())
+                : CompletableFuture.supplyAsync(() ->
+                refresher.getData().getMatchingConfigs(searchRequest.toBuilder().configTypes(cachedTypes).build()));
+
+        var repoFuture = nonCachedTypes.isEmpty()
+                ? CompletableFuture.completedFuture(List.<ConfigDetails>of())
+                : CompletableFuture.supplyAsync(() ->
+                repositorySupplier.get().getStoredRecords(searchRequest.toBuilder().configTypes(nonCachedTypes).build()));
+
+        return cacheFuture.thenCombine(repoFuture, (cached, repo) ->
+                Stream.concat(cached.stream(), repo.stream()).toList()
+        ).join();
     }
 
     @Override
     public Optional<Consumer<ConfigRegistry>> getConfigConsumer(ConciergeRequestContext requestContext) {
-        if (!useRepositoryCache(requestContext)) {
+        if (!cacheEnabled(requestContext)) {
             log.debug("There is no cache context enabled, returning the empty config consumer");
             return Optional.empty();
         }
-        return !useRepositoryCache(requestContext) ? Optional.empty() :
-                Optional.ofNullable(refresher.getConsumerSupplier()).map(Supplier::get);
+        return Optional.ofNullable(refresher.getConsumerSupplier()).map(Supplier::get);
     }
 
-    private boolean useRepositoryCache(final ConciergeRequestContext requestContext) {
+    private boolean cacheEnabled(final ConciergeRequestContext requestContext) {
         return null != requestContext && !requestContext.isIgnoreCache()
-                && null != cacheConfig && cacheConfig.isEnabled() && null != refresher;
+                && null != cacheConfig && cacheConfig.isEnabled()
+                && null != refresher;
     }
 
-    private boolean match(ConfigDetails configDetails, SearchRequest searchRequest) {
-        final var configKey = configDetails.getConfigKey();
-        final var namespaceMatch = CollectionUtils.isNullOrEmpty(searchRequest.getNamespaces()) ||
-                searchRequest.getNamespaces().contains(configKey.getNamespace());
-        final var configNameMatch = CollectionUtils.isNullOrEmpty(searchRequest.getConfigNames()) ||
-                searchRequest.getConfigNames().contains(configKey.getConfigName());
-        final var configStateMatch = CollectionUtils.isNullOrEmpty(searchRequest.getConfigStates()) ||
-                searchRequest.getConfigStates().contains(configDetails.getConfigState());
-        final var orgMatch = CollectionUtils.isNullOrEmpty(searchRequest.getOrgs()) ||
-                searchRequest.getOrgs().contains(configKey.getOrgId());
-        final var tenantMatch = CollectionUtils.isNullOrEmpty(searchRequest.getTenants()) ||
-                searchRequest.getTenants().contains(configKey.getTenantId());
-        final var configTypeMatch = CollectionUtils.isNullOrEmpty(searchRequest.getConfigTypes()) ||
-                searchRequest.getConfigTypes().contains(configKey.getConfigType());
-        return namespaceMatch && configNameMatch && configStateMatch
-                && orgMatch && tenantMatch && configTypeMatch;
+    private boolean useRepositoryCache(final ConciergeRequestContext requestContext, final String configType) {
+        return null != requestContext && !requestContext.isIgnoreCache()
+                && null != cacheConfig && cacheConfig.isEnabled()
+                && cacheConfig.cachedType(configType)
+                && null != refresher;
     }
 }

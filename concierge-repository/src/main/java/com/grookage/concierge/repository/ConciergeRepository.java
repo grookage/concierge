@@ -6,6 +6,7 @@ import com.grookage.concierge.models.config.ConfigKey;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface ConciergeRepository {
 
@@ -13,13 +14,18 @@ public interface ConciergeRepository {
 
     void update(ConfigDetails configDetails);
 
-    Optional<ConfigDetails> getStoredRecord(final String referenceId);
+    Optional<ConfigDetails> getStoredRecord(final String configType, final String referenceId);
 
     default Optional<ConfigDetails> getStoredRecord(final ConfigKey configKey) {
-        return getStoredRecord(configKey.getReferenceId());
+        return getStoredRecord(configKey.getConfigType(), configKey.getReferenceId());
     }
 
-    List<ConfigDetails> getStoredRecords();
+    default List<ConfigDetails> getStoredRecords(final String configType) {
+        final var searchRequest = SearchRequest.builder()
+                .configTypes(Set.of(configType))
+                .build();
+        return getStoredRecords(searchRequest);
+    }
 
     List<ConfigDetails> getStoredRecords(SearchRequest searchRequest);
 

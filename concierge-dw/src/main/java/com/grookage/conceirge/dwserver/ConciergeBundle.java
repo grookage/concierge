@@ -67,7 +67,7 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
         return DefaultAppendConfigResolver::new;
     }
 
-    protected ConfigVersionManager getConfigVersionManageR(T configuration) {
+    protected ConfigVersionManager getConfigVersionManager(T configuration) {
         return new DefaultConfigVersionManager();
     }
 
@@ -90,7 +90,7 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
         final var configDataValidator = getConfigDataValidator(configuration);
         Preconditions.checkNotNull(configDataValidator, "Config Data Resolver can't be null");
 
-        final var configVersionManager = getConfigVersionManageR(configuration);
+        final var configVersionManager = getConfigVersionManager(configuration);
         Preconditions.checkNotNull(configVersionManager, "Config Version Manager can't be null");
 
         final var cacheConfig = getCacheConfig(configuration);
@@ -120,7 +120,8 @@ public abstract class ConciergeBundle<T extends Configuration, U extends ConfigU
         withHealthChecks(configuration)
                 .forEach(leiaHealthCheck -> environment.healthChecks().register(leiaHealthCheck.getName(), leiaHealthCheck));
         environment.jersey().register(new ConciergeExceptionMapper());
-        environment.jersey().register(new IngestionResource<>(ingestionService, userResolver, permissionResolver, configDataValidator));
+        environment.jersey().register(new IngestionResource<>(ingestionService, userResolver, permissionResolver,
+                configDataValidator, configVersionManager));
         environment.jersey().register(new ConfigResource(configService));
     }
 
