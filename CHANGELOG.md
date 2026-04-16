@@ -15,7 +15,7 @@ All notable changes to this project will be documented in this file.
     - `computeIfAbsent` for nested map operations
     - Stream-based filtering in `getMatchingConfigs`
     - `Optional.ofNullable().map()` in `getConfigDetails`
-- `CacheConfig.cachedType` simplified to use `equalsIgn
+- `CacheConfig.cachedType` simplified to use `equalsIgnoreCase` for case-insensitive matching
 
 ## [1.0.6]
 
