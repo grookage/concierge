@@ -52,15 +52,9 @@ public class AerospikeRepository implements ConciergeRepository {
     }
 
     @Override
-    public Optional<ConfigDetails> getStoredRecord(String referenceId) {
+    public Optional<ConfigDetails> getStoredRecord(String configType, String referenceId) {
         return aerospikeManager.getRecord(referenceId)
                 .map(this::toConfigDetails);
-    }
-
-    @Override
-    public List<ConfigDetails> getStoredRecords() {
-        return aerospikeManager.getRecords(SearchRequest.builder().build())
-                .stream().map(this::toConfigDetails).toList();
     }
 
     @Override

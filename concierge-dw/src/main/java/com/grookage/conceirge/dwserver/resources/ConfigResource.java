@@ -77,12 +77,14 @@ public class ConfigResource {
     @GET
     @Timed
     @ExceptionMetered
-    @Path("/{referenceId}/summary")
+    @Path("/{configType}/{referenceId}/summary")
     public List<ConfigurationResponse> getConfigDetails(
             @QueryParam("ignoreCache") boolean ignoreCache,
+            @PathParam("configType") @NotEmpty String configType,
             @PathParam("referenceId") @NotEmpty final String referenceId
     ) {
-        final var config = configService.getConfig(toRequestContext(ignoreCache), referenceId).orElse(null);
+        final var config = configService.getConfig(toRequestContext(ignoreCache), configType, referenceId)
+                .orElse(null);
         return getConfigurationResponses(null == config ? List.of() : List.of(config));
     }
 

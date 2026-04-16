@@ -1,5 +1,3 @@
-
-
 package com.grookage.concierge.core.engine.processors;
 
 import com.grookage.concierge.core.engine.ConciergeContext;
