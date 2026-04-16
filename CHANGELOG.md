@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.7]
+
+**Features**
+- Added pagination support via `PageWindow` in `SearchRequest` with configurable `page` and `pageSize`
+- Pagination applied across all repository implementations (Aerospike, Elasticsearch) and in-memory cache
+
+**Improvements**
+- `ConfigServiceImpl.getConfigs` now fetches cached and non-cached config types in parallel using `CompletableFuture`, improving performance for mixed queries
+- `SearchRequest` now supports `toBuilder()` for easier request modification
+- Code cleanup: Replaced imperative patterns with streams and `Optional` chaining in `ConfigRegistry`
+    - `computeIfAbsent` for nested map operations
+    - Stream-based filtering in `getMatchingConfigs`
+    - `Optional.ofNullable().map()` in `getConfigDetails`
+- `CacheConfig.cachedType` simplified to use `equalsIgn
+
 ## [1.0.6]
 
 - BugFix: Data in repository record is not getting updated correctly as part of bulkUpdate
