@@ -41,4 +41,8 @@ target/
 */test-classes/*
 \$*
 .DS_Store
+.classpath
+.factorypath
+.project
+.settings/
 
